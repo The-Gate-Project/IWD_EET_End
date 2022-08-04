@@ -1,0 +1,94 @@
+
+
+
+IF
+	Global("BD_JOINXP","LOCALS",0)
+	InParty(Myself)
+	XPGT(Player1,249999)
+	XPLT(Myself,250000)
+THEN
+	RESPONSE #100
+		SetInterrupt(FALSE)
+		SetGlobal("BD_JOINXP","LOCALS",1)
+		ChangeStat(Myself,XP,250000,SET)
+		SetInterrupt(TRUE)
+END
+
+IF
+	Global("BD_JOINXP","LOCALS",0)
+	InParty(Myself)
+	XPGT(Player1,199999)
+	XPLT(Myself,200000)
+THEN
+	RESPONSE #100
+		SetInterrupt(FALSE)
+		SetGlobal("BD_JOINXP","LOCALS",1)
+		ChangeStat(Myself,XP,200000,SET)
+		SetInterrupt(TRUE)
+END
+
+IF
+	Global("BD_JOINXP","LOCALS",0)
+	InParty(Myself)
+	XPGT(Player1,160999)
+	XPLT(Myself,161000)
+THEN
+	RESPONSE #100
+		SetInterrupt(FALSE)
+		SetGlobal("BD_JOINXP","LOCALS",1)
+		ChangeStat(Myself,XP,161000,SET)
+		SetInterrupt(TRUE)
+END
+
+IF
+	Global("BD_JOINXP","LOCALS",0)
+	InParty(Myself)
+	XPGT(Player1,134999)
+	XPLT(Myself,135000)
+THEN
+	RESPONSE #100
+		SetInterrupt(FALSE)
+		SetGlobal("BD_JOINXP","LOCALS",1)
+		ChangeStat(Myself,XP,135000,SET)
+		SetInterrupt(TRUE)
+END
+
+IF
+	Global("BD_JOINXP","LOCALS",0)
+	InParty(Myself)
+	XPGT(Player1,109999)
+	XPLT(Myself,110000)
+THEN
+	RESPONSE #100
+		SetInterrupt(FALSE)
+		SetGlobal("BD_JOINXP","LOCALS",1)
+		ChangeStat(Myself,XP,110000,SET)
+		SetInterrupt(TRUE)
+END
+
+IF
+	Global("BD_JOINXP","LOCALS",0)
+	InParty(Myself)
+	XPGT(Player1,89999)
+	XPLT(Myself,90000)
+THEN
+	RESPONSE #100
+		SetInterrupt(FALSE)
+		SetGlobal("BD_JOINXP","LOCALS",1)
+		ChangeStat(Myself,XP,90000,SET)
+		SetInterrupt(TRUE)
+END
+
+IF
+	Global("BD_JOINXP","LOCALS",0)
+	InParty(Myself)
+	XPLT(Player1,90000)
+THEN
+	RESPONSE #100
+		SetInterrupt(FALSE)
+		SetGlobal("BD_JOINXP","LOCALS",1)
+		SetInterrupt(TRUE)
+END
+
+
+

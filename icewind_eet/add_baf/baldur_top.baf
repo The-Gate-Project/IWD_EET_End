@@ -1,0 +1,65 @@
+IF
+	!TriggerOverride(Player1,InMyArea("fcsherri"))
+	OR(4)
+		Global("SHERRY_PLOT","GLOBAL",11)
+		Global("SHERRY_PLOT","GLOBAL",21)
+		Global("SHERRY_PLOT","GLOBAL",31)
+		Global("SHERRY_PLOT","GLOBAL",41)
+THEN
+	RESPONSE #100
+		IncrementGlobal("SHERRY_PLOT","GLOBAL",-1)
+		Continue()
+END
+
+IF
+	GlobalTimerExpired("SHERRY_TIMER_PLOT","GLOBAL")
+	GlobalLT("Chapter","GLOBAL",7)
+	OR(4)
+		Global("SHERRY_PLOT","GLOBAL",10)
+		Global("SHERRY_PLOT","GLOBAL",20)
+		Global("SHERRY_PLOT","GLOBAL",30)
+		Global("SHERRY_PLOT","GLOBAL",40)
+	OR(13)
+		AreaCheckObject("BG4801",Player1) //Nashkel Inn
+		AreaCheckObject("BG2301",Player1) //Friendly Arm Inn
+		AreaCheckObject("BG0116",Player1) //Helm and Cloack
+		AreaCheckObject("BG0119",Player1) //Three Old Kegs
+		AreaCheckObject("BG0114",Player1) //Blushing Mermaid
+		AreaCheckObject("BG0103",Player1) //Splurging Sturgeon - NE BG
+		AreaCheckObject("BG0720",Player1) //Drakon Tavern - C BG
+		AreaCheckObject("BG0705",Player1) //Elfsong
+		AreaCheckObject("BG1109",Player1) //Tavern SW BG
+		AreaCheckObject("BG1215",Player1) //Jopalin's Tavern - S BG
+		AreaCheckObject("BG0133",Player1) //Low Lantern
+		AreaCheckObject("BG0105",Player1) //Blade and Stars
+		AreaCheckObject("BG1001",Player1) //Ulgoth's Beard Inn
+	//!Exists("fcsherri")
+THEN
+	RESPONSE #100
+		IncrementGlobal("SHERRY_PLOT","GLOBAL",1)
+		//CreateCreatureObjectOffScreen("fcsherri",Player1,0,0,0)
+		MoveGlobalObjectOffScreen("fcsherri",Player1)
+		ActionOverride("fcsherri",MoveToObject(Player1))
+		Continue()
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

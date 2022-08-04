@@ -1,0 +1,580 @@
+/* Add Campaigns logos */
+OUTER_SPRINT ~logo_folder~ ~%MOD_FOLDER%/logo_RoI~
+
+INCLUDE ~%logo_folder%/edit_bam.tph~
+
+LAF ADD_BAM_FRAME
+	STR_VAR
+		path_to_bam   = EVAL "%logo_folder%/bam/RoI.bam"
+		patch_to_pvrz = EVAL "%logo_folder%/bam"
+		bam_to_add    = "title"
+	RET
+		title_bam = new_frame_index
+END
+PRINT ~New frame index "title" = %title_bam%~
+
+LAF ADD_BAM_FRAME
+	STR_VAR
+		path_to_bam   = EVAL "%logo_folder%/biglogo/logo.bam"
+		patch_to_pvrz = EVAL "%logo_folder%/biglogo"
+		bam_to_add    = "biglogo"
+	RET
+		biglogo_bam = new_frame_index
+END
+PRINT ~New frame index "biglogo" = %biglogo_bam%~
+
+LAF ADD_BAM_FRAME
+	INT_VAR
+		seq           = 1
+	STR_VAR
+		path_to_bam   = EVAL "%logo_folder%/cmpgeet/logo.bam"
+		patch_to_pvrz = EVAL "%logo_folder%/cmpgeet"
+		bam_to_add    = "cmpgeet"
+	RET
+		cmpgeet_bam = new_frame_index
+END
+PRINT ~New sequence index "cmpgeet" = %cmpgeet_bam%~
+
+/* patch Campaign.2da */
+INCLUDE ~%mod_lib%/campaigns.tph~
+
+<<<<<<<<../IWSTRGLD.2DA
+2DA                 V1.0
+0
+                    SIDES               ROLLS               MODIFIER            MULTIPLIER
+MAGE                0                   0                   0                   0
+FIGHTER             0                   0                   0                   0
+CLERIC              0                   0                   0                   0
+THIEF               0                   0                   0                   0
+BARD                0                   0                   0                   0
+PALADIN             0                   0                   0                   0
+DRUID               0                   0                   0                   0
+RANGER              0                   0                   0                   0
+FIGHTER_MAGE        0                   0                   0                   0
+FIGHTER_CLERIC      0                   0                   0                   0
+FIGHTER_THIEF       0                   0                   0                   0
+FIGHTER_MAGE_THIEF  0                   0                   0                   0
+MAGE_THIEF          0                   0                   0                   0
+CLERIC_MAGE         0                   0                   0                   0
+CLERIC_THIEF        0                   0                   0                   0
+FIGHTER_DRUID       0                   0                   0                   0
+FIGHTER_MAGE_CLERIC 0                   0                   0                   0
+CLERIC_RANGER       0                   0                   0                   0
+SORCERER            0                   0                   0                   0
+MONK                0                   0                   0                   0
+SHAMAN              0                   0                   0                   0
+>>>>>>>>
+COPY ~../IWSTRGLD.2DA~ ~override~
+	PRETTY_PRINT_2DA
+
+LAF CAMPAIGN_EXISTS STR_VAR campaign=IW1 RET cmp_exists = exists END
+ACTION_IF NOT cmp_exists BEGIN
+	OUTER_SET idt = (IDS_OF_SYMBOL(~SONGLIST~ ~IDTHM~))
+	LAF SET_CAMPAIGN_INFO
+		INT_VAR
+			create_new          = 1
+			cmp_icon            = 7
+			cmp_music           = idt
+			cmp_map_dropshadow  = 1
+			cmp_keep_powers     = 1
+		STR_VAR
+			campaign            = ~IW1~
+			cmp_worldscript     = ~ICEWIND~
+			cmp_interdia        = ~IDBANTER~
+			cmp_loadhint        = ~*~
+			cmp_masterarea      = ~MASTAREA~
+			cmp_npclevel        = ~*~
+			cmp_tbpparty        = ~BGPARTY~
+			cmp_pdialog         = ~IDDIALOG~
+			cmp_save_dir        = ~save~
+			cmp_startare        = ~IDSTARTA~
+			cmp_strtgold        = ~IWSTRGLD~
+			cmp_startpos        = ~IDSTARTP~
+			cmp_stweapon        = ~STWEAPON~
+			cmp_25stweap        = ~STWEAPON~
+			cmp_xpcap           = ~*~
+			cmp_xplist          = ~*~
+			cmp_worldmap        = ~WORLDMAP~
+			cmp_worldscript2    = ~ICEWIND~
+			cmp_map_fontcolor   = ~0xFFFFFFFF~
+			cmp_intro_movie     = ~IDINTRO~
+			cmp_import          = ~PARTY~
+			cmp_interact        = ~INTERACT~
+			cmp_years           = ~SODYEARS~
+			cmp_reputation      = ~IDREPUT~
+			cmp_clastext        = ~BGCLATXT~
+			cmp_racetext        = ~BGRACTXT~
+	END
+END
+
+LAF CAMPAIGN_EXISTS STR_VAR campaign=IW2 RET cmp_exists = exists END
+ACTION_IF NOT cmp_exists BEGIN
+	OUTER_SET idt = (IDS_OF_SYMBOL(~SONGLIST~ ~IWTHM~))
+	LAF SET_CAMPAIGN_INFO
+		INT_VAR
+			create_new          = 1
+			cmp_icon            = 9
+			cmp_music           = idt
+			cmp_map_dropshadow  = 1
+			cmp_keep_powers     = 1
+		STR_VAR
+			campaign            = ~IW2~
+			cmp_worldscript     = ~ICEWIND2~
+			cmp_interdia        = ~IWBANTER~
+			cmp_loadhint        = ~*~
+			cmp_masterarea      = ~MASTAREA~
+			cmp_npclevel        = ~*~
+			cmp_tbpparty        = ~25PARTY~
+			cmp_pdialog         = ~IWDIALOG~
+			cmp_save_dir        = ~save~
+			cmp_startare        = ~IWSTARTA~
+			cmp_strtgold        = ~IWSTRGLD~
+			cmp_startpos        = ~IWSTARTP~
+			cmp_stweapon        = ~STWEAPON~
+			cmp_25stweap        = ~STWEAPON~
+			cmp_xpcap           = ~*~
+			cmp_xplist          = ~*~
+			cmp_worldmap        = ~WORLDMAP~
+			cmp_worldscript2    = ~ICEWIND2~
+			cmp_map_fontcolor   = ~0xFFFFFFFF~
+			cmp_intro_movie     = ~IWINTRO~
+			cmp_import          = ~PARTY~
+			cmp_interact        = ~INTERACT~
+			cmp_years           = ~25YEARS~
+			cmp_reputation      = ~IWREPUT~
+			cmp_clastext        = ~CLASTEXT~
+			cmp_racetext        = ~RACETEXT~
+	END
+END
+
+LAF CAMPAIGN_EXISTS STR_VAR campaign=FFC RET cmp_exists = exists END
+ACTION_IF NOT cmp_exists BEGIN
+	OUTER_SET idt = (IDS_OF_SYMBOL(~SONGLIST~ ~FFCTHM~))
+	LAF SET_CAMPAIGN_INFO
+		INT_VAR
+			create_new          = 1
+			cmp_icon            = cmpgeet_bam
+			cmp_music           = idt
+			cmp_map_dropshadow  = 1
+			cmp_keep_powers     = 1
+		STR_VAR
+			campaign            = ~FFC~
+			cmp_worldscript     = ~FFCWORLD~ /* */
+			cmp_interdia        = ~FCBANTER~ /* */
+			cmp_loadhint        = ~*~
+			cmp_masterarea      = ~MASTAREA~
+			cmp_npclevel        = ~*~
+			cmp_tbpparty        = ~25PARTY~
+			cmp_pdialog         = ~FCDIALOG~ /* */
+			cmp_save_dir        = ~save~
+			cmp_startare        = ~FCSTARTA~ /* */
+			cmp_strtgold        = ~IWSTRGLD~
+			cmp_startpos        = ~FCSTARTP~ /* */
+			cmp_stweapon        = ~STWEAPON~
+			cmp_25stweap        = ~STWEAPON~
+			cmp_xpcap           = ~*~
+			cmp_xplist          = ~*~
+			cmp_worldmap        = ~WORLDMAP~
+			cmp_worldscript2    = ~FFCWORLD~ /* */
+			cmp_map_fontcolor   = ~0xFFFFFFFF~
+			cmp_intro_movie     = ~FCINTRO~  /* */
+			cmp_import          = ~PARTY~
+			cmp_interact        = ~INTERACT~
+			cmp_years           = ~25YEARS~
+			cmp_reputation      = ~REPUTATI~
+			cmp_clastext        = ~CLASTEXT~
+			cmp_racetext        = ~RACETEXT~
+	END
+END
+
+COPY_EXISTING ~Campaign.2da~ ~override~
+	PRETTY_PRINT_2DA
+
+/* LUA / MENU PATCH */
+OUTER_SET cnt = 2000210
+OUTER_SPRINT iwd1_title (AT cnt)
+OUTER_PATCH_SAVE iwd1_title ~%iwd1_title%~ BEGIN
+	REPLACE_TEXTUALLY ~%LNL%~ ~\n~
+	REPLACE_TEXTUALLY ~"~ ~\"~
+END
+OUTER_SET cnt = 2000211
+OUTER_SPRINT iwd2_title (AT cnt)
+OUTER_PATCH_SAVE iwd2_title ~%iwd2_title%~ BEGIN
+	REPLACE_TEXTUALLY ~%LNL%~ ~\n~
+	REPLACE_TEXTUALLY ~"~ ~\"~
+END
+OUTER_SET cnt = 2000212
+OUTER_SPRINT ffc_title (AT cnt)
+OUTER_PATCH_SAVE ffc_title ~%ffc_title%~ BEGIN
+	REPLACE_TEXTUALLY ~%LNL%~ ~\n~
+	REPLACE_TEXTUALLY ~"~ ~\"~
+END
+
+OUTER_SET cnt = 2000200
+OUTER_SPRINT iwd1_text (AT cnt)
+OUTER_PATCH_SAVE iwd1_text ~%iwd1_text%~ BEGIN
+	REPLACE_TEXTUALLY ~%LNL%~ ~\n~
+	REPLACE_TEXTUALLY ~"~ ~\"~
+END
+OUTER_SET cnt = 2000201
+OUTER_SPRINT iwd2_text (AT cnt)
+OUTER_PATCH_SAVE iwd2_text ~%iwd2_text%~ BEGIN
+	REPLACE_TEXTUALLY ~%LNL%~ ~\n~
+	REPLACE_TEXTUALLY ~"~ ~\"~
+END
+OUTER_SET cnt = 2000202
+OUTER_SPRINT ffc_text (AT cnt)
+OUTER_PATCH_SAVE ffc_text ~%ffc_text%~ BEGIN
+	REPLACE_TEXTUALLY ~%LNL%~ ~\n~
+	REPLACE_TEXTUALLY ~"~ ~\"~
+END
+
+COPY_EXISTING ~M_K#EET.LUA~ ~override~
+	REPLACE_TEXTUALLY ~chapter = chapter \+ amount~ ~if ((chapter + amount) > 29) then
+		chapter = 29
+	else
+		chapter = chapter + amount
+	end~
+	REPLACE_TEXTUALLY ~chapter < 23~ ~chapter < 30~
+	/*LPF REPLACE_MULTILINE
+		INT_VAR
+			num = 1
+		STR_VAR
+			pattern = "elseif (chapter < 23) then
+		return eetStrings.EET_CHAPTER .. chapter
+	else
+		return Infinity_FetchString(-1)"
+			string = "elseif (chapter < 30) then
+		return eetStrings.EET_CHAPTER .. chapter
+	else
+		return Infinity_FetchString(-1)"
+/*			pattern = "elseif (chapter < 23) then
+		return eetStrings.EET_CHAPTER .. chapter
+	else
+		return Infinity_FetchString(-1)"
+			string = "elseif (chapter < 30) then
+		chpt = Infinity_GetScriptVarInt("IWD_CHAPTER")
+		chptext = chapter
+		ddd = 0
+		if (chapter > 8) and (chapter < 23) then
+			if (chpt = 1) or (chpt = 2) then ddd = 1 end
+			if (chpt = 3) or (chpt = 4) then ddd = 2 end
+			if (chpt = 5) then ddd = 3 end
+			if (chpt > 5) then ddd = 4 end
+		end
+		if (chapter > 22) and (chapter < 26) then
+			if (chpt = 1) or (chpt = 2) then ddd = 5 end
+			if (chpt = 3) then ddd = 6 end
+			if (chpt = 4) or (chpt = 5) then ddd = 7 end
+			if (chpt > 5) then ddd = 8 end
+		end
+		if (chapter > 25) then
+			if (chpt = 1) then ddd = 8 end
+			if (chpt > 1) then ddd = 9 end
+		end
+		chptext = chapter + ddd
+		return eetStrings.EET_CHAPTER .. chptext
+	else
+		return Infinity_FetchString(-1)"*/
+	END*/
+	LPF REPLACE_MULTILINE
+		INT_VAR
+			num = 1
+			strict = 1
+		STR_VAR
+			pattern = ~~~~~{id = 'SOD', name = 'EET_CMP_TITLE_SOD', description = 'EET_CMP_TEXT_SOD',~~~~~
+			string  = ~~~~~{id = 'IW1', name = 'EET_CMP_TITLE_IW1', description = 'EET_CMP_TEXT_IW1', title = 7, bigLogo = 7, icon = 7, background = 2, button = 2, sidebar = 2, importEnabled = false, tutorialEnabled = false, forceParty = false, cheatAreasTable = cheatAreas},
+	{id = 'SOD', name = 'EET_CMP_TITLE_SOD', description = 'EET_CMP_TEXT_SOD',~~~~~
+	END
+	LPF REPLACE_MULTILINE
+		INT_VAR
+			num = 1
+			strict = 1
+		STR_VAR
+			pattern = ~~~~~{id = 'TOB', name = 'EET_CMP_TITLE_TOB', description = 'EET_CMP_TEXT_TOB',~~~~~
+			string  = EVAL ~~~~~{id = 'IW2', name = 'EET_CMP_TITLE_IW2', description = 'EET_CMP_TEXT_IW2', title = 9, bigLogo = 9, icon = 9, background = 2, button = 2, sidebar = 2, importEnabled = false, tutorialEnabled = false, forceParty = false, cheatAreasTable = cheatAreas},
+	{id = 'FFC', name = 'EET_CMP_TITLE_FFC', description = 'EET_CMP_TEXT_FFC', title = %title_bam%, bigLogo = %biglogo_bam%, icon = %cmpgeet_bam%, background = 2, button = 2, sidebar = 2, importEnabled = false, tutorialEnabled = false, forceParty = false, cheatAreasTable = cheatAreas},
+	{id = 'TOB', name = 'EET_CMP_TITLE_TOB', description = 'EET_CMP_TEXT_TOB',~~~~~
+	END
+	REPLACE_TEXTUALLY ~EET_CMP_TEXT_SOD = ~ ~EET_CMP_TEXT_IW1 = "%iwd1_text%",
+	EET_CMP_TEXT_SOD = ~
+	REPLACE_TEXTUALLY ~EET_CMP_TEXT_TOB = ~ ~EET_CMP_TEXT_IW2 = "%iwd2_text%",
+	EET_CMP_TEXT_FFC = "%ffc_text%",
+	EET_CMP_TEXT_TOB = ~
+	REPLACE_TEXTUALLY ~EET_CMP_TITLE_SOD = ~ ~EET_CMP_TITLE_IW1 = "%iwd1_title%",
+	EET_CMP_TITLE_SOD = ~
+	REPLACE_TEXTUALLY ~EET_CMP_TITLE_TOB = ~ ~EET_CMP_TITLE_IW2 = "%iwd2_title%",
+	EET_CMP_TITLE_FFC = "%ffc_title%",
+	EET_CMP_TITLE_TOB = ~
+
+COPY_EXISTING ~BGEE.LUA~ ~override~
+	//REPLACE_TEXTUALLY ~START_CAMPAIGN_TUT = 7,~ ~START_CAMPAIGN_TUT = 7,
+	//START_CAMPAIGN_IW1 = 8,
+	//START_CAMPAIGN_IW2 = 9,
+	//START_CAMPAIGN_FFC = 10,~
+	//REPLACE_TEXTUALLY ~START_CAMPAIGN_BG1 = 1,~
+	REPLACE_TEXTUALLY ~START_CAMPAIGN_SOD = 2,~ ~START_CAMPAIGN_IW1 = 2,
+	START_CAMPAIGN_SOD = 3,~
+	REPLACE_TEXTUALLY ~START_CAMPAIGN_SOA = 3,~ ~START_CAMPAIGN_SOA = 4,
+	START_CAMPAIGN_IW2 = 5,
+	START_CAMPAIGN_FFC = 6,~
+	REPLACE_TEXTUALLY ~START_CAMPAIGN_TOB = 4,~ ~START_CAMPAIGN_TOB = 7,~
+	REPLACE_TEXTUALLY ~START_CAMPAIGN_BP1 = 5,~ ~START_CAMPAIGN_BP1 = 8,~
+	REPLACE_TEXTUALLY ~START_CAMPAIGN_BP2 = 6,~ ~START_CAMPAIGN_BP2 = 9,~
+	REPLACE_TEXTUALLY ~START_CAMPAIGN_TUT = 7,~ ~START_CAMPAIGN_TUT = 10,~
+
+COPY_EXISTING ~UI.MENU~ ~override~
+	LPF REPLACE_MULTILINE
+		INT_VAR
+			num = 1
+			strict = 1
+		STR_VAR
+			pattern = ~~~~~checkCampaign = Infinity_GetINIValue('Program Options','Active Campaign')
+		local chapter = Infinity_GetMaxChapterPage()
+		if (chapter == 0) and (checkCampaign ~= const.START_CAMPAIGN_BG1) and (checkCampaign ~= const.START_CAMPAIGN_BP1) and (checkCampaign ~= const.START_CAMPAIGN_BP2) and (checkCampaign ~= const.START_CAMPAIGN_TUT) then
+			currentCampaign = const.START_CAMPAIGN_BG1
+		elseif (chapter > 0) and (chapter < 7) and (checkCampaign ~= const.START_CAMPAIGN_BG1) then
+			currentCampaign = const.START_CAMPAIGN_BG1
+		elseif (chapter == 7) and (checkCampaign ~= const.START_CAMPAIGN_BG1) and (checkCampaign ~= const.START_CAMPAIGN_SOD) then
+			currentCampaign = const.START_CAMPAIGN_SOD
+		elseif (chapter > 7) and (chapter < 13) and (checkCampaign ~= const.START_CAMPAIGN_SOD) then
+			currentCampaign = const.START_CAMPAIGN_SOD
+		elseif (chapter == 13) and (checkCampaign ~= const.START_CAMPAIGN_SOD) and (checkCampaign ~= const.START_CAMPAIGN_SOA) then
+			currentCampaign = const.START_CAMPAIGN_SOA
+		elseif (chapter > 13) and (chapter < 20) and (checkCampaign ~= const.START_CAMPAIGN_SOA) then
+			currentCampaign = const.START_CAMPAIGN_SOA
+		elseif (chapter >= 20) and (checkCampaign ~= const.START_CAMPAIGN_TOB) then
+			currentCampaign = const.START_CAMPAIGN_TOB
+		end
+		if (checkCampaign ~= currentCampaign) then
+			Infinity_SetINIValue('Program Options','Active Campaign',currentCampaign)~~~~~
+			string  = ~~~~~checkCampaign = Infinity_GetINIValue('Program Options','Active Campaign')
+		local chapter = Infinity_GetMaxChapterPage()
+		if (chapter == 0) and (checkCampaign ~= const.START_CAMPAIGN_BG1) and (checkCampaign ~= const.START_CAMPAIGN_BP1) and (checkCampaign ~= const.START_CAMPAIGN_BP2) and (checkCampaign ~= const.START_CAMPAIGN_TUT) then
+			currentCampaign = const.START_CAMPAIGN_BG1
+		elseif (chapter > 0) and (chapter < 8) and (checkCampaign ~= const.START_CAMPAIGN_BG1) then
+			currentCampaign = const.START_CAMPAIGN_BG1
+		elseif (chapter > 7) and (chapter < 10) and (checkCampaign ~= const.START_CAMPAIGN_IW1) then
+			currentCampaign = const.START_CAMPAIGN_IW1
+		elseif (chapter == 10) and (checkCampaign ~= const.START_CAMPAIGN_IW1) and (checkCampaign ~= const.START_CAMPAIGN_SOD) then
+			currentCampaign = const.START_CAMPAIGN_SOD
+		elseif (chapter > 10) and (chapter < 16) and (checkCampaign ~= const.START_CAMPAIGN_SOD) then
+			currentCampaign = const.START_CAMPAIGN_SOD
+		elseif (chapter == 16) and (checkCampaign ~= const.START_CAMPAIGN_SOD) and (checkCampaign ~= const.START_CAMPAIGN_SOA) then
+			currentCampaign = const.START_CAMPAIGN_SOA
+		elseif (chapter > 16) and (chapter < 23) and (checkCampaign ~= const.START_CAMPAIGN_SOA) then
+			currentCampaign = const.START_CAMPAIGN_SOA
+		elseif (chapter > 22) and (chapter < 26) and (checkCampaign ~= const.START_CAMPAIGN_IW2) then
+			currentCampaign = const.START_CAMPAIGN_IW2
+		elseif (chapter == 26) and (checkCampaign ~= const.START_CAMPAIGN_FFC) then
+			currentCampaign = const.START_CAMPAIGN_FFC
+		elseif (chapter >= 27) and (checkCampaign ~= const.START_CAMPAIGN_TOB) then
+			currentCampaign = const.START_CAMPAIGN_TOB
+		end
+		if (checkCampaign ~= currentCampaign) then
+			Infinity_SetINIValue('Program Options','Active Campaign',currentCampaign)~~~~~
+	END
+	
+	LPF REPLACE_MULTILINE
+		INT_VAR
+			num = 1
+			strict = 1
+		STR_VAR
+			pattern = ~~~~~function matchMultiplayerGameType(gameVersion)
+	if gameVersion == "bgee-main" then
+		startEngine:OnCampaignButtonClick('BG1',false)
+		e:CheckGUISong()
+	elseif gameVersion == "bgee-bp" then
+		startEngine:OnCampaignButtonClick('BP1',false)
+		e:CheckGUISong()
+	elseif gameVersion == "bgee-sod" then
+		startEngine:OnCampaignButtonClick('SOD',false)
+		e:CheckGUISong()
+	elseif gameVersion == "bg2ee-main" then
+		startEngine:OnCampaignButtonClick('SOA',false)
+		e:CheckGUISong()
+	elseif gameVersion == "bg2ee-bp" then
+		startEngine:OnCampaignButtonClick('BP2',false)
+		e:CheckGUISong()
+	elseif gameVersion == "bg2ee-tob" then
+		startEngine:OnCampaignButtonClick('TOB',false)
+		e:CheckGUISong()
+	end
+end~~~~~
+			string  = ~~~~~function matchMultiplayerGameType(gameVersion)
+	if gameVersion == "bgee-main" then
+		startEngine:OnCampaignButtonClick('BG1',false)
+		e:CheckGUISong()
+	elseif gameVersion == "iwd-main" then
+		startEngine:OnCampaignButtonClick('IW1',false)
+		e:CheckGUISong()
+	elseif gameVersion == "bgee-bp" then
+		startEngine:OnCampaignButtonClick('BP1',false)
+		e:CheckGUISong()
+	elseif gameVersion == "bgee-sod" then
+		startEngine:OnCampaignButtonClick('SOD',false)
+		e:CheckGUISong()
+	elseif gameVersion == "bg2ee-main" then
+		startEngine:OnCampaignButtonClick('SOA',false)
+		e:CheckGUISong()
+	elseif gameVersion == "iwd2-main" then
+		startEngine:OnCampaignButtonClick('IW2',false)
+		e:CheckGUISong()
+	elseif gameVersion == "ffc-main" then
+		startEngine:OnCampaignButtonClick('FFC',false)
+		e:CheckGUISong()
+	elseif gameVersion == "bg2ee-bp" then
+		startEngine:OnCampaignButtonClick('BP2',false)
+		e:CheckGUISong()
+	elseif gameVersion == "bg2ee-tob" then
+		startEngine:OnCampaignButtonClick('TOB',false)
+		e:CheckGUISong()
+	end
+end~~~~~
+	END
+
+COPY ~EET/SoD_GUI/UI.MENU~ ~EET/SoD_GUI~
+	LPF REPLACE_MULTILINE
+		INT_VAR
+			num = 1
+			strict = 1
+		STR_VAR
+			pattern = ~~~~~checkCampaign = Infinity_GetINIValue('Program Options','Active Campaign')
+		local chapter = Infinity_GetMaxChapterPage()
+		if (chapter == 0) and (checkCampaign ~= const.START_CAMPAIGN_BG1) and (checkCampaign ~= const.START_CAMPAIGN_BP1) and (checkCampaign ~= const.START_CAMPAIGN_BP2) and (checkCampaign ~= const.START_CAMPAIGN_TUT) then
+			currentCampaign = const.START_CAMPAIGN_BG1
+		elseif (chapter > 0) and (chapter < 7) and (checkCampaign ~= const.START_CAMPAIGN_BG1) then
+			currentCampaign = const.START_CAMPAIGN_BG1
+		elseif (chapter == 7) and (checkCampaign ~= const.START_CAMPAIGN_BG1) and (checkCampaign ~= const.START_CAMPAIGN_SOD) then
+			currentCampaign = const.START_CAMPAIGN_SOD
+		elseif (chapter > 7) and (chapter < 13) and (checkCampaign ~= const.START_CAMPAIGN_SOD) then
+			currentCampaign = const.START_CAMPAIGN_SOD
+		elseif (chapter == 13) and (checkCampaign ~= const.START_CAMPAIGN_SOD) and (checkCampaign ~= const.START_CAMPAIGN_SOA) then
+			currentCampaign = const.START_CAMPAIGN_SOA
+		elseif (chapter > 13) and (chapter < 20) and (checkCampaign ~= const.START_CAMPAIGN_SOA) then
+			currentCampaign = const.START_CAMPAIGN_SOA
+		elseif (chapter >= 20) and (checkCampaign ~= const.START_CAMPAIGN_TOB) then
+			currentCampaign = const.START_CAMPAIGN_TOB
+		end
+		if (checkCampaign ~= currentCampaign) then
+			Infinity_SetINIValue('Program Options','Active Campaign',currentCampaign)~~~~~
+			string  = ~~~~~checkCampaign = Infinity_GetINIValue('Program Options','Active Campaign')
+		local chapter = Infinity_GetMaxChapterPage()
+		if (chapter == 0) and (checkCampaign ~= const.START_CAMPAIGN_BG1) and (checkCampaign ~= const.START_CAMPAIGN_BP1) and (checkCampaign ~= const.START_CAMPAIGN_BP2) and (checkCampaign ~= const.START_CAMPAIGN_TUT) then
+			currentCampaign = const.START_CAMPAIGN_BG1
+		elseif (chapter > 0) and (chapter < 8) and (checkCampaign ~= const.START_CAMPAIGN_BG1) then
+			currentCampaign = const.START_CAMPAIGN_BG1
+		elseif (chapter > 7) and (chapter < 10) and (checkCampaign ~= const.START_CAMPAIGN_IW1) then
+			currentCampaign = const.START_CAMPAIGN_IW1
+		elseif (chapter == 10) and (checkCampaign ~= const.START_CAMPAIGN_IW1) and (checkCampaign ~= const.START_CAMPAIGN_SOD) then
+			currentCampaign = const.START_CAMPAIGN_SOD
+		elseif (chapter > 10) and (chapter < 16) and (checkCampaign ~= const.START_CAMPAIGN_SOD) then
+			currentCampaign = const.START_CAMPAIGN_SOD
+		elseif (chapter == 16) and (checkCampaign ~= const.START_CAMPAIGN_SOD) and (checkCampaign ~= const.START_CAMPAIGN_SOA) then
+			currentCampaign = const.START_CAMPAIGN_SOA
+		elseif (chapter > 16) and (chapter < 23) and (checkCampaign ~= const.START_CAMPAIGN_SOA) then
+			currentCampaign = const.START_CAMPAIGN_SOA
+		elseif (chapter > 22) and (chapter < 26) and (checkCampaign ~= const.START_CAMPAIGN_IW2) then
+			currentCampaign = const.START_CAMPAIGN_IW2
+		elseif (chapter == 26) and (checkCampaign ~= const.START_CAMPAIGN_FFC) then
+			currentCampaign = const.START_CAMPAIGN_FFC
+		elseif (chapter >= 27) and (checkCampaign ~= const.START_CAMPAIGN_TOB) then
+			currentCampaign = const.START_CAMPAIGN_TOB
+		end
+		if (checkCampaign ~= currentCampaign) then
+			Infinity_SetINIValue('Program Options','Active Campaign',currentCampaign)~~~~~
+	END
+	
+	LPF REPLACE_MULTILINE
+		INT_VAR
+			num = 1
+			strict = 1
+		STR_VAR
+			pattern = ~~~~~function matchMultiplayerGameType(gameVersion)
+	if gameVersion == "bgee-main" then
+		startEngine:OnCampaignButtonClick('BG1',false)
+		e:CheckGUISong()
+	elseif gameVersion == "bgee-bp" then
+		startEngine:OnCampaignButtonClick('BP1',false)
+		e:CheckGUISong()
+	elseif gameVersion == "bgee-sod" then
+		startEngine:OnCampaignButtonClick('SOD',false)
+		e:CheckGUISong()
+	elseif gameVersion == "bg2ee-main" then
+		startEngine:OnCampaignButtonClick('SOA',false)
+		e:CheckGUISong()
+	elseif gameVersion == "bg2ee-bp" then
+		startEngine:OnCampaignButtonClick('BP2',false)
+		e:CheckGUISong()
+	elseif gameVersion == "bg2ee-tob" then
+		startEngine:OnCampaignButtonClick('TOB',false)
+		e:CheckGUISong()
+	end
+end~~~~~
+			string  = ~~~~~function matchMultiplayerGameType(gameVersion)
+	if gameVersion == "bgee-main" then
+		startEngine:OnCampaignButtonClick('BG1',false)
+		e:CheckGUISong()
+	elseif gameVersion == "iwd-main" then
+		startEngine:OnCampaignButtonClick('IW1',false)
+		e:CheckGUISong()
+	elseif gameVersion == "bgee-bp" then
+		startEngine:OnCampaignButtonClick('BP1',false)
+		e:CheckGUISong()
+	elseif gameVersion == "bgee-sod" then
+		startEngine:OnCampaignButtonClick('SOD',false)
+		e:CheckGUISong()
+	elseif gameVersion == "bg2ee-main" then
+		startEngine:OnCampaignButtonClick('SOA',false)
+		e:CheckGUISong()
+	elseif gameVersion == "iwd2-main" then
+		startEngine:OnCampaignButtonClick('IW2',false)
+		e:CheckGUISong()
+	elseif gameVersion == "ffc-main" then
+		startEngine:OnCampaignButtonClick('FFC',false)
+		e:CheckGUISong()
+	elseif gameVersion == "bg2ee-bp" then
+		startEngine:OnCampaignButtonClick('BP2',false)
+		e:CheckGUISong()
+	elseif gameVersion == "bg2ee-tob" then
+		startEngine:OnCampaignButtonClick('TOB',false)
+		e:CheckGUISong()
+	end
+end~~~~~
+	END
+	
+
+/* EET_END PATCH */
+/*OUTER_SPRINT ~til~ "~"
+OUTER_SPRINT ~prc~ ~%~
+COPY ~EET_end/EET_end.tp2~ ~EET_end~
+	LPF REPLACE_MULTILINE
+		INT_VAR
+			num = 1
+			strict = 1
+		STR_VAR
+			pattern = ~~~~~ ~~~~~
+ 			string  = EVAL ~~~~~ ~~~~~
+	END
+	*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

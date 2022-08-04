@@ -1,0 +1,48 @@
+IF
+	//GlobalLT("Iwd1AllGameDays","GLOBAL",1)
+	True()
+THEN
+	RESPONSE #100
+		IncrementGlobal("All_Restored","MYAREA",1)
+		DestroySelf()
+END
+/*
+IF
+	GlobalGT("Iwd1AllGameDays","GLOBAL",50)
+THEN
+	RESPONSE #100
+		IncrementGlobal("Iwd1AllGameDays","GLOBAL",-50)
+		AdvanceTime(-360000)
+END
+
+IF
+	GlobalGT("Iwd1AllGameDays","GLOBAL",10)
+THEN
+	RESPONSE #100
+		IncrementGlobal("Iwd1AllGameDays","GLOBAL",-10)
+		AdvanceTime(-72000)
+END
+
+IF
+	GlobalGT("Iwd1AllGameDays","GLOBAL",5)
+THEN
+	RESPONSE #100
+		IncrementGlobal("Iwd1AllGameDays","GLOBAL",-5)
+		AdvanceTime(-36000)
+END
+
+IF
+	GlobalGT("Iwd1AllGameDays","GLOBAL",1)
+THEN
+	RESPONSE #100
+		IncrementGlobal("Iwd1AllGameDays","GLOBAL",-1)
+		AdvanceTime(-7200)
+END
+
+IF
+	GlobalGT("Iwd1AllGameDays","GLOBAL",0)
+THEN
+	RESPONSE #100
+		IncrementGlobal("Iwd1AllGameDays","GLOBAL",-1)
+		AdvanceTime(-4000) //7200
+END*/

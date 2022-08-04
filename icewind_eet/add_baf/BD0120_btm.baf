@@ -1,0 +1,31 @@
+IF
+	!Global("SHERRI_GLOBAL","GLOBAL",0)
+	//Global("IWD_COMPLETE","GLOBAL",0)
+	!BitCheck("IWDEET_COMPLETE","GLOBAL",BITS_IWD1)
+	!Global("SHERRY_TEXT_SCREEN","MYAREA",1)
+THEN
+	RESPONSE #100
+		SetGlobal("SHERRY_TEXT_SCREEN","MYAREA",1)
+		SetGlobal("IWD_CHAPTER","GLOBAL",0)
+		FadeToColor([15.0],0)
+		Wait(1)
+		SmallWait(5)
+		TextScreen("FCTOIWD3")
+		SmallWait(5)
+		FadeFromColor([15.0],0)
+		Continue()
+END
+
+IF
+	Global("SHERRI_GLOBAL","GLOBAL",0) //FCTOIWD3
+THEN
+	RESPONSE #100
+		SetGlobal("SHERRI_GLOBAL","GLOBAL",1)
+		SetGlobal("SHERRY_PLOT","GLOBAL",91)
+		IncrementGlobal("CNT_VELETA_RELESIN","GLOBAL",1)
+		CreateCreature("fcsherri",[435.735],0)
+		ActionOverride("fcsherri",MakeGlobal())
+		SmallWait(3)
+		ActionOverride("fcsherri",ChangeAIScript("FCSHESOD",DEFAULT))
+		MoveGlobal("BD0021","fcsherri",[575.660])
+END

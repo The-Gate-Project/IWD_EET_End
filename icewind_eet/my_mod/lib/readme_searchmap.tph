@@ -1,0 +1,113 @@
+
+
+I wrote a small tool and function to alter the searchmap bitmap files.
+
+For Baldurans Seatower I made a new practical tool for an old problem. It was always a problem to edit searmap files, because you could only overwrite the existing file.
+When two different mods edit the same searchmap, it was always difficult to find a solution.
+Now I wrote a small tool and a function to solve this problem.
+
+The tool SRmap_modding_tool now compares the modded searchmap with the originals from the classic and ee version and creates a 2da file with all bitmap changes.
+
+The function is for the setup.tp2 file, which uses the 2da files to alter the existing bitmap with the changes.
+
+So two different mods can alter the searchmap file.
+
+Now a small instruction for mod authors:
+-First you need to use the tool to create a file that lists the search map changes. This you need to do once for your mod.
+-After that you include this "changes.tpa" inside your mod to patch the existing search map when the mod is installed.
+
+ 
+
+Put the SRmap_modding_tool in your Baldurs Gate installation.
+
+1. Go into SRmap_modding_tool\area directory
+
+2. Put the classic, ee and your modded/new searchmap bitmap in the fitting directory
+
+3. Open the setup-SRmap_modding_tool.tp2 with an editor
+
+4. Enter the names of the bitmap files without the extension in the lines
+
+filename_classic, filename_ee, filename_new
+ 
+//BLOCK 
+ALWAYS
+
+//OUTER_SET areaname = ~AR1200~
+OUTER_SPRINT originalfolder_classic ~%MOD_FOLDER%/area/original/classic~ //original unmodded searchmap folder from classic bg
+OUTER_SPRINT originalfolder_ee ~%MOD_FOLDER%/area/original/ee~ //original unmodded searchmap folder from ee bg
+OUTER_SPRINT filename_classic ~AR1200SR~ //original unmodded searchmap filename from classic bg
+OUTER_SPRINT filename_ee ~BG1200SR~ //original unmodded searchmap filename from ee bg
+OUTER_SPRINT newfolder ~%MOD_FOLDER%/area/new~ //modded searchmap folder
+OUTER_SPRINT filename_new ~AR8100SR~ //modded searchmap filename
+OUTER_SPRINT filename_changes_classic ~%filename_new%_changes_classic~ //filenames for the 2da files used by the mod
+OUTER_SPRINT filename_changes_ee ~%filename_new%_changes_ee~ //filenames for the 2da files used by the mod
+END
+//BLOCKEND
+
+5. Save the file and start the tool. It will work a while
+
+6. When it's finished. There are either two files "AR8100SR_changes_ee.2da" and "AR8100SR_changes_classic.2da" or if both files are identical there is only one file "AR8100SR_changes.2da"
+
+7. Copy the 2da file from step 6 into your mod folder
+
+8. Copy the alter_searchmap.tpa function to your mod functions. You find it in the SRmap_modding_tool\lib directory
+  Hide contents
+
+//BLOCK 
+DEFINE_ACTION_FUNCTION ~ALTER_SEARCHMAP~
+	INT_VAR
+
+	STR_VAR
+	path_to_2da_file = ~~ // full path to the *changes.2da file, e.g. ~mymod/bmp/AR3700SR_changes_ee.2da~
+	areaname = ~~ 		  // area name, e.g. ~AR3700~
+
+	RET
+
+BEGIN
+	COPY ~%path_to_2da_file%~ ~%path_to_2da_file%~
+		READ_2DA_ENTRIES_NOW ~newpixelarray~ 4
+		COUNT_2DA_ROWS 4 ~pixelnumber~
+		
+	COPY_EXISTING ~%areaname%SR.bmp~ ~override~
+		FOR (cnt=0; cnt<pixelnumber; cnt=cnt+1) BEGIN
+			READ_2DA_ENTRY_FORMER ~newpixelarray~ cnt 0 ~offset~
+			READ_BYTE ~offset~ ~oldpixel~
+			READ_2DA_ENTRY_FORMER ~newpixelarray~ cnt 2 ~newpixel~
+			READ_2DA_ENTRY_FORMER ~newpixelarray~ cnt 3 ~byte~
+			SET left_oldpixel =  oldpixel / 16
+			SET right_oldpixel =  oldpixel MODULO 16
+			SET left_newpixel = newpixel / 16
+			SET right_newpixel = newpixel MODULO 16
+			PATCH_IF (~%byte%~ STRING_EQUAL ~b~)=1 BEGIN
+				SET setpixel = newpixel
+				//PATCH_PRINT ~%offset%: oldpixel %oldpixel% - newpixel %newpixel% - setpixel %setpixel%~
+				//PATCH_PRINT ~%offset%: lo %left_oldpixel% ro %right_oldpixel% - ln %left_newpixel% rn %right_newpixel% - setpixel %setpixel%~
+			END
+			PATCH_IF (~%byte%~ STRING_EQUAL ~r~)=1 BEGIN
+				SET setpixel = left_oldpixel * 16 + right_newpixel
+			END
+			PATCH_IF (~%byte%~ STRING_EQUAL ~l~)=1 BEGIN
+				SET setpixel = left_newpixel * 16 + right_oldpixel
+			END
+			WRITE_BYTE offset ~%setpixel%~ 
+		END
+END
+//BLOCKEND
+ 
+
+
+9. Put following lines into your setup-mymod.tp2
+ 
+//BLOCK 
+INCLUDE ~%MOD_FOLDER%/lib/alter_searchmap.tpa~
+LAF ALTER_SEARCHMAP
+STR_VAR
+path_to_2da_file = EVAL ~%MOD_FOLDER%/Ramazith/AR7238SR_changes.2da~ // full path to the *changes.2da file, e.g. ~mymod/bam/AR3700SR_changes_ee.2da~
+areaname = EVAL ~AR7238~ // area name, e.g. ~AR3700~
+END
+//BLOCKEND
+
+Enter your path to the 2da file and the areaname.
+
+For ee and classic differnces, you have to make a query with ACTION_IF

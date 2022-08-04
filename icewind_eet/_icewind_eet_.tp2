@@ -1,0 +1,855 @@
+BACKUP ~icewind_eet/backup~
+AUTHOR ~Ya~
+
+LANGUAGE ~Russian~
+	     ~ru_RU~
+	     ~icewind_eet/lang/ru_RU/setup.tra~
+	     ~icewind_eet/lang/ru_RU/dialog.tra~
+	     ~icewind_eet/lang/ru_RU/chapters.tra~
+	     ~icewind_eet/lang/ru_RU/journal.tra~
+
+BEGIN ~Rituals of Infinity~
+
+OUTER_SPRINT newline ~%WNL%%LNL%%MNL%%TAB% ~
+OUTER_SPRINT slash ~/~
+OUTER_SPRINT quote ~"~
+OUTER_SPRINT tilde "~"
+OUTER_SPRINT percent ~%~
+
+//SHERRY
+ADD_JOURNAL TITLE (@10000000) @10000001 @10000002 @10000003 @10000004 @10000005 @10000006 @10000007 @10000008
+
+
+
+/* установка музыки FFC */ 
+
+//BLOCK PATCH CHAPTERS
+ACTION_FOR_EACH var IN BCS DLG BEGIN
+  COPY_EXISTING_REGEXP GLOB ~^.+\.%var%$~ ~override~
+    DECOMPILE_AND_PATCH BEGIN
+      REPLACE_TEXTUALLY ~IncrementGlobal~ ~IncrementReplaceMe~
+      REPLACE_EVALUATE CASE_INSENSITIVE ~\([A-Za-z]*Global[A-Za-z]*("CHAPTER","GLOBAL",\)\([0-9]+\))~ BEGIN
+        SET value = MATCH2
+        PATCH_IF (value > 19) BEGIN
+          SET value = value + 15 /* может, будет +16, если сделаю 2 главы в моем моде */
+        END
+        PATCH_IF (value > 7) AND (value < 20) BEGIN
+          SET value = value + 7
+        END
+        PATCH_PRINT ~Patching %SOURCE_FILESPEC%: %MATCH2% => %MATCH1%%value%)~
+      END
+      ~%MATCH1%%value%)~
+      REPLACE_TEXTUALLY ~SetGlobal~ ~GlobalSet~
+      REPLACE_TEXTUALLY ~Global("Chapter","GLOBAL",7)~ ~GlobalGT("Chapter","GLOBAL",6)GlobalLT("Chapter","GLOBAL",15)~
+      REPLACE_TEXTUALLY ~GlobalGT("Chapter","GLOBAL",7)~ ~GlobalGT("Chapter","GLOBAL",14)~
+      REPLACE_TEXTUALLY ~GlobalSet~ ~SetGlobal~
+      REPLACE_TEXTUALLY ~SetGlobal("Chapter","GLOBAL",7)~ ~SetGlobal("Chapter","GLOBAL",14)~
+      REPLACE_TEXTUALLY ~IncrementReplaceMe~ ~IncrementGlobal~
+    END
+  BUT_ONLY
+END
+
+//BLOCK IWD1 CHAPTERS
+COPY_EXISTING ~ID0000.BCS~ ~override~
+  DECOMPILE_AND_PATCH BEGIN
+    REPLACE_TEXTUALLY ~SetGlobal("IWD1_CHAPTER","GLOBAL",0)~ ~SetGlobal("CHAPTER","GLOBAL",7)~
+    REPLACE_TEXTUALLY ~Wait(1)~ ~Wait(1)  TextScreen("FCTOIWD2")  Wait(1)~
+    /* для тестового прохо хождения REPLACE_TEXTUALLY ~Wait(1)~ ~Wait(1)  StartMovie("IDINTRO")  Wait(1)~
+     REPLACE_TEXTUALLY ~SetGlobal("TAKE_PARTY_GOLD","MYAREA",1)~ ~~
+    REPLACE_TEXTUALLY ~SetGlobal("SET_PARTY_GOLD","MYAREA",1)~ ~~ */
+  END
+/* patch IDP6EQP.baf - SetAreaScript("",OVERRIDE) -> SetAreaScript("NEW_BAF",OVERRIDE)
+   NEW_BAF - ustanovka scriptov i dialogov standartnym persam
+   	Будет устанавливаться скрипт и диалог и IncrementGlobal("TP_NUM_IN_PARTY_IWD","GLOBAL",1)
+   
+   еще надо учесть, что могут быть персы из модов, им давать один скрипт и диалог
+   + в этих скриптах надо учесть, чтоб они возвращались на FC0125, а там, при возвращении
+   в БГ присоединялись к партии
+   
+   персонажи будут уходить не на FC0125, а на ID0000.
+   При возвращении из ИВД, они на этой локации присоединятся к партии. На этой же локации отмотка времени
+   и все остальное.
+   В скриптах персонажей добавить, что если он мертв, и его выбросили из партии, то он оживает и 
+   перемещается на ID0000. Только не те персонажи, которые будут только для ИВД.
+   	Скрипт присоединения к партии. Пока TP_NUM_IN_PARTY_IWD > 0, остальные скрипты не сработают.
+   	А в скрипте персонажей - присоединение к партии и IncrementGlobal("TP_NUM_IN_PARTY_IWD","GLOBAL",-1)
+   	
+   Когда выгоняют из партии:
+     1. Если персонаж мертв, на персе создается VisualEffect и он перемещается на ID0000
+     2. Если персонаж жив, на персе создается VisualEffect и он перемещается на ID0000, только через pdialog
+     
+   скрипт IDTOEET будет перемещать на ID0000, там все восстанавливается и потом переносит на локу FC0125
+   из скрипта FC0125 убрать все в ID0000 отдельными скриптами
+   Проверяется по Global("PARTY_IN_ICEWIND_DALE","GLOBAL",1)
+   Когда все проверено SetGlobal("PARTY_IN_ICEWIND_DALE","GLOBAL",2) 
+   Global("PARTY_IN_ICEWIND_DALE","GLOBAL",2) - запускает катсцену возвращения
+   и в этой катсцене - SetGlobal("PARTY_IN_ICEWIND_DALE","GLOBAL",0) */
+   /* Сначала будут устанавливаться персонажи и их скрипты, а потом - переходы и сам мод + дополнения к
+      скриптам персонажей по возвращению и установке XP */
+
+COPY_EXISTING ~ID1006.BCS~ ~override~ //IWD1TXT0
+  DECOMPILE_AND_PATCH BEGIN
+    REPLACE_TEXTUALLY ~StartMovie("IDINTRO")~ ~~
+    REPLACE_TEXTUALLY ~IncrementGlobal("IWD1_CHAPTER","GLOBAL",1)~ ~IncrementChapter("")~
+    REPLACE_TEXTUALLY ~SetGlobal("IWD1_CHAPTER","GLOBAL",0)~ ~~
+    REPLACE_TEXTUALLY ~\(TextScreen("IWD1TXT0")\)~ ~\1
+    AddJournalEntry(@2000080,INFO)~
+  END
+
+COPY_EXISTING ~ID2100.BCS~ ~override~ //IWD1TXT1
+  DECOMPILE_AND_PATCH BEGIN
+    REPLACE_TEXTUALLY ~IncrementGlobal("IWD1_CHAPTER","GLOBAL",1)~ ~IncrementChapter("")~
+    REPLACE_TEXTUALLY ~Global("IWD1_CHAPTER","GLOBAL",0)~ ~Global("Chapter","GLOBAL",8)~
+    REPLACE_TEXTUALLY ~GlobalGT("IWD1_CHAPTER","GLOBAL",3)~ ~GlobalGT("Chapter","GLOBAL",11)~
+    REPLACE_TEXTUALLY ~GlobalGT("IWD1_CHAPTER","GLOBAL",1)~ ~GlobalGT("Chapter","GLOBAL",9)~
+    REPLACE_TEXTUALLY ~\(TextScreen("IWD1TXT1")\)~ ~\1
+    AddJournalEntry(@2000081,INFO)~
+  END
+
+COPY_EXISTING ~ID4000.BCS~ ~override~ //IWD1TXT2
+  DECOMPILE_AND_PATCH BEGIN
+    REPLACE_TEXTUALLY ~IncrementGlobal("IWD1_CHAPTER","GLOBAL",1)~ ~IncrementChapter("")~
+    REPLACE_TEXTUALLY ~Global("IWD1_CHAPTER","GLOBAL",1)~ ~Global("Chapter","GLOBAL",9)~
+    REPLACE_TEXTUALLY ~\(TextScreen("IWD1TXT2")\)~ ~\1
+    AddJournalEntry(@2000082,INFO)~
+  END
+
+COPY_EXISTING ~ID5000.BCS~ ~override~ //IWD1TXT3
+  DECOMPILE_AND_PATCH BEGIN
+    REPLACE_TEXTUALLY ~IncrementGlobal("IWD1_CHAPTER","GLOBAL",1)~ ~IncrementChapter("")~
+    REPLACE_TEXTUALLY ~Global("IWD1_CHAPTER","GLOBAL",2)~ ~Global("Chapter","GLOBAL",10)~
+    REPLACE_TEXTUALLY ~\(TextScreen("IWD1TXT3")\)~ ~\1
+    AddJournalEntry(@2000083,INFO)~
+  END
+
+COPY_EXISTING ~ID6000.BCS~ ~override~ //IWD1TXT4
+  DECOMPILE_AND_PATCH BEGIN
+    REPLACE_TEXTUALLY ~IncrementGlobal("IWD1_CHAPTER","GLOBAL",1)~ ~IncrementChapter("")~
+    REPLACE_TEXTUALLY ~Global("IWD1_CHAPTER","GLOBAL",3)~ ~Global("Chapter","GLOBAL",11)~
+    REPLACE_TEXTUALLY ~\(TextScreen("IWD1TXT4")\)~ ~\1
+    AddJournalEntry(@2000084,INFO)~
+  END
+
+COPY_EXISTING ~ID7005.BCS~ ~override~ //IWD1TXT5
+  DECOMPILE_AND_PATCH BEGIN
+    REPLACE_TEXTUALLY ~IncrementGlobal("IWD1_CHAPTER","GLOBAL",1)~ ~IncrementChapter("")~
+    REPLACE_TEXTUALLY ~Global("IWD1_CHAPTER","GLOBAL",4)~ ~Global("Chapter","GLOBAL",12)~
+    REPLACE_TEXTUALLY ~\(TextScreen("IWD1TXT5")\)~ ~\1
+    AddJournalEntry(@2000085,INFO)~
+  END
+
+COPY_EXISTING ~ID8001.BCS~ ~override~ //IWD1TXT6
+  DECOMPILE_AND_PATCH BEGIN
+    REPLACE_TEXTUALLY ~IncrementGlobal("IWD1_CHAPTER","GLOBAL",1)~ ~IncrementChapter("")~
+    REPLACE_TEXTUALLY ~Global("IWD1_CHAPTER","GLOBAL",5)~ ~Global("Chapter","GLOBAL",13)~
+    REPLACE_TEXTUALLY ~\(TextScreen("IWD1TXT6")\)~ ~\1
+    AddJournalEntry(@2000086,INFO)~
+  END
+
+COPY_EXISTING ~ID1100.BCS~ ~override~ //IWD1TXT6
+  DECOMPILE_AND_PATCH BEGIN
+    REPLACE_TEXTUALLY ~\(TextScreen("IWD1TXT7")\)~ ~\1
+    AddJournalEntry(@2000094,INFO)~
+  END
+
+COPY_EXISTING ~DNATE.DLG~ ~override~
+  DECOMPILE_AND_PATCH BEGIN
+    REPLACE_TEXTUALLY ~GlobalLT("IWD1_CHAPTER","GLOBAL",2)~ ~GlobalLT("Chapter","GLOBAL",10)~
+    REPLACE_TEXTUALLY ~Global("IWD1_CHAPTER","GLOBAL",2)~ ~Global("Chapter","GLOBAL",10)~
+    REPLACE_TEXTUALLY ~GlobalGT("IWD1_CHAPTER","GLOBAL",2)~ ~GlobalGT("Chapter","GLOBAL",10)~
+  END
+
+COPY_EXISTING ~DPLANAR.DLG~ ~override~
+  DECOMPILE_AND_PATCH BEGIN
+    REPLACE_TEXTUALLY ~GlobalLT("IWD1_CHAPTER","GLOBAL",1)~ ~GlobalLT("Chapter","GLOBAL",9)~
+    REPLACE_TEXTUALLY ~Global("IWD1_CHAPTER","GLOBAL",1)~ ~Global("Chapter","GLOBAL",9)~
+    REPLACE_TEXTUALLY ~Global("IWD1_CHAPTER","GLOBAL",2)~ ~Global("Chapter","GLOBAL",10)~
+    REPLACE_TEXTUALLY ~Global("IWD1_CHAPTER","GLOBAL",3)~ ~Global("Chapter","GLOBAL",11)~
+    REPLACE_TEXTUALLY ~Global("IWD1_CHAPTER","GLOBAL",4)~ ~Global("Chapter","GLOBAL",12)~
+    REPLACE_TEXTUALLY ~Global("IWD1_CHAPTER","GLOBAL",5)~ ~Global("Chapter","GLOBAL",13)~
+    REPLACE_TEXTUALLY ~Global("IWD1_CHAPTER","GLOBAL",6)~ ~Global("Chapter","GLOBAL",14)~
+  END
+
+//BLOCKEND
+
+//BLOCK CHAPTER PATCH
+<<<<<<<<chaptrs.tph
+>>>>>>>>
+COPY ~chaptrs.tph~ ~icewind_eet/chaptrs.tph~
+
+COPY_EXISTING ~IWD1TXT0.2da~ ~override~
+  READ_2DA_ENTRY 1 1 3 "iwd1_t0"
+  READ_2DA_ENTRY 1 2 3 "iwd1_tt0"
+COPY_EXISTING ~IWD1TXT1.2da~ ~override~
+  READ_2DA_ENTRY 1 1 3 "iwd1_t1"
+  READ_2DA_ENTRY 1 2 3 "iwd1_tt1"
+COPY_EXISTING ~IWD1TXT2.2da~ ~override~
+  READ_2DA_ENTRY 1 1 3 "iwd1_t2"
+  READ_2DA_ENTRY 1 2 3 "iwd1_tt2"
+COPY_EXISTING ~IWD1TXT3.2da~ ~override~
+  READ_2DA_ENTRY 1 1 3 "iwd1_t3"
+  READ_2DA_ENTRY 1 2 3 "iwd1_tt3"
+COPY_EXISTING ~IWD1TXT4.2da~ ~override~
+  READ_2DA_ENTRY 1 1 3 "iwd1_t4"
+  READ_2DA_ENTRY 1 2 3 "iwd1_tt4"
+COPY_EXISTING ~IWD1TXT5.2da~ ~override~
+  READ_2DA_ENTRY 1 1 3 "iwd1_t5"
+  READ_2DA_ENTRY 1 2 3 "iwd1_tt5"
+COPY_EXISTING ~IWD1TXT6.2da~ ~override~
+  READ_2DA_ENTRY 1 1 3 "iwd1_t6"
+  READ_2DA_ENTRY 1 2 3 "iwd1_tt6"
+
+OUTER_SPRINT iwd1_tx0 ~Глава 8 (ИВД: Пролог)~ /* не траифицировано */
+OUTER_SPRINT iwd1_tx1 ~Глава 9 (ИВД: 1)~
+OUTER_SPRINT iwd1_tx2 ~Глава 10 (ИВД: 2)~
+OUTER_SPRINT iwd1_tx3 ~Глава 11 (ИВД: 3)~
+OUTER_SPRINT iwd1_tx4 ~Глава 12 (ИВД: 4)~
+OUTER_SPRINT iwd1_tx5 ~Глава 13 (ИВД: 5)~
+OUTER_SPRINT iwd1_tx6 ~Глава 14 (ИВД: 6)~
+OUTER_SPRINT eet_13 ~Глава 20~
+OUTER_SPRINT eet_14 ~Глава 21~
+OUTER_SPRINT eet_15 ~Глава 22~
+OUTER_SPRINT eet_16 ~Глава 23~
+OUTER_SPRINT eet_17 ~Глава 24~
+OUTER_SPRINT eet_18 ~Глава 25~
+OUTER_SPRINT eet_19 ~Глава 26~
+OUTER_SPRINT eet_20 ~Глава 35~
+OUTER_SPRINT eet_21 ~Глава 36~
+OUTER_SPRINT eet_22 ~Глава 37~
+OUTER_SPRINT sod_08 ~Глава 15~ //271137
+OUTER_SPRINT sod_09 ~Глава 16~ //271139
+OUTER_SPRINT sod_10 ~Глава 17~ //271141
+OUTER_SPRINT sod_11 ~Глава 18~ //271143
+OUTER_SPRINT sod_12 ~Глава 19~ //271145
+OUTER_SPRINT sod_13 ~Глава 20~ //271147
+
+APPEND_OUTER ~icewind_eet/chaptrs.tph~ ~%LNL%  STRING_SET %iwd1_t0% %tilde%%iwd1_tx0%%tilde%
+  STRING_SET %iwd1_t1% %tilde%%iwd1_tx1%%tilde%
+  STRING_SET %iwd1_t2% %tilde%%iwd1_tx2%%tilde%
+  STRING_SET %iwd1_t3% %tilde%%iwd1_tx3%%tilde%
+  STRING_SET %iwd1_t4% %tilde%%iwd1_tx4%%tilde%
+  STRING_SET %iwd1_t5% %tilde%%iwd1_tx5%%tilde%
+  STRING_SET %iwd1_t6% %tilde%%iwd1_tx6%%tilde%
+  STRING_SET 74414 %tilde%%eet_13%%tilde%
+  STRING_SET 74412 %tilde%%eet_14%%tilde%
+  STRING_SET 74390 %tilde%%eet_15%%tilde%
+  STRING_SET 74407 %tilde%%eet_16%%tilde%
+  STRING_SET 74399 %tilde%%eet_17%%tilde%
+  STRING_SET 74400 %tilde%%eet_18%%tilde%
+  STRING_SET 74353 %tilde%%eet_19%%tilde%
+  STRING_SET 71020 %tilde%%eet_20%%tilde%
+  STRING_SET 71021 %tilde%%eet_21%%tilde%
+  STRING_SET 71022 %tilde%%eet_22%%tilde%
+  STRING_SET 271137 %tilde%%sod_08%%tilde%
+  STRING_SET 271139 %tilde%%sod_09%%tilde%
+  STRING_SET 271141 %tilde%%sod_10%%tilde%
+  STRING_SET 271143 %tilde%%sod_11%%tilde%
+  STRING_SET 271145 %tilde%%sod_12%%tilde%
+  STRING_SET 271147 %tilde%%sod_13%%tilde%~
+  STRING_SET %iwd1_ttx0% @2000087
+  STRING_SET %iwd1_ttx1% @2000088
+  STRING_SET %iwd1_ttx2% @2000089
+  STRING_SET %iwd1_ttx3% @2000090
+  STRING_SET %iwd1_ttx4% @2000091
+  STRING_SET %iwd1_ttx5% @2000092
+  STRING_SET %iwd1_ttx6% @2000093
+  /* IWD2 strings */
+  /* LPF REPLACE_MULTILINE - посмотреть в bg2_GUI.tph и bg1_GUI.tph из EET */
+COPY_EXISTING ~BGEE.LUA~ ~override~
+  REPLACE_TEXTUALLY ~START_CAMPAIGN_TUT = 7,~ ~START_CAMPAIGN_TUT = 7,
+	START_CAMPAIGN_ID1 = 8, //=2
+	START_CAMPAIGN_ID2 = 9, //=5
+	START_CAMPAIGN_FFC = 10,~ //=6
+/*	START_CAMPAIGN_BG1 = 1,
+	START_CAMPAIGN_ID1 = 2,
+	START_CAMPAIGN_SOD = 3,
+	START_CAMPAIGN_SOA = 4,
+	START_CAMPAIGN_ID2 = 5,
+	START_CAMPAIGN_FFC = 6,
+	START_CAMPAIGN_TOB = 7,
+	START_CAMPAIGN_BP1 = 8,
+	START_CAMPAIGN_BP2 = 9,
+	START_CAMPAIGN_TUT = 10, */
+  REPLACE_TEXTUALLY ~chapterBackgrounds[8]~  ~chapterBackgrounds[15]~
+  REPLACE_TEXTUALLY ~chapterBackgrounds[9]~  ~chapterBackgrounds[16]~
+  REPLACE_TEXTUALLY ~chapterBackgrounds[10]~ ~chapterBackgrounds[17]~
+  REPLACE_TEXTUALLY ~chapterBackgrounds[11]~ ~chapterBackgrounds[18]~
+  REPLACE_TEXTUALLY ~chapterBackgrounds[12]~ ~chapterBackgrounds[19]~
+  REPLACE_TEXTUALLY ~chapterBackgrounds[13]~ ~chapterBackgrounds[20]~
+ /* не траифицировано */
+OUTER_SPRINT ~iwd1_text~ ~Говорят, что история - лучший учитель. Рассказы о деяниях прошлого определяют, каковы мы сегодня и какими станем в будущем. Говорят, такие истории с каждым новым пересказом освещают нас сиянием правды. Один из таких рассказов вы от меня и услышите. Мне хорошо известна эта история, ведь почти всю жизнь я собираю ее по частям и раскладываю по порядку в этой книге. Много лет мне приходилось размышлять над этими страницами, изучая каждую строку, сохраняя в памяти каждое слово. Может быть, теперь, пересказывая эту историю, я наконец обрету ответы на давние вопросы.\n\nЭто произошло на севере Фаэруна, в краю, что зовется Долиной Ледяных Ветров. Эта суровая морозная страна отделена от остального мира грядой горных вершин, которую зовут Хребтом Мира. Сотни лет на ледяных землях этой долины жили варвары Утгарда и Регеда. Объединившись в маленькие, но крепкие племена, варвары вели простую жизнь и были свободны, горды и отчаянно независимы.\n\nНо однажды в Долину Ледяных Ветров пришел архимаг по имени Аракон. Вместе со своей армией наемников Аракон желал завоевать Север и поработить гордых варваров. Много недель шли сражения, и разобщенные племена варваров несли тяжелые потери. Казалось, их поражение неизбежно.\n\nВ самый трудный час варварский шаман Джеррод призвал оставшиеся племена собраться на совет. Джеррод, славный и доблестный воин, уговорил совет забыть о расхождениях и вместе выступить против Аракона. Варвары воспряли духом и последовали за новым вождем, ибо теперь у них была общая цель.\n\nОбъединенное войско северян оказалось достойным противником для армии Аракона, который полагался на разобщенность варваров. Волна за волной воины-варвары сминали войско наемников Аракона, заставив их сперва перейти в оборону, а потом и бежать. Армия Аракона рассыпалась у него на глазах, но он успел предпринять последнюю отчаянную попытку одержать верх над варварами. Из последних сил архимаг прорвал планарные границы и открыл портал в Нижние планы. Победные вопли глупого архимага сменились криками ужаса, когда жуткие уродливые демоны явились из портала и обрушились на поле боя.\n\nПротив этой нежданной новой опасности варвары и наемники выступили вместе, бок о бок. Оставшиеся воины отважно бросились на портал, чтобы загнать обратно адских тварей... но погибали сотнями.\n\nВидя, как гибнет его народ, варварский шаман Джеррод поднял взор от снега на поле боя, покрасневшего от крови, и в отдалении, на вершине горы заметил одинокую фигуру. Джеррод сразу понял, что это бог Темпос посылает варварам знамение. В ту же секунду он почувствовал, что надо сделать. Взывая к своему богу, он пробился через строй демонов и прыгнул в портал. Энергия портала встретилась с кровью Джеррода, и все поле битвы поглотила вспышка белого света. Когда свет рассеялся, демонов уже не было, а портал закрылся.\n\nНа том месте, где он был, в воздухе парил каменный диск. В центре его застыло тело Джеррода, в последний момент агонии... в последний момент триумфа... навеки.\n\nНо на этом история не заканчивается... нет... только начинается.~
+OUTER_SPRINT ~iwd2_text~ ~Снова и снова я пытаюсь понять, что же заставило меня уйти из уютного Кулдахара и отправиться в Низовья, к месту рождения Иселора. На первый взгляд, меня просто отправили туда дядя Освальд и сам Иселор. Когда Иселор ушел от берегов Внутреннего Моря к Хребту Мира, он сказал собратьям-друидам, что пришлет на свое место ученицу. Потому-то, как мне казалось, я и отправилась в путь. Но теперь, сидя у огня в Мирабаре, я понимаю, что Иселор все знал уже тогда. Я помню все до мелочей. Все началось много лет назад.\n\nШел тысяча триста десятый год по летоисчислению Долины, когда разведчики из Брин Шандера, крупнейшего из Десяти Городов, впервые заметили отряды гоблинов. Неделю спустя гоблины бурной рекой хлынули через Хребет Мира, и над этим смертоносным потоком развевались знамена с головами химеры. Отвернись удача от Брин-Шандера - и Долину защищало бы лишь ополчение Десяти Городов. Но Ульбрек Диннсмор, мэр Таргоса, убедил Совет послать гонцов в южные города - Лускан и Невервинтер.\n\nУ Лускана хватало своих забот, однако лусканские капитаны, испугавшись возможных последствий, нашли выход из ситуации. Они развесили по всему городу объявления о наборе добровольцев. Работы в порту хватало не для всех. Многие наемники, соблазнившись обещанным богатством, погрузились на корабли и отправились на север. Пройдя через Море Плавучих Льдов, суда двинулись вверх по Шенгарну. Наемники уже предвкушали, какие подвиги они совершат и каких замков понастроят.\n\nЗамечтавшись, они не заметили, что их уже поджидают гоблины и орки. Из всех кораблей уцелело лишь несколько. Поднявшись дальше по реке, выжившие увидели пепелище Бремена. Один из Десяти Городов пал.\n\nЯ, как и многие, не перестаю удивляться, на что способна горстка храбрецов, оказавшаяся в столь тяжелых обстоятельствах против целой армии.\n\n          -- Марали Скрипкодел~
+OUTER_SPRINT ~ffc_text~ ~/* не забыть про этот екст */~
+OUTER_SPRINT ~iwd1_title~ ~Долина Ледяного Ветра~
+OUTER_SPRINT ~iwd2_title~ ~Долина Ледяного Ветра 2~
+OUTER_SPRINT ~ffc_title~  ~Отцы и Дети~
+
+COPY_EXISTING ~M_EET.LUA~ ~override~
+  //REPLACE_TEXTUALLY ~chapter == 8~  ~chapter == 15~
+  REPLACE_TEXTUALLY ~chapter == 9~  ~chapter == 16~
+  REPLACE_TEXTUALLY ~chapter == 10~ ~chapter == 17~
+  REPLACE_TEXTUALLY ~chapter == 11~ ~chapter == 18~
+  REPLACE_TEXTUALLY ~chapter == 12~ ~chapter == 19~
+  REPLACE_TEXTUALLY ~chapter == 13~ ~chapter == 20~
+  REPLACE_TEXTUALLY ~chapter == 14~ ~chapter == 21~
+  REPLACE_TEXTUALLY ~chapter == 15~ ~chapter == 22~
+  REPLACE_TEXTUALLY ~chapter == 16~ ~chapter == 23~
+  REPLACE_TEXTUALLY ~chapter == 17~ ~chapter == 24~
+  REPLACE_TEXTUALLY ~chapter == 18~ ~chapter == 25~
+  REPLACE_TEXTUALLY ~chapter == 19~ ~chapter == 26~
+  REPLACE_TEXTUALLY ~chapter == 8~ ~chapter == 8) then
+		return Infinity_FetchString(%iwd1_t0%)
+	elseif (chapter == 9) then
+		return Infinity_FetchString(%iwd1_t1%)
+	elseif (chapter == 10) then
+		return Infinity_FetchString(%iwd1_t2%)
+	elseif (chapter == 11) then
+		return Infinity_FetchString(%iwd1_t3%)
+	elseif (chapter == 12) then
+		return Infinity_FetchString(%iwd1_t4%)
+	elseif (chapter == 13) then
+		return Infinity_FetchString(%iwd1_t5%)
+	elseif (chapter == 14) then
+		return Infinity_FetchString(%iwd1_t6%)
+	elseif (chapter == 15~ EVALUATE_BUFFER
+  /* IWD2 strings */
+  /* My mod strings */
+  REPLACE_TEXTUALLY ~eetStrings.EET_CHAPTER_8~  ~Infinity_FetchString(271137)~
+  REPLACE_TEXTUALLY ~eetStrings.EET_CHAPTER_9~  ~Infinity_FetchString(271139)~
+  REPLACE_TEXTUALLY ~eetStrings.EET_CHAPTER_10~ ~Infinity_FetchString(271141)~
+  REPLACE_TEXTUALLY ~eetStrings.EET_CHAPTER_11~ ~Infinity_FetchString(271143)~
+  REPLACE_TEXTUALLY ~eetStrings.EET_CHAPTER_12~ ~Infinity_FetchString(271145)~
+  REPLACE_TEXTUALLY ~chapter < 23~ ~chapter < 38~
+  /* тут нужно ещ отнять разницу в главах (71000 + chapter - разница) */
+  //dalee icon CMPGEET, bigLogo - BIGLOGO, title - TITLE
+  REPLACE_TEXTUALLY ~{name = 'EET_CMP_TITLE_SOD',~ ~{name = 'EET_CMP_TITLE_ID1', description = 'EET_CMP_TEXT_ID1', title = 7, bigLogo = 7, icon = 7, background = 2, button = 2, sidebar = 2, importEnabled = false, tutorialEnabled = false}, --id1
+	{name = 'EET_CMP_TITLE_SOD',~
+  REPLACE_TEXTUALLY ~{name = 'EET_CMP_TITLE_TOB',~ ~{name = 'EET_CMP_TITLE_ID2', description = 'EET_CMP_TEXT_ID2', title = 8, bigLogo = 8, icon = 8, background = 2, button = 2, sidebar = 2, importEnabled = false, tutorialEnabled = false}, --id2
+	{name = 'EET_CMP_TITLE_FFC', description = 'EET_CMP_TEXT_FFC', title = 9, bigLogo = 9, icon = 9, background = 2, button = 2, sidebar = 2, importEnabled = false, tutorialEnabled = false}, --ffc
+	{name = 'EET_CMP_TITLE_TOB',~
+  REPLACE_TEXTUALLY ~EET_CMP_TITLE_BG1 = "~ ~EET_CMP_TEXT_ID1 = "%iwd1_text%",
+	EET_CMP_TEXT_ID2 = "%iwd2_text%",
+	EET_CMP_TEXT_FFC = "%ffc_text%",
+	EET_CMP_TITLE_BG1 = "~ EVALUATE_BUFFER
+  REPLACE_TEXTUALLY ~EET_CMP_TITLE_TUT = "~ ~EET_CMP_TITLE_ID1 = "%iwd1_title%",
+	EET_CMP_TITLE_ID2 = "%iwd2_title%",
+	EET_CMP_TITLE_FFC = "%ffc_title%",
+	EET_CMP_TITLE_TUT = "~ EVALUATE_BUFFER
+
+/* файл ui.menu. Там тоже есть связанное с ЕЕТ, в районе строк 6840 и 8450 */
+
+/*CHAPTERS TEXTSCREEN
+//Line 1328 - EET_core.tp2
+//CHPTXT1  - BG1 - Chapter 1
+//CHPTXT2  - BG1 - Chapter 2
+//CHPTXT3  - BG1 - Chapter 3
+//CHPTXT4  - BG1 - Chapter 4
+//CHPTXT5  - BG1 - Chapter 5
+//CHPTXT6  - BG1 - Chapter 6
+//CHPTXT7  - BG1 - Chapter 7
+
+//IWD1CHP0 - ID1 - Chapter 8  //0
+//IWD1CHP1 - ID1 - Chapter 9  //1
+//IWD1CHP2 - ID1 - Chapter 10 //2
+//IWD1CHP3 - ID1 - Chapter 11 //3
+//IWD1CHP4 - ID1 - Chapter 12 //4
+//IWD1CHP5 - ID1 - Chapter 13 //5
+//IWD1CHP6 - ID1 - Chapter 14 //6
+
+//DPALACE
+//CHPTXT8  - SoD - Chapter 15 //8
+//SODTXT9  - SoD - Chapter 16 //9
+//SODTXT10 - SoD - Chapter 17 //10
+//CHPTXT11 - SoD - Chapter 18 //11
+//CHPTXT12 - SoD - Chapter 19 //12
+//CHPTXT13 - SoD - Chapter 20 //13
+
+//NO       - SoA - Chapter 20 //13, 1
+//SCENE02  - SoA - Chapter 21 //14, 2 - 48005
+//SCENE03  - SoA - Chapter 22 //15, 3 - 61359
+//SCENE04  - SoA - Chapter 22 //15, 3 - 61360
+//SCRTXT01 - SoA - Chapter 23 //16, 4 - 55714 - Bodhi
+//SCRTXT02 - SoA - Chapter 23 //16, 4 - 8633  - Aran
+//SCRTXT07 - SoA - Chapter 24 //17, 5 - 61361
+//SCRTXT06 - SoA - Chapter 25 //18, 6 - 1389
+//SCRTXT08 - SoA - Chapter 26 //19, 7 - 61362
+
+//NO       - ToB - Chapter 35 //20, 8
+//CHPTXT9  - ToB - Chapter 36 //21, 9 - 71591
+//CHPTXT10 - ToB - Chapter 37 //22, 10 - 71592
+*/
+COPY_EXISTING ~CHPTXT1.2da~ ~override~
+  READ_2DA_ENTRY 1 2 5 ~tx~
+  BUT_ONLY_IF_IT_CHANGES
+APPEND_OUTER ~icewind_eet/chaptrs.tph~ ~%LNL%  STRING_SET %tx% @2000000~
+COPY_EXISTING ~CHPTXT2.2da~ ~override~
+  READ_2DA_ENTRY 1 2 3 ~tx~
+  BUT_ONLY_IF_IT_CHANGES
+APPEND_OUTER ~icewind_eet/chaptrs.tph~ ~%LNL%  STRING_SET %tx% @2000001~
+COPY_EXISTING ~CHPTXT3.2da~ ~override~
+  READ_2DA_ENTRY 1 2 3 ~tx~
+  BUT_ONLY_IF_IT_CHANGES
+APPEND_OUTER ~icewind_eet/chaptrs.tph~ ~%LNL%  STRING_SET %tx% @2000002~
+COPY_EXISTING ~CHPTXT4.2da~ ~override~
+  READ_2DA_ENTRY 1 2 3 ~tx~
+  BUT_ONLY_IF_IT_CHANGES
+APPEND_OUTER ~icewind_eet/chaptrs.tph~ ~%LNL%  STRING_SET %tx% @2000003~
+COPY_EXISTING ~CHPTXT5.2da~ ~override~
+  READ_2DA_ENTRY 1 2 3 ~tx~
+  BUT_ONLY_IF_IT_CHANGES
+APPEND_OUTER ~icewind_eet/chaptrs.tph~ ~%LNL%  STRING_SET %tx% @2000004~
+COPY_EXISTING ~CHPTXT6.2da~ ~override~
+  READ_2DA_ENTRY 1 2 3 ~tx~
+  BUT_ONLY_IF_IT_CHANGES
+APPEND_OUTER ~icewind_eet/chaptrs.tph~ ~%LNL%  STRING_SET %tx% @2000005~
+COPY_EXISTING ~CHPTXT7.2da~ ~override~
+  READ_2DA_ENTRY 1 2 3 ~tx~
+  BUT_ONLY_IF_IT_CHANGES
+APPEND_OUTER ~icewind_eet/chaptrs.tph~ ~%LNL%  STRING_SET %tx% @2000006~
+
+COPY_EXISTING ~DPALACE.2da~ ~override~
+  READ_2DA_ENTRY 2 2 3 ~tx~
+  BUT_ONLY_IF_IT_CHANGES
+APPEND_OUTER ~icewind_eet/chaptrs.tph~ ~%LNL%  STRING_SET %tx% @2000007~
+COPY_EXISTING ~CHPTXT8.2da~ ~override~
+  READ_2DA_ENTRY 1 2 3 ~tx~
+  BUT_ONLY_IF_IT_CHANGES
+APPEND_OUTER ~icewind_eet/chaptrs.tph~ ~%LNL%  STRING_SET %tx% @2000008~
+COPY_EXISTING ~SODTXT9.2da~ ~override~
+  READ_2DA_ENTRY 1 2 3 ~tx~
+  BUT_ONLY_IF_IT_CHANGES
+APPEND_OUTER ~icewind_eet/chaptrs.tph~ ~%LNL%  STRING_SET %tx% @2000009~
+COPY_EXISTING ~SODTXT10.2da~ ~override~
+  READ_2DA_ENTRY 1 2 3 ~tx~
+  BUT_ONLY_IF_IT_CHANGES
+APPEND_OUTER ~icewind_eet/chaptrs.tph~ ~%LNL%  STRING_SET %tx% @2000010~
+COPY_EXISTING ~CHPTXT11.2da~ ~override~
+  READ_2DA_ENTRY 1 2 3 ~tx~
+  BUT_ONLY_IF_IT_CHANGES
+APPEND_OUTER ~icewind_eet/chaptrs.tph~ ~%LNL%  STRING_SET %tx% @2000011~
+COPY_EXISTING ~CHPTXT12.2da~ ~override~
+  READ_2DA_ENTRY 1 2 3 ~tx~
+  BUT_ONLY_IF_IT_CHANGES
+APPEND_OUTER ~icewind_eet/chaptrs.tph~ ~%LNL%  STRING_SET %tx% @2000012~
+COPY_EXISTING ~CHPTXT13.2da~ ~override~
+  READ_2DA_ENTRY 1 2 3 ~tx~
+  BUT_ONLY_IF_IT_CHANGES
+APPEND_OUTER ~icewind_eet/chaptrs.tph~ ~%LNL%  STRING_SET %tx% @2000013~
+
+STRING_SET 48005 @2000014
+STRING_SET 61359 @2000015
+STRING_SET 61360 @2000016
+STRING_SET 55714 @2000017
+STRING_SET 8633  @2000018
+STRING_SET 61361 @2000019
+STRING_SET 1389  @2000020
+STRING_SET 61362 @2000021
+STRING_SET 71591 @2000022
+STRING_SET 71592 @2000023
+
+
+/* не забыть IWD2 и мою главу */
+
+/*CHAPTERS JOURNAL
+//BG1 - Chapter 1           - 216190
+//BG1 - Chapter 2           - 215836
+//BG1 - Chapter 3           - 215837
+//BG1 - Chapter 4           - 215838
+//BG1 - Chapter 5           - 215839
+//BG1 - Chapter 6           - 215840
+//BG1 - Chapter 7           - 215841
+
+//SoD - Chapter 15 //8      - 256974
+//SoD - Chapter 16 //9      - 256368
+//SoD - Chapter 17 //10     - 256371
+//SoD - Chapter 18 //11     - 256373
+//SoD - Chapter 19 //12     - 256375
+//SoD - Chapter 20 //13     - 256378 - Part 1
+
+//SoA - Chapter 20 //13, 1  - 34089  - Part 2
+//SoA - Chapter 21 //14, 2  - 23458
+//SoA - Chapter 22 //15, 3  - 8730
+//SoA - Chapter 22 //15, 3  - 23351
+//SoA - Chapter 23 //16, 4  - 20632
+//SoA - Chapter 23 //16, 4  - 20633
+//SoA - Chapter 24 //17, 5  - 10944
+//SoA - Chapter 25 //18, 6  - 11722
+//SoA - Chapter 26 //19, 7  - 23513  - Part 1
+//SoA - Chapter 26 //19, 7  - 5743   - Part 2
+
+//ToB - Chapter 35 //20, 8  - 73256
+//ToB - Chapter 36 //21, 9  - 73258
+//ToB - Chapter 37 //22, 10 - 73257
+*/
+//BG1
+STRING_SET 216190 @2000024
+STRING_SET 215836 @2000025
+STRING_SET 215837 @2000026
+STRING_SET 215838 @2000027
+STRING_SET 215839 @2000028
+STRING_SET 215840 @2000029
+STRING_SET 215841 @2000030
+//SoD /* здесь вообще-то надо искать - это добавляется через ЕЕТ */
+STRING_SET 256974 @2000032
+STRING_SET 256368 @2000033
+STRING_SET 256371 @2000034
+STRING_SET 256373 @2000035
+STRING_SET 256375 @2000036
+STRING_SET 256378 @2000037 
+/* перевод строк SoD в chapters.tra */
+//SoA
+STRING_SET 34089  @2000038
+STRING_SET 23458  @2000039
+STRING_SET 8730   @2000040
+STRING_SET 23351  @2000041
+STRING_SET 20632  @2000042
+STRING_SET 20633  @2000043
+STRING_SET 10944  @2000044
+STRING_SET 11722  @2000045
+STRING_SET 23513  @2000046
+STRING_SET 5743   @2000047
+//ToB
+STRING_SET 73256  @2000048 
+STRING_SET 73258  @2000049 
+STRING_SET 73257  @2000050 
+//Chapters
+STRING_SET 216203 @2000051
+STRING_SET 216204 @2000052
+STRING_SET 216205 @2000053
+STRING_SET 216206 @2000054
+STRING_SET 216207 @2000055
+STRING_SET 216208 @2000056
+STRING_SET 216209 @2000057
+STRING_SET 256369 @2000059
+STRING_SET 256370 @2000060
+STRING_SET 256372 @2000061
+STRING_SET 256374 @2000062
+STRING_SET 256376 @2000063
+STRING_SET 74414  @2000065 
+STRING_SET 74412  @2000066 
+STRING_SET 74390  @2000067 
+STRING_SET 74407  @2000068 
+STRING_SET 74399  @2000069 
+STRING_SET 74400  @2000070 
+STRING_SET 74353  @2000071 
+STRING_SET 71020  @2000072 
+STRING_SET 71021  @2000073 
+STRING_SET 71022  @2000074 
+
+
+INCLUDE ~icewind_eet/chaptrs.tph~
+
+COPY ~EET_end.tp2~ ~EET_end.tp2~
+  REPLACE_TEXTUALLY ~SPRINT game %tilde%SoD%tilde%~ ~SPRINT game %tilde%SoD%tilde%
+					END ELSE PATCH_IF (%tilde%%percent%file%percent%%tilde% STR_EQ %tilde%IDDIALOG%tilde%) BEGIN
+						SPRINT game %tilde%ID1%tilde%
+					END ELSE PATCH_IF (%tilde%%percent%file%percent%%tilde% STR_EQ %tilde%IWDIALOG%tilde%) BEGIN
+						SPRINT game %tilde%ID2%tilde%
+					END ELSE PATCH_IF (%tilde%%percent%file%percent%%tilde% STR_EQ %tilde%FCDIALOG%tilde%) BEGIN
+						SPRINT game %tilde%FFC%tilde%~ EVALUATE_BUFFER
+  REPLACE_TEXTUALLY ~Global("EndofBG1","GLOBAL",~ ~Global("PARTY_IN_ICEWIND_DALE","GLOBAL",0)Global("EndofBG1","GLOBAL",~
+  REPLACE_TEXTUALLY ~GlobalGT("CHAPTER","GLOBAL",19)~ ~GlobalGT("CHAPTER","GLOBAL",34)~
+  REPLACE_TEXTUALLY ~GlobalLT("CHAPTER","GLOBAL",20)~ ~GlobalLT("CHAPTER","GLOBAL",27)~
+  REPLACE_TEXTUALLY ~END ELSE PATCH_IF %tilde%%percent%file_2%percent%%tilde% STR_EQ %tilde%SoD%tilde% BEGIN~ ~END ELSE PATCH_IF %tilde%%percent%file_2%percent%%tilde% STR_EQ %tilde%ID1%tilde% BEGIN
+									SPRINT trigger %tilde%Global("PARTY_IN_ICEWIND_DALE","GLOBAL",1)%percent%LNL%percent%%percent%trigger%percent%%percent%LNL%percent%%tilde%
+									PATCH_PRINT %tilde%Patching %percent%SOURCE_FILESPEC%percent% - PID (%percent%file_2%percent%)%tilde%
+								END ELSE PATCH_IF %tilde%%percent%file_2%percent%%tilde% STR_EQ %tilde%ID2%tilde% BEGIN
+									SPRINT trigger %tilde%Global("PARTY_IN_ICEWIND_DALE","GLOBAL",1)%percent%LNL%percent%%percent%trigger%percent%%percent%LNL%percent%%tilde%
+									PATCH_PRINT %tilde%Patching %percent%SOURCE_FILESPEC%percent% - PID (%percent%file_2%percent%)%tilde%
+								END ELSE PATCH_IF %tilde%%percent%file_2%percent%%tilde% STR_EQ %tilde%FFC%tilde% BEGIN
+									SPRINT trigger %tilde%Global("CHAPTER","GLOBAL",34)%percent%LNL%percent%%percent%trigger%percent%%percent%LNL%percent%%tilde%
+									PATCH_PRINT %tilde%Patching %percent%SOURCE_FILESPEC%percent% - PID (%percent%file_2%percent%)%tilde%
+								END ELSE PATCH_IF %tilde%%percent%file_2%percent%%tilde% STR_EQ %tilde%SoD%tilde% BEGIN~ EVALUATE_BUFFER
+//BLOCKEND
+
+//BLOCK ADD CAMPAIGNS
+APPEND ~CAMPAIGN.2DA~ ~ID1            ICEWIND        -1             7              IDBANTER       *              MASTAREA       IWD_THEME            -1             *              *              IDDIALOG       save           IDSTARTA       STRTGOLD       IDSTARTP       *              *              *              *              WORLDMAP       ICEWIND        1              0xFFFFFFFF     1              IDINTRO        PARTY          INTERACT       SODYEARS       IDREPUT        BGCLATXT       BGRACTXT
+ID2            ICEWIND2       -1             8              IWBANTER       *              MASTAREA       IWD2_THEME            -1             *              *              IWDIALOG       save           IWSTARTA       STRTGOLD       IWSTARTP       *              *              *              *              WORLDMAP       ICEWIND2       1              0xFFFFFFFF     1              IWINTRO        PARTY          INTERACT       25YEARS        IDREPUT        CLASTEXT       RACETEXT
+FFC            FCFTCHLD       -1             9              FCBANTER       *              MASTAREA       FFC_THEME            -1             *              *              FCDIALOG       save           FCSTARTA       STRTGOLD       FCSTARTP       *              *              *              *              WORLDMAP       FCFTCHLD       1              0xFFFFFFFF     1              FCINTRO        PARTY          INTERACT       25YEARS        REPUTATI       CLASTEXT       RACETEXT~
+
+SET idt = (IDS_OF_SYMBOL(~SONGLIST~ ~IDTHM~))
+//SET iwt = (IDS_OF_SYMBOL(~SONGLIST~ ~~)) /* IWD2 THEME */
+//SET fct = (IDS_OF_SYMBOL(~SONGLIST~ ~~)) /* FFC THEME */
+
+COPY_EXISTING ~CAMPAIGN.2da~ ~override~
+  REPLACE_TEXTUALLY ~IWD_THEME~  ~%idt%~ EVALUATE_BUFFER
+  REPLACE_TEXTUALLY ~IWD2_THEME~ ~%iwt%~ EVALUATE_BUFFER
+  REPLACE_TEXTUALLY ~FFC_THEME~  ~%fct%~ EVALUATE_BUFFER
+  PRETTY_PRINT_2DA
+//BLOCKEND
+
+//BLOCKEND
+
+COPY_EXISTING ~BG0125.ARE~ ~override/FC0125.ARE~
+  WRITE_ASCII 0x94 ~FC0125~ (8)
+  FOR ( i = SHORT_AT 0x58 ; i ; --i ) BEGIN
+    LPF fj_are_structure
+      INT_VAR fj_delete_mode = i - 1
+      STR_VAR fj_structure_type = actor
+    END
+  END
+  FOR ( i = SHORT_AT 0x5a ; i ; --i ) BEGIN
+    LPF fj_are_structure
+      INT_VAR fj_delete_mode = i - 1
+      STR_VAR fj_structure_type = region
+    END
+  END
+  FOR ( i = SHORT_AT 0x6c ; i ; --i ) BEGIN
+    LPF fj_are_structure
+      INT_VAR fj_delete_mode = i - 1
+      STR_VAR fj_structure_type = entrance
+    END
+  END
+  LPF fj_are_structure
+    INT_VAR fj_loc_x = 532 fj_loc_y = 405 fj_dest_x = 532 fj_dest_y = 405 fj_animation = 50432
+    STR_VAR fj_structure_type = actor fj_name = "Bat" fj_cre_resref = "BAT_DOOR"
+  END
+  LPF fj_are_structure
+    INT_VAR fj_loc_x = 574 fj_loc_y = 387 fj_dest_x = 574 fj_dest_y = 387 fj_animation = 50432
+    STR_VAR fj_structure_type = actor fj_name = "Bat" fj_cre_resref = "BAT_DOOR"
+  END
+  LPF fj_are_structure
+    INT_VAR fj_loc_x = 626 fj_loc_y = 459 fj_dest_x = 626 fj_dest_y = 459 fj_animation = 50432
+    STR_VAR fj_structure_type = actor fj_name = "Bat" fj_cre_resref = "BAT_DOOR"
+  END
+  LPF fj_are_structure
+    INT_VAR fj_loc_x = 767 fj_loc_y = 797 fj_dest_x = 767 fj_dest_y = 797 fj_animation = 50432
+    STR_VAR fj_structure_type = actor fj_name = "Bat" fj_cre_resref = "BAT_DOOR"
+  END
+  LPF fj_are_structure
+    INT_VAR fj_loc_x = 705 fj_loc_y = 810 fj_dest_x = 705 fj_dest_y = 810 fj_animation = 50432
+    STR_VAR fj_structure_type = actor fj_name = "Bat" fj_cre_resref = "BAT_DOOR"
+  END
+  LPF fj_are_structure
+    INT_VAR fj_loc_x = 926 fj_loc_y = 1096 fj_dest_x = 926 fj_dest_y = 1096 fj_animation = 50432
+    STR_VAR fj_structure_type = actor fj_name = "Bat" fj_cre_resref = "BAT_DOOR"
+  END
+  LPF fj_are_structure
+    INT_VAR fj_loc_x = 1139 fj_loc_y = 1048 fj_dest_x = 1139 fj_dest_y = 1048 fj_animation = 50432
+    STR_VAR fj_structure_type = actor fj_name = "Bat" fj_cre_resref = "BAT_DOOR"
+  END
+  LPF fj_are_structure
+    INT_VAR fj_loc_x = 775 fj_loc_y = 1178 fj_dest_x = 775 fj_dest_y = 1178 fj_animation = 50432
+    STR_VAR fj_structure_type = actor fj_name = "Bat" fj_cre_resref = "BAT_DOOR"
+  END
+  LPF fj_are_structure
+    INT_VAR fj_loc_x = 833 fj_loc_y = 1114 fj_dest_x = 833 fj_dest_y = 1114 fj_animation = 50432
+    STR_VAR fj_structure_type = actor fj_name = "Bat" fj_cre_resref = "BAT_DOOR"
+  END
+  LPF fj_are_structure
+    INT_VAR fj_loc_x = 1020 fj_loc_y = 999 fj_dest_x = 1020 fj_dest_y = 999 fj_animation = 50432
+    STR_VAR fj_structure_type = actor fj_name = "Bat" fj_cre_resref = "BAT_DOOR"
+  END
+  LPF fj_are_structure
+    INT_VAR fj_loc_x = 1017 fj_loc_y = 1122 fj_dest_x = 1017 fj_dest_y = 1122 fj_animation = 50432
+    STR_VAR fj_structure_type = actor fj_name = "Bat" fj_cre_resref = "BAT_DOOR"
+  END
+  LPF fj_are_structure
+    INT_VAR fj_loc_x = 850 fj_loc_y = 975 fj_dest_x = 850 fj_dest_y = 975 fj_animation = 50432
+    STR_VAR fj_structure_type = actor fj_name = "Bat" fj_cre_resref = "BAT_DOOR"
+  END
+  LPF fj_are_structure
+    INT_VAR
+      fj_loc_x = 786
+      fj_loc_y = 552
+      fj_type = 7
+      fj_box_left    = 753
+      fj_box_top     = 457
+      fj_box_right   = 790
+      fj_box_bottom  = 506
+      fj_trap_loc_x  = 541
+      fj_trap_loc_y  = 263
+      fj_vertex_0    = 756 + (469 << 16)
+      fj_vertex_1    = 769 + (457 << 16)
+      fj_vertex_2    = 781 + (461 << 16)
+      fj_vertex_3    = 785 + (469 << 16)
+      fj_vertex_4    = 790 + (486 << 16)
+      fj_vertex_5    = 789 + (491 << 16)
+      fj_vertex_6    = 783 + (496 << 16)
+      fj_vertex_7    = 783 + (505 << 16)
+      fj_vertex_8    = 767 + (506 << 16)
+      fj_vertex_9    = 765 + (500 << 16)
+      fj_vertex_10   = 760 + (497 << 16)
+      fj_vertex_11   = 755 + (494 << 16)
+      fj_vertex_12   = 753 + (485 << 16)
+      fj_vertex_13   = 755 + (471 << 16)
+    STR_VAR
+      fj_structure_type = container
+      fj_name = "IdImportContainer"
+  END
+  LPF fj_are_structure
+    INT_VAR
+      fj_type = 1
+      fj_box_left    =  874
+      fj_box_top     = 1125
+      fj_box_right   = 1096
+      fj_box_bottom  = 1274
+      fj_cursor_idx  = 30
+      fj_loc_x = 852
+      fj_loc_y = 980
+      fj_vertex_0    = 1056 + (1125 << 16)
+      fj_vertex_1    =  891 + (1161 << 16)
+      fj_vertex_2    =  874 + (1274 << 16)
+      fj_vertex_3    = 1096 + (1274 << 16)
+    STR_VAR
+      fj_structure_type = region
+      fj_name = "ToSoD"
+      fj_reg_script = "FCSODTRN"
+  END
+
+COPY_EXISTING ~BG0125.ARE~ ~override~
+  LPF fj_are_structure
+    INT_VAR
+      fj_loc_x = 55
+      fj_loc_y = 35
+      fj_type = 8
+      fj_box_left    = 90
+      fj_box_top     = 25
+      fj_box_right   = 120
+      fj_box_bottom  = 45
+      fj_trap_loc_x  = 10
+      fj_trap_loc_y  = 10
+      fj_vertex_0    = 90  + (25 << 16)
+      fj_vertex_1    = 120 + (25 << 16)
+      fj_vertex_2    = 105 + (45 << 16)
+    STR_VAR
+      fj_structure_type = container
+      fj_name = "IdImportContainer"
+  END
+
+COPY_EXISTING ~BG0125.BCS~ ~override~
+  DECOMPILE_AND_PATCH BEGIN
+    REPLACE_TEXTUALLY ~StartCutScene("BDSODTRN")~ ~StartCutScene("FCSHCUT1")~
+  END
+
+COPY_EXISTING ~BDSODTRN.BCS~ ~override~
+  DECOMPILE_AND_PATCH BEGIN
+    REPLACE_TEXTUALLY ~StartMovie("ENDMOVIE")~ ~~
+  END
+
+EXTEND_TOP    ~baldur.bcs~ ~icewind_eet/add_baf/baldur_top.baf~
+EXTEND_BOTTOM ~BD0120.bcs~ ~icewind_eet/add_baf/BD0120_btm.baf~
+EXTEND_TOP    ~BD3000.bcs~ ~icewind_eet/add_baf/BD3000_btm.baf~
+EXTEND_TOP    ~BG0119.bcs~ ~icewind_eet/add_baf/BG0119_top.baf~
+EXTEND_BOTTOM ~BG0123.bcs~ ~icewind_eet/add_baf/BG0123_btm.baf~
+EXTEND_BOTTOM ~BG0705.bcs~ ~icewind_eet/add_baf/BG0705_btm.baf~
+EXTEND_TOP    ~BG1200.bcs~ ~icewind_eet/add_baf/BG1200_top.baf~
+EXTEND_TOP    ~BG2301.bcs~ ~icewind_eet/add_baf/BG2301_top.baf~
+EXTEND_BOTTOM ~BG2600.bcs~ ~icewind_eet/add_baf/BG2600_btm.baf~
+EXTEND_TOP    ~BG2626.bcs~ ~icewind_eet/add_baf/BG2626_top.baf~
+EXTEND_TOP    ~BG4700.bcs~ ~icewind_eet/add_baf/bg4700_top.baf~
+EXTEND_TOP    ~BG4801.bcs~ ~icewind_eet/add_baf/BG4801_top.baf~
+EXTEND_TOP    ~ID1000.bcs~ ~icewind_eet/add_baf/ID1000_top.baf~
+//EXTEND_TOP    ~ID1006.bcs~ ~icewind_eet/add_baf/ID1006_top.baf~
+
+/* несколько раз, на OUTDOOR локах Лакнир придет на помощь, когда у ГГ будет жизней меньше 30% */
+/* при отправлении в ИВД2 убирать у ГГ способность Превращение в Душегуба. А при возвращении - возвращать(как spin810, только без эффектов). spin822, spin718 - если находится в форме Душегуба (если Slayer10 = 2 ), то вернуть человеческуэ форму */
+
+/* Только надо учесть, что не надо добавлять кампанию Heart of Winter */
+/* CMPGEET.bam - надо добавить картинку моей кампании */
+/* BIGLOGO.bam - надо добавить картинку моей кампании */
+/* TITLE.bam   - надо добавить картинку моей кампании */
+/* в UTIL.LUA тоже есть связанное с журналом, хотя он подменяется в M_K#EET.LUA */
+
+/* поменять номера глав в названиях сохранений */
+
+/* проверить ошибки в существующих в игре скриптах
+   и поискать, где в скриптах к номерам строк из dialog.tlk не добавлено 200000 */
+
+/* тема и вступительное видео из BG:NID FCINTRO.WBM */
+
+/* Флаг DREAMAREA делает локацию черно-белой, а персонажей оставляет цветными */
+
+/* SAVENAME.2DA - надо там текст тоже изменить */
+
+/* Заменить в основном переводе Ски на Скай, Аянтис на Аджантис */
+
+/* //ICEWIND_EET
+idtoEET - скрипт возвращения в БГ из ИВД1
+iwtoEET - скрипт возвращения в БГ из ИВД2
+  FadeFromColor([15.0],0) EndCutSceneMode
+//TakePartyGold(2147483647)
+TakeObjectGoldGlobal("SET_PARTY_GOLD","GLOBAL",Player1)
+GiveObjectGoldGlobal("SET_PARTY_GOLD","GLOBAL",Player1)
+SetGlobal("SET_PARTY_GOLD","GLOBAL",0) - надо будет при проверке попробовать это, когда в партии несколько человек
+Деньги из Icewind Dale - 10%
+
+Не забыть добавить ворам, монахам и бардам AP_#EVASION, если буду добавлять киты + добавить такую способность тем, кто не в партии, если уровень соответствует (или не смотреть уровень)
+
+Может быть добавить в тавернах и гостиницах ИВД какую-нибудь музыку из БГ
+
+Добавить в магазины катаны и доугое оружие, которого нет в ИВД
+
+При переходе в ИВД сбрасывать репутацию в зависимости от мировоззрения. А при возвращении в БГ - восстанавливать.
+
+Святые символы, может добавить перманент и КастСпеллОнКондишн. Только надо сделать спелл CDHLYSYM, чтобы он не давал колдовать, пока AreaType=IWDAREA. А когда обычная лока, колдует CDHLYSYZ - это копия CDHLYSYM.
+
+item_use.2da - не исправленны строки из СоД и БГ1 (точнее, не правильно патчатся в EET)
+//itemexcl.2da - добавить предметы из СоД
+
+Счетчики таймеров надо переместить из EET в EET_end
+
+В Generalized Biffing добавить, чтобы биффил ini, pvrz и другие новые файлы
+
+Fishing for Trouble - там не правильная добавка в racetext.2da, в eet файл выглядит подругому. Иконки для карты мира тоже нет. И перевести Worldmap.tra
+*/
+
+/* OTHER QUESTS
+
+*/
+
+/* BDBRAC02.EFF - Parametr 3 - надо добавить 200000, а лучше добавить в macros.tph в EET (EET_expand_tlk)
+   BDAMUL08.itm - в описании есть бонус к КЗ, а в файле нет */
+
+/* Чтобы использовать Float text/Cinicism - надо использовать внешний EFF. Special=количество строк; Parametr 3=начальная строка. Надо исправить в ИВД1. См. BDBRAC02.itm */
+
+/* Final Belhifet
+В моей главе, перед финальной битвой, Белхифет скажет, что хочет отомстить ГГ за его предков, которые помешали сначала ему, а потом его детям. Что Крестовый Поход он затеял, чтобы привлечь внимание ГГ. Сначала он надеялся, что у Каэлар все получится(точнее будет, когда узнаю концовку СоД), но убийство в Герцогском Дворце Врат Балдура не удалось, потом Драконье Копье и т.д. Потом он надеялся, что этот глупый маг Айреникус заберет то, что нужно ему, Белхифету. Но тот не удержал то, что украл. После разговора придут Исаир и Медея.
+*/
+
+/* Святые символы
+Lathander Holy symbol - unusable by evil alignments
+Helm Holy Symbol - unusable by chaotic alignments
+Talos holy symbol - unusable by lawful and good alignments
+sm. Divine Remix
+
+Добавить некоторым персонажам киты.
+sm. Divine Remix (из ИВД тоже)
+
+CDHLYSYM.spl - будет добавлять эффект Cast Spell on Condition 1 раз/минуту. Спедд: CDHLYSYZ.spl
+CDHLYSYZ.spl:
+  * Protection from Spell CDHLYSYZ IF AreaType = IWD_AREA
+  * Эффекты из оригинального CDHLYSYM
+*/
+
+/* Меч Джонена
+Возможно, добавить в скрипты, если AreaType != IWDAREA, то заменять на более простой вариант меча */
+
+/* Мод Ooze Longue
+Добавить проверку, если он установлен, то добавидь в диалог Исаиру перед финальной битвой, если у партии есть улучшенный меч из этого мода или банка с кровью, то он почувствует свою кровь */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

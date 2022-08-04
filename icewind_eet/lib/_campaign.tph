@@ -1,0 +1,48 @@
+
+
+<<<<<<<<camp_var.baf
+IF
+	!Global("Chapter7_14","GLOBAL",1)
+	GlobalGT("Chapter","GLOBAL",6)
+	GlobalLT("Chapter","GLOBAL",10) //15
+THEN
+	RESPONSE #100
+		SetGlobal("Chapter7_14","GLOBAL",1)
+		Continue()
+END
+
+IF
+	!Global("Chapter7_14","GLOBAL",0)
+	OR(2)
+		GlobalLT("Chapter","GLOBAL",7)
+		GlobalGT("Chapter","GLOBAL",9) //14
+THEN
+	RESPONSE #100
+		SetGlobal("Chapter7_14","GLOBAL",0)
+		Continue()
+END
+>>>>>>>>
+
+ACTION_CLEAR_ARRAY ~campscr~
+
+COPY_EXISTING ~CAMPAIGN.2DA~ ~override~
+  COUNT_2DA_ROWS 4 rws
+  FOR ( i = 0 ; i < rws ; ++i ) BEGIN
+    READ_2DA_ENTRY i 1 4 scrp
+    PATCH_IF (!VARIABLE_IS_SET $campscr(~%scrp%~)) BEGIN
+      DEFINE_ASSOCIATIVE_ARRAY campscr BEGIN ~%scrp%~ => ~~ END
+    END
+  END
+  BUT_ONLY
+
+ACTION_PHP_EACH campscr AS wbcs => dummy BEGIN
+  ACTION_IF FILE_EXISTS_IN_GAME ~%wbcs%.bcs~ THEN BEGIN
+    EXTEND_TOP ~%wbcs%.bcs~ ~camp_var.baf~
+  END
+END
+
+
+
+
+
+

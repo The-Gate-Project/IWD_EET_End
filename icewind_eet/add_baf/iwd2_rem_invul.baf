@@ -1,0 +1,20 @@
+
+
+
+
+
+IF
+	OR(3)
+		!InParty(Myself)
+		!AreaType(IWDAREA)
+		AreaCheck("IW0000")
+	Global("ID_IMOEN_BELT","LOCALS",1)
+THEN
+	RESPONSE #100
+		ApplySpellRES("idimbltr",Myself)
+		SetGlobal("ID_IMOEN_BELT","LOCALS",0)
+END
+
+
+
+

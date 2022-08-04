@@ -1,0 +1,11 @@
+COMPILE ~%MOD_FOLDER%/baf/IDP1EQP.baf~
+        ~%MOD_FOLDER%/baf/IDP2EQP.baf~
+        ~%MOD_FOLDER%/baf/IDP3EQP.baf~
+        ~%MOD_FOLDER%/baf/IDP4EQP.baf~
+        ~%MOD_FOLDER%/baf/IDP5EQP.baf~
+        ~%MOD_FOLDER%/baf/IDP6EQP.baf~
+        ~%MOD_FOLDER%/baf/IDSETREP.baf~
+        ~%MOD_FOLDER%/baf/IDTKGLD.baf~
+        ~%MOD_FOLDER%/baf/IDPLRES3.baf~
+        ~%MOD_FOLDER%/baf/IDPLRES4.baf~
+        ~%MOD_FOLDER%/baf/IDPLRES5.baf~

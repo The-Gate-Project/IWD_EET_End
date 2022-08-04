@@ -1,0 +1,8 @@
+IF
+	GlobalLT("VELETA_RELESIN","GLOBAL",10)
+THEN
+	RESPONSE #100
+		CreateCreature("fcporis",[3779.3161],0)
+		CreateCreature("fcdead01",[3779.3233],4)
+		SetGlobal("VELETA_RELESIN","GLOBAL",10)
+END

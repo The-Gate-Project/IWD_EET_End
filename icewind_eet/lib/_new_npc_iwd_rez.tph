@@ -1,0 +1,825 @@
+
+
+
+
+/* создать IWD2 ARRAYS AND FILES */
+//BLOCK GENERATE NPC ARAY
+<<<<<<<<zIDDIALOG.2DA
+2DA V1.0
+NONE
+                  POST_DIALOG_FILE  JOIN_DIALOG_FILE  DREAM_SCRIPT_FILE
+%IDDIALOGU%
+>>>>>>>>
+
+<<<<<<<<zIDBANTER.2DA
+2DA      V1.0
+NONE
+         FILE
+%IDBANTERU%
+>>>>>>>>
+
+<<<<<<<<CRE_NPC_IWD1.2DA
+2DA V1.0
+NONE
+	OVERRIDE_SCRIPT	DIALOG	POST_DIALOG_FILE	JOIN_DIALOG_FILE	DREAM_SCRIPT_FILE	BANTER_FILE	ORIGINAL	OLD_SCRIPT
+%CRE_NPC_IWD1U%
+>>>>>>>>
+
+ACTION_DEFINE_ASSOCIATIVE_ARRAY ORIGINAL_NPC BEGIN 
+	~AERIE~     => ~~
+	~AJANTIS~   => ~~
+	~ALORA~     => ~~
+	~ANOMEN~    => ~~
+	~BAELOTH~   => ~~
+	~BRANWEN~   => ~~
+	~CERND~     => ~~
+	~CORAN~     => ~~
+	~DORN~      => ~~
+	~DYNAHEIR~  => ~~
+	~EDWIN~     => ~~
+	~ELDOTH~    => ~~
+	~FALDORN~   => ~~
+	~GARRICK~   => ~~
+	~HAERDALIS~ => ~~
+	~HEXXAT~    => ~~
+	~IDIOT01~   => ~~
+	~IMOEN2~    => ~~
+	~JAHEIRA~   => ~~
+	~JAN~       => ~~
+	~KAGAIN~    => ~~
+	~KELDORN~   => ~~
+	~KHALID~    => ~~
+	~KIVAN~     => ~~
+	~KORGAN~    => ~~
+	~MAZZY~     => ~~
+	~MINSC~     => ~~
+	~MONTARON~  => ~~
+	~NALIA~     => ~~
+	~NEERA~     => ~~
+	~OHHFAK~    => ~~
+	~QUAYLE~    => ~~
+	~RASAAD~    => ~~
+	~SAFANA~    => ~~
+	~SAREVOK~   => ~~
+	~SHARTEEL~  => ~~
+	~SKIE~      => ~~
+	~TIAX~      => ~~
+	~VALYGAR~   => ~~
+	~VICONIA~   => ~~
+	~WILSON~    => ~~
+	~XAN~       => ~~
+	~XZAR~      => ~~
+	~YESLICK~   => ~~
+	~YOSHIMO~   => ~~
+END
+
+ACTION_IF FILE_EXISTS_IN_GAME ~CAMPAIGN.2DA~ BEGIN
+	COPY_EXISTING ~CAMPAIGN.2DA~ ~override~
+		COUNT_2DA_ROWS 20 rws
+		FOR ( i = 0 ; i < rws ; ++i ) BEGIN
+			READ_2DA_ENTRY i 11 20 dial //11
+			PATCH_IF !(VARIABLE_IS_SET $pdialog_arr(~%dial%~)) AND (FILE_EXISTS_IN_GAME ~%dial%.2da~) BEGIN
+				DEFINE_ASSOCIATIVE_ARRAY pdialog_arr BEGIN ~%dial%~ => ~~ END
+			END
+			READ_2DA_ENTRY i 4 20 dial2//11
+			PATCH_IF !(VARIABLE_IS_SET $banters_arr(~%dial2%~)) AND (FILE_EXISTS_IN_GAME ~%dial2%.2da~) BEGIN
+				DEFINE_ASSOCIATIVE_ARRAY banters_arr BEGIN ~%dial2%~ => ~~ END
+			END
+		END
+		BUT_ONLY_IF_IT_CHANGES
+END
+
+OUTER_SET norg_npc = 0
+ACTION_PHP_EACH pdialog_arr AS dial => dummy BEGIN
+	COPY_EXISTING ~%dial%.2DA~ ~override~
+		COUNT_2DA_ROWS 4 num_rows
+		FOR ( i = 0 ; i < num_rows ; ++i ) BEGIN
+			READ_2DA_ENTRY i 0 4 dv
+			READ_2DA_ENTRY i 1 4 pdf
+			READ_2DA_ENTRY i 2 4 jdf
+			READ_2DA_ENTRY i 3 4 dsf
+			TO_UPPER ~dv~
+			TO_UPPER ~pdf~
+			TO_UPPER ~jdf~
+			TO_UPPER ~dsf~
+			//IWD1
+			PATCH_IF !(VARIABLE_IS_SET $NPC_ARRAY_Z(~%dv%~)) BEGIN
+				LPF CREATE_B_BCS_NAME STR_VAR namez = EVAL "%pdf%" prefix = "ID"  suffix = "P"  RET pdfz = result END
+				LPF CREATE_B_BCS_NAME STR_VAR namez = EVAL "%jdf%" prefix = "ID"  suffix = "J"  RET jdfz = result END
+				LPF CREATE_B_BCS_NAME STR_VAR namez = EVAL "%dsf%" prefix = "ID"  suffix = "D"  RET dsfz = result END
+				LPF CREATE_B_BCS_NAME STR_VAR namez = EVAL "%dv%"  prefix = "ID"  suffix = "OS" RET ovs  = result END
+				SET orig = 0
+				SET norg_npc = norg_npc + 1
+				PATCH_IF (VARIABLE_IS_SET $ORIGINAL_NPC(~%dv%~)) BEGIN SET orig = 1 SET norg_npc = norg_npc - 1 END
+				PATCH_IF ( orig = 0 ) BEGIN SPRINT ~jdfz~ ~%jdf%~ END
+				DEFINE_ASSOCIATIVE_ARRAY NPC_ARRAY_Z BEGIN ~%dv%~, ~%ovs%~, ~*~, ~%pdfz%~, ~%jdfz%~, ~%dsfz%~, ~NONE~, ~%orig%~  => ~~ END
+			END
+			//IWD2
+			PATCH_IF !(VARIABLE_IS_SET $NPC_ARRAY_Z_I2(~%dv%~)) BEGIN
+				LPF CREATE_B_BCS_NAME STR_VAR namez = EVAL "%pdf%" prefix = "IW"  suffix = "P"  RET pdfz = result END
+				LPF CREATE_B_BCS_NAME STR_VAR namez = EVAL "%jdf%" prefix = "IW"  suffix = "J"  RET jdfz = result END
+				LPF CREATE_B_BCS_NAME STR_VAR namez = EVAL "%dsf%" prefix = "IW"  suffix = "D"  RET dsfz = result END
+				LPF CREATE_B_BCS_NAME STR_VAR namez = EVAL "%dv%"  prefix = "IW"  suffix = "OS" RET ovs  = result END
+				SET orig = 0
+				SET norg_npc2 = norg_npc2 + 1
+				PATCH_IF (VARIABLE_IS_SET $ORIGINAL_NPC(~%dv%~)) BEGIN SET orig = 1 SET norg_npc2 = norg_npc2 - 1 END
+				PATCH_IF ( orig = 0 ) BEGIN SPRINT ~jdfz~ ~%jdf%~ END
+				DEFINE_ASSOCIATIVE_ARRAY NPC_ARRAY_Z_I2 BEGIN ~%dv%~, ~%ovs%~, ~*~, ~%pdfz%~, ~%jdfz%~, ~%dsfz%~, ~NONE~, ~%orig%~  => ~~ END
+			END
+		END
+		BUT_ONLY_IF_IT_CHANGES
+END
+
+ACTION_PHP_EACH banters_arr AS dial => dummy BEGIN
+	COPY_EXISTING ~%dial%.2DA~ ~override~
+		COUNT_2DA_ROWS 2 num_rows
+		FOR ( i = 0 ; i < num_rows ; ++i ) BEGIN
+			READ_2DA_ENTRY i 0 2 dv
+			READ_2DA_ENTRY i 1 2 bnf
+			TO_UPPER ~dv~
+			TO_UPPER ~bnf~
+			//IWD1
+			PATCH_IF (NOT VARIABLE_IS_SET $NPC_ARRAY_Z2(~%dv%~)) BEGIN
+				LPF CREATE_B_BCS_NAME STR_VAR namez = EVAL "%bnf%" prefix = "ID" RET bnfz = result END
+				DEFINE_ASSOCIATIVE_ARRAY NPC_ARRAY_Z2 BEGIN ~%dv%~, ~%bnfz%~ => ~~ END
+			END
+			//IWD2
+			PATCH_IF (NOT VARIABLE_IS_SET $NPC_ARRAY_Z2_I2(~%dv%~)) BEGIN
+				LPF CREATE_B_BCS_NAME STR_VAR namez = EVAL "%bnf%" prefix = "IW" RET bnfz = result END
+				DEFINE_ASSOCIATIVE_ARRAY NPC_ARRAY_Z2_I2 BEGIN ~%dv%~, ~%bnfz%~ => ~~ END
+			END
+		END
+		BUT_ONLY_IF_IT_CHANGES
+END
+
+ACTION_IF ( norg_npc > 0 ) OR ( norg_npc2 > 0 ) BEGIN
+	PRINT ~Finding override scripts...~
+	SILENT
+		COPY_EXISTING_REGEXP GLOB ~^.+\.cre$~ ~override~
+			READ_ASCII 0x280 scrpn (32) NULL
+			TO_UPPER scrpn
+			//IWD1
+			PATCH_IF (VARIABLE_IS_SET $NPC_ARRAY_Z(~%scrpn%~)) BEGIN
+				READ_ASCII 0x248 scrp (8) NULL
+				PATCH_IF (NOT VARIABLE_IS_SET $ZZZ_Q(~%scrpn%~)) BEGIN
+					DEFINE_ASSOCIATIVE_ARRAY ZZZ_Q BEGIN ~%scrpn%~, ~%scrp%~ => ~~ END
+				END
+			END
+			//IWD2
+			PATCH_IF (VARIABLE_IS_SET $NPC_ARRAY_Z_I2(~%scrpn%~)) BEGIN
+				READ_ASCII 0x248 scrp (8) NULL
+				PATCH_IF (NOT VARIABLE_IS_SET $ZZZ_Q_I2(~%scrpn%~)) BEGIN
+					DEFINE_ASSOCIATIVE_ARRAY ZZZ_Q_I2 BEGIN ~%scrpn%~, ~%scrp%~ => ~~ END
+				END
+			END
+			BUT_ONLY_IF_IT_CHANGES
+	VERBOSE
+END
+
+//IWD1
+ACTION_PHP_EACH NPC_ARRAY_Z AS d_var => scr BEGIN
+	LAF CREATE_B_BCS_NAME STR_VAR namez = EVAL "%d_var%" prefix = "IDB" RET bnt = result END
+	ACTION_PHP_EACH NPC_ARRAY_Z2 AS var_d => sor BEGIN
+		ACTION_IF (~%d_var%~ STRING_EQUAL_CASE ~%var_d%~) AND (~%d_var_6%~ STRING_COMPARE_CASE ~NONE~) BEGIN
+			OUTER_SPRINT ~bnt~ ~%var_d_1%~
+		END
+	END
+	OUTER_SPRINT ~old_scr~ ~~
+	ACTION_PHP_EACH ZZZ_Q AS scr_d => sora BEGIN
+		ACTION_IF (~%d_var%~ STRING_EQUAL_CASE ~%scr_d%~) BEGIN
+			OUTER_SPRINT ~old_scr~ ~%scr_d_1%~
+		END
+	END
+	ACTION_DEFINE_ASSOCIATIVE_ARRAY NEW_NPC_ARRAY BEGIN
+		~%d_var%~, ~%d_var_1%~, ~%d_var_2%~, ~%d_var_3%~, ~%d_var_4%~, ~%d_var_5%~, ~%bnt%~, ~%d_var_7%~, ~%old_scr%~  => ~~
+	END
+END
+//IWD2
+ACTION_PHP_EACH NPC_ARRAY_Z_I2 AS d_var => scr BEGIN
+	LAF CREATE_B_BCS_NAME STR_VAR namez = EVAL "%d_var%" prefix = "IWB" RET bnt = result END
+	ACTION_PHP_EACH NPC_ARRAY_Z2_I2 AS var_d => sor BEGIN
+		ACTION_IF (~%d_var%~ STRING_EQUAL_CASE ~%var_d%~) AND (~%d_var_6%~ STRING_COMPARE_CASE ~NONE~) BEGIN
+			OUTER_SPRINT ~bnt~ ~%var_d_1%~
+		END
+	END
+	OUTER_SPRINT ~old_scr~ ~~
+	ACTION_PHP_EACH ZZZ_Q_I2 AS scr_d => sora BEGIN
+		ACTION_IF (~%d_var%~ STRING_EQUAL_CASE ~%scr_d%~) BEGIN
+			OUTER_SPRINT ~old_scr~ ~%scr_d_1%~
+		END
+	END
+	ACTION_DEFINE_ASSOCIATIVE_ARRAY NEW_NPC_ARRAY_I2 BEGIN
+		~%d_var%~, ~%d_var_1%~, ~%d_var_2%~, ~%d_var_3%~, ~%d_var_4%~, ~%d_var_5%~, ~%bnt%~, ~%d_var_7%~, ~%old_scr%~  => ~~
+	END
+END
+
+OUTER_SPRINT ~adds~ ~TTXAN             TTXANP            TTXANJ%LNL%TTBRAN            TTBRANP           TTBRANJ%LNL%TTIMOEN           TTIMOENP          TTIMOENJ%LNL%TTJAHEIR          TTJAHEIP          TTJAHEIJ%LNL%TTMINSC           TTMINSCP          TTMINSCJ~
+//IWD1
+OUTER_SPRINT ~IDDIALOGU~ ~~
+OUTER_SPRINT ~IDBANTERU~ ~~
+OUTER_SPRINT ~CRE_NPC_IWD1U~ ~~
+ACTION_PHP_EACH NEW_NPC_ARRAY AS d_var => scr BEGIN
+	OUTER_SPRINT ~IDDIALOGU~ ~%IDDIALOGU%%d_var%%TAB%%d_var_3%%TAB%%d_var_4%%TAB%%d_var_5%%LNL%~
+	OUTER_SPRINT ~IDBANTERU~ ~%IDBANTERU%%d_var%%TAB%%d_var_6%%LNL%~
+	OUTER_SPRINT ~CRE_NPC_IWD1U~ ~%CRE_NPC_IWD1U%%d_var%%TAB%%d_var_1%%TAB%%d_var_2%%TAB%%d_var_3%%TAB%%d_var_4%%TAB%%d_var_5%%TAB%%d_var_6%%TAB%%d_var_7%%TAB%%d_var_8%%LNL%~
+END
+OUTER_SPRINT ~IDDIALOGU~ ~%IDDIALOGU%%adds%%LNL%~
+COPY ~zIDDIALOG.2DA~    ~override/IDDIALOG.2DA~ EVALUATE_BUFFER
+COPY ~zIDBANTER.2DA~    ~override/IDBANTER.2DA~ EVALUATE_BUFFER
+COPY ~CRE_NPC_IWD1.2DA~ ~override/NPC_IWD1.2DA~ EVALUATE_BUFFER
+ACTION_CLEAR_ARRAY NPC_ARRAY_Z
+ACTION_CLEAR_ARRAY NPC_ARRAY_Z2
+ACTION_CLEAR_ARRAY ZZZ_Q
+//IWD2
+OUTER_SPRINT ~IDDIALOGU~ ~~
+OUTER_SPRINT ~IDBANTERU~ ~~
+OUTER_SPRINT ~CRE_NPC_IWD1U~ ~~
+ACTION_PHP_EACH NEW_NPC_ARRAY_I2 AS d_var => scr BEGIN
+	OUTER_SPRINT ~IDDIALOGU~ ~%IDDIALOGU%%d_var%%TAB%%d_var_3%%TAB%%d_var_4%%TAB%%d_var_5%%LNL%~
+	OUTER_SPRINT ~IDBANTERU~ ~%IDBANTERU%%d_var%%TAB%%d_var_6%%LNL%~
+	OUTER_SPRINT ~CRE_NPC_IWD1U~ ~%CRE_NPC_IWD1U%%d_var%%TAB%%d_var_1%%TAB%%d_var_2%%TAB%%d_var_3%%TAB%%d_var_4%%TAB%%d_var_5%%TAB%%d_var_6%%TAB%%d_var_7%%TAB%%d_var_8%%LNL%~
+END
+OUTER_SPRINT ~IDDIALOGU~ ~%IDDIALOGU%%adds%%LNL%~
+COPY ~zIDDIALOG.2DA~    ~override/IWDIALOG.2DA~ EVALUATE_BUFFER
+COPY ~zIDBANTER.2DA~    ~override/IWBANTER.2DA~ EVALUATE_BUFFER
+COPY ~CRE_NPC_IWD1.2DA~ ~override/NPC_IWD2.2DA~ EVALUATE_BUFFER
+ACTION_CLEAR_ARRAY NPC_ARRAY_Z_I2
+ACTION_CLEAR_ARRAY NPC_ARRAY_Z2_I2
+ACTION_CLEAR_ARRAY ZZZ_Q_I2
+//BLOCKEND
+
+//BLOCK NEW_NPC IWD1
+EXTEND_TOP ~ID0000.bcs~ ~%iwd1npc%/ID0000_top.baf~
+//d_var_1           d_var_2 d_var_3             d_var_4             d_var_5             d_var_6     d_var_7     d_var_8
+//OVERRIDE_SCRIPT	DIALOG	POST_DIALOG_FILE	JOIN_DIALOG_FILE	DREAM_SCRIPT_FILE	BANTER_FILE	ORIGINAL	OLD_SCRIPT
+COPY ~%iwd1npc%/FCMORDAK.cre~ ~override~
+	SAY 0x008 @1
+	SAY 0x00c @1
+	/* sounds */
+	WRITE_ASCII 0x248 ~FCMORDAK~ (8)  //override
+	WRITE_ASCII 0x260 ~WTRUNSGT~ (8)  //general
+	WRITE_ASCII 0x268 ~DPLAYER~  (8)  //default
+	WRITE_ASCII 0x280 ~FCMORDAK~ (32) //script name
+	WRITE_ASCII 0x2cc ~FCMORDAK~ (8)  //dialogue
+	/* items & effects */
+//                               POST_DIALOG_FILE  JOIN_DIALOG_FILE  DREAM_SCRIPT_FILE
+APPEND ~IDDIALOG.2DA~ ~FCMORDAK  FCMORDAP          FCMORDAJ          FCMORDAD~
+//                               FILE
+APPEND ~IDBANTER.2DA~ ~FCMORDAK  BFCMORDA~
+//                               OVERRIDE_SCRIPT DIALOG   POST_DIALOG_FILE JOIN_DIALOG_FILE DREAM_SCRIPT_FILE BANTER_FILE ORIGINAL OLD_SCRIPT
+APPEND ~NPC_IWD1.2DA~ ~FCMORDAK  FCMORDAK        FCMORDAK FCMORDAP         FCMORDAJ         FCMORDAD          BFCMORDA    2        *~
+ACTION_DEFINE_ASSOCIATIVE_ARRAY NEW_NPC_ARRAY BEGIN ~FCMORDAK~, ~FCMORDAK~, ~FCMORDAK~, ~FCMORDAP~, ~FCMORDAJ~, ~FCMORDAD~, ~BFCMORDA~, ~2~, ~*~ => ~~ END
+/* не забыть добавлять в IDDIALOG, IDBANTER и NPC_IWD1. У них вместо * будет имя файла диалога в NPC_IWD1, а ORIGINAL будет = 2 */
+/* в начале скриптов у всех - Face(их направление) */
+//BLOCKEND
+
+//BLOCK NEW_NPC IWD2
+
+/* не забыть добавлять в IWDIALOG, IWBANTER и NPC_IWD2. У них вместо * будет имя файла диалога в NPC_IWD2, а ORIGINAL будет = 2 */
+/* в начале скриптов у всех - Face(их направление) */
+//BLOCKEND
+
+COPY ~override/IDDIALOG.2DA~ ~override~
+     ~override/IDBANTER.2DA~ ~override~
+     ~override/NPC_IWD1.2DA~ ~override~
+     ~override/IWDIALOG.2DA~ ~override~
+     ~override/IWBANTER.2DA~ ~override~
+     ~override/NPC_IWD2.2DA~ ~override~
+	PRETTY_PRINT_2DA
+
+CLEAR_IDS_MAP
+
+//BLOCK SCRIPTS & DIALOGUES OF ORIGINAL NPC
+<<<<<<<< def_dial.d
+BEGIN %dia_file%
+>>>>>>>>
+//IWD1
+ACTION_PHP_EACH NEW_NPC_ARRAY AS d_var => scr BEGIN
+	ACTION_IF (NOT FILE_EXISTS_IN_GAME ~%d_var_2%.dlg~) AND (~%d_var_2%~ STRING_COMPARE_CASE ~*~) BEGIN
+		SILENT
+			OUTER_SPRINT ~dia_file~ ~%d_var_2%~
+			COMPILE ~def_dial.d~ EVALUATE_BUFFER
+		VERBOSE
+	END
+	ACTION_IF NOT FILE_EXISTS_IN_GAME ~%d_var_3%.dlg~ BEGIN
+		SILENT
+			OUTER_SPRINT ~dia_file~ ~%d_var_3%~
+			COMPILE ~def_dial.d~ EVALUATE_BUFFER
+		VERBOSE
+	END
+	ACTION_IF NOT FILE_EXISTS_IN_GAME ~%d_var_4%.dlg~ BEGIN
+		SILENT
+			OUTER_SPRINT ~dia_file~ ~%d_var_4%~
+			COMPILE ~def_dial.d~ EVALUATE_BUFFER
+		VERBOSE
+	END
+	ACTION_IF NOT FILE_EXISTS_IN_GAME ~%d_var_6%.dlg~ BEGIN
+		SILENT
+			OUTER_SPRINT ~dia_file~ ~%d_var_6%~
+			COMPILE ~def_dial.d~ EVALUATE_BUFFER
+		VERBOSE
+	END
+	ACTION_IF (~%d_var_2%~ STRING_COMPARE_CASE ~*~) BEGIN OUTER_SPRINT EVAL ~D%d_var%~  ~%d_var_2%~ END
+	ACTION_IF (~%d_var_3%~ STRING_COMPARE_CASE ~*~) BEGIN OUTER_SPRINT EVAL ~P%d_var%~  ~%d_var_3%~ END
+	ACTION_IF (~%d_var_4%~ STRING_COMPARE_CASE ~*~) BEGIN OUTER_SPRINT EVAL ~J%d_var%~  ~%d_var_4%~ END
+	ACTION_IF (~%d_var_6%~ STRING_COMPARE_CASE ~*~) BEGIN OUTER_SPRINT EVAL ~B%d_var%~  ~%d_var_6%~ END
+END
+//IWD2
+ACTION_PHP_EACH NEW_NPC_ARRAY_I2 AS d_var => scr BEGIN
+	ACTION_IF (NOT FILE_EXISTS_IN_GAME ~%d_var_2%.dlg~) AND (~%d_var_2%~ STRING_COMPARE_CASE ~*~) BEGIN
+		SILENT
+			OUTER_SPRINT ~dia_file~ ~%d_var_2%~
+			COMPILE ~def_dial.d~ EVALUATE_BUFFER
+		VERBOSE
+	END
+	ACTION_IF NOT FILE_EXISTS_IN_GAME ~%d_var_3%.dlg~ BEGIN
+		SILENT
+			OUTER_SPRINT ~dia_file~ ~%d_var_3%~
+			COMPILE ~def_dial.d~ EVALUATE_BUFFER
+		VERBOSE
+	END
+	ACTION_IF NOT FILE_EXISTS_IN_GAME ~%d_var_4%.dlg~ BEGIN
+		SILENT
+			OUTER_SPRINT ~dia_file~ ~%d_var_4%~
+			COMPILE ~def_dial.d~ EVALUATE_BUFFER
+		VERBOSE
+	END
+	ACTION_IF NOT FILE_EXISTS_IN_GAME ~%d_var_6%.dlg~ BEGIN
+		SILENT
+			OUTER_SPRINT ~dia_file~ ~%d_var_6%~
+			COMPILE ~def_dial.d~ EVALUATE_BUFFER
+		VERBOSE
+	END
+	ACTION_IF (~%d_var_2%~ STRING_COMPARE_CASE ~*~) BEGIN OUTER_SPRINT EVAL ~D%d_var%~  ~%d_var_2%~ END
+	ACTION_IF (~%d_var_3%~ STRING_COMPARE_CASE ~*~) BEGIN OUTER_SPRINT EVAL ~P%d_var%~  ~%d_var_3%~ END
+	ACTION_IF (~%d_var_4%~ STRING_COMPARE_CASE ~*~) BEGIN OUTER_SPRINT EVAL ~J%d_var%~  ~%d_var_4%~ END
+	ACTION_IF (~%d_var_6%~ STRING_COMPARE_CASE ~*~) BEGIN OUTER_SPRINT EVAL ~B%d_var%~  ~%d_var_6%~ END
+END
+
+
+<<<<<<<< id_def.baf
+%LNL%%LNL%%LNL%%LNL%
+>>>>>>>>
+//IWD1
+ACTION_PHP_EACH NEW_NPC_ARRAY AS d_var => scr BEGIN //for CrossDialog IWD1
+	OUTER_SPRINT EVAL ~DIW%d_var%~ ~%d_var_2%~
+	OUTER_SPRINT EVAL ~PIW%d_var%~ ~%d_var_3%~
+	OUTER_SPRINT EVAL ~JIW%d_var%~ ~%d_var_4%~
+	OUTER_SPRINT EVAL ~BIW%d_var%~ ~%d_var_6%~
+END
+ACTION_PHP_EACH NEW_NPC_ARRAY AS d_var => scr BEGIN
+	ACTION_IF (~%d_var_7%~ = 0 ) BEGIN
+		OUTER_SPRINT ~PDIALOG_IWD1~ ~%d_var_3%~
+		COMPILE ~%f_dialog%/iwd1_pdialog.d~ EVALUATE_BUFFER
+		//OVERRIDE_SCRIPT
+		COPY ~id_def.baf~ ~%temp_baf%/%d_var_1%.baf~ EVALUATE_BUFFER
+		ACTION_IF ( ins_type = 1 ) BEGIN
+			SILENT
+				COPY ~%temp_baf%/%d_var_1%.baf~ ~%temp_baf%~ APPEND_FILE   ~%add_baf%/iwd1_rem_invul.baf~
+				COPY ~%temp_baf%/%d_var_1%.baf~ ~%temp_baf%~ INSERT_FILE 0 ~%add_baf%/iwd1_add_invul.baf~
+			VERBOSE
+		END
+		SILENT
+			COPY ~%temp_baf%/%d_var_1%.baf~ ~%temp_baf%~ APPEND_FILE   ~%add_baf%/iwd1_ohsmode.baf~
+			COPY ~%temp_baf%/%d_var_1%.baf~ ~%temp_baf%~ INSERT_FILE 0 ~%add_baf%/iwd1_npc_reload.baf~
+		VERBOSE
+	END
+	ACTION_IF (~%d_var_7%~ = 1 ) BEGIN
+		OUTER_SPRINT ~zPDIAL~ ~P%d_var%~
+		ACTION_IF FILE_EXISTS ~%npc_dial_iwd1%/%zPDIAL%.d~ BEGIN
+			COMPILE ~%npc_dial_iwd1%/%zPDIAL%.d~ EVALUATE_BUFFER
+		END ELSE BEGIN
+			OUTER_SPRINT ~PDIALOG_IWD1~ ~%d_var_3%~
+			COMPILE ~%f_dialog%/iwd1_pdialog.d~ EVALUATE_BUFFER
+		END
+		OUTER_SPRINT ~zPDIAL~ ~J%d_var%~
+		ACTION_IF FILE_EXISTS ~%npc_dial_iwd1%/%zPDIAL%.d~ BEGIN
+			COMPILE ~%npc_dial_iwd1%/%zPDIAL%.d~ EVALUATE_BUFFER
+		END
+		OUTER_SPRINT ~zPDIAL~ ~B%d_var%~
+		ACTION_IF FILE_EXISTS ~%npc_dial_iwd1%/%zPDIAL%.d~ BEGIN
+			COMPILE ~%npc_dial_iwd1%/%zPDIAL%.d~ EVALUATE_BUFFER
+		END
+		// OVERRIDE_SCRIPT
+		ACTION_IF FILE_EXISTS ~%npc_baf_iwd1%/OS%d_var%.baf~ BEGIN
+			COPY ~%npc_baf_iwd1%/OS%d_var%.baf~ ~%temp_baf%/%d_var_1%.baf~ EVALUATE_BUFFER
+		END ELSE BEGIN
+			COPY ~id_def.baf~ ~%temp_baf%/%d_var_1%.baf~ EVALUATE_BUFFER
+		END
+		ACTION_IF ( ins_type = 1 ) BEGIN
+			SILENT
+				COPY ~%temp_baf%/%d_var_1%.baf~ ~%temp_baf%~ APPEND_FILE   ~%add_baf%/iwd1_rem_invul.baf~
+				COPY ~%temp_baf%/%d_var_1%.baf~ ~%temp_baf%~ INSERT_FILE 0 ~%add_baf%/iwd1_add_invul.baf~
+			VERBOSE
+		END
+		SILENT
+			COPY ~%temp_baf%/%d_var_1%.baf~ ~%temp_baf%~ APPEND_FILE   ~%add_baf%/iwd1_ohsmode.baf~
+			COPY ~%temp_baf%/%d_var_1%.baf~ ~%temp_baf%~ INSERT_FILE 0 ~%add_baf%/iwd1_npc_reload.baf~
+		VERBOSE
+		// DREAM_SCRIPT
+		ACTION_IF FILE_EXISTS ~%npc_baf_iwd1%/DS%d_var%.baf~ BEGIN
+			COPY ~%npc_baf_iwd1%/DS%d_var%.baf~ ~%temp_baf%/%d_var_5%.baf~ EVALUATE_BUFFER
+		END
+	END
+	ACTION_IF (~%d_var_7%~ = 2 ) BEGIN
+		// IWD1_NPC DIALOGUES
+		OUTER_SPRINT ~zPDIAL~ ~P%d_var%~
+		ACTION_IF FILE_EXISTS ~%npc_dial_iwd1%/%zPDIAL%.d~ BEGIN
+			COMPILE ~%npc_dial_iwd1%/%zPDIAL%.d~ EVALUATE_BUFFER
+		END ELSE BEGIN
+			//OUTER_SPRINT ~PDIALOG_IWD1~ ~%d_var_3%~
+			//COMPILE ~%f_dialog%/iwd1_pdialog.d~ EVALUATE_BUFFER
+			/* type 2 PDialog with AreaCheck */
+		END
+		OUTER_SPRINT ~zPDIAL~ ~D%d_var%~
+		ACTION_IF FILE_EXISTS ~%npc_dial_iwd1%/%zPDIAL%.d~ BEGIN
+			COMPILE ~%npc_dial_iwd1%/%zPDIAL%.d~ EVALUATE_BUFFER
+		END
+		OUTER_SPRINT ~zPDIAL~ ~J%d_var%~
+		ACTION_IF FILE_EXISTS ~%npc_dial_iwd1%/%zPDIAL%.d~ BEGIN
+			COMPILE ~%npc_dial_iwd1%/%zPDIAL%.d~ EVALUATE_BUFFER
+		END
+		OUTER_SPRINT ~zPDIAL~ ~B%d_var%~
+		ACTION_IF FILE_EXISTS ~%npc_dial_iwd1%/%zPDIAL%.d~ BEGIN
+			COMPILE ~%npc_dial_iwd1%/%zPDIAL%.d~ EVALUATE_BUFFER
+		END
+		// OVERRIDE_SCRIPT
+		ACTION_IF FILE_EXISTS ~%npc_baf_iwd1%/OS%d_var%.baf~ BEGIN
+			COPY ~%npc_baf_iwd1%/OS%d_var%.baf~ ~%temp_baf%/%d_var_1%.baf~ EVALUATE_BUFFER
+		END ELSE BEGIN
+			COPY ~id_def.baf~ ~%temp_baf%/%d_var_1%.baf~ EVALUATE_BUFFER
+		END
+		ACTION_IF ( ins_type = 1 ) BEGIN
+			SILENT
+				COPY ~%temp_baf%/%d_var_1%.baf~ ~%temp_baf%~ APPEND_FILE   ~%add_baf%/iwd1_rem_invul.baf~
+				COPY ~%temp_baf%/%d_var_1%.baf~ ~%temp_baf%~ INSERT_FILE 0 ~%add_baf%/iwd1_add_invul.baf~
+			VERBOSE
+		END
+		SILENT
+			COPY ~%temp_baf%/%d_var_1%.baf~ ~%temp_baf%~ APPEND_FILE   ~%add_baf%/iwd1_add_xp.baf~
+			COPY ~%temp_baf%/%d_var_1%.baf~ ~%temp_baf%~ APPEND_FILE   ~%add_baf%/iwd1_ohsmode.baf~
+		VERBOSE
+		// DREAM_SCRIPT
+		ACTION_IF FILE_EXISTS ~%npc_baf_iwd1%/DS%d_var%.baf~ BEGIN
+			COPY ~%npc_baf_iwd1%/DS%d_var%.baf~ ~%temp_baf%/%d_var_5%.baf~ EVALUATE_BUFFER
+		END
+	END
+END
+//IWD2
+ACTION_PHP_EACH NEW_NPC_ARRAY_I2 AS d_var => scr BEGIN //for CrossDialog IWD2
+	OUTER_SPRINT EVAL ~DID%d_var%~ ~%d_var_2%~
+	OUTER_SPRINT EVAL ~PID%d_var%~ ~%d_var_3%~
+	OUTER_SPRINT EVAL ~JID%d_var%~ ~%d_var_4%~
+	OUTER_SPRINT EVAL ~BID%d_var%~ ~%d_var_6%~
+END
+ACTION_PHP_EACH NEW_NPC_ARRAY_I2 AS d_var => scr BEGIN
+	ACTION_IF (~%d_var_7%~ = 0 ) BEGIN
+		OUTER_SPRINT ~PDIALOG_IWD2~ ~%d_var_3%~
+		COMPILE ~%f_dialog%/iwd2_pdialog.d~ EVALUATE_BUFFER
+		//OVERRIDE_SCRIPT
+		COPY ~id_def.baf~ ~%temp_baf%/%d_var_1%.baf~ EVALUATE_BUFFER
+		ACTION_IF ( ins_type = 1 ) BEGIN
+			SILENT
+				COPY ~%temp_baf%/%d_var_1%.baf~ ~%temp_baf%~ APPEND_FILE   ~%add_baf%/iwd2_rem_invul.baf~
+				COPY ~%temp_baf%/%d_var_1%.baf~ ~%temp_baf%~ INSERT_FILE 0 ~%add_baf%/iwd2_add_invul.baf~
+			VERBOSE
+		END
+		SILENT
+			COPY ~%temp_baf%/%d_var_1%.baf~ ~%temp_baf%~ APPEND_FILE   ~%add_baf%/iwd1_ohsmode.baf~
+			COPY ~%temp_baf%/%d_var_1%.baf~ ~%temp_baf%~ INSERT_FILE 0 ~%add_baf%/iwd2_npc_reload.baf~
+		VERBOSE
+	END
+	ACTION_IF (~%d_var_7%~ = 1 ) BEGIN
+		OUTER_SPRINT ~zPDIAL~ ~P%d_var%~
+		ACTION_IF FILE_EXISTS ~%npc_dial_iwd2%/%zPDIAL%.d~ BEGIN
+			COMPILE ~%npc_dial_iwd2%/%zPDIAL%.d~ EVALUATE_BUFFER
+		END ELSE BEGIN
+			OUTER_SPRINT ~PDIALOG_IWD2~ ~%d_var_3%~
+			COMPILE ~%f_dialog%/iwd2_pdialog.d~ EVALUATE_BUFFER
+		END
+		OUTER_SPRINT ~zPDIAL~ ~J%d_var%~
+		ACTION_IF FILE_EXISTS ~%npc_dial_iwd2%/%zPDIAL%.d~ BEGIN
+			COMPILE ~%npc_dial_iwd2%/%zPDIAL%.d~ EVALUATE_BUFFER
+		END
+		OUTER_SPRINT ~zPDIAL~ ~B%d_var%~
+		ACTION_IF FILE_EXISTS ~%npc_dial_iwd2%/%zPDIAL%.d~ BEGIN
+			COMPILE ~%npc_dial_iwd2%/%zPDIAL%.d~ EVALUATE_BUFFER
+		END
+		// OVERRIDE_SCRIPT
+		ACTION_IF FILE_EXISTS ~%npc_baf_iwd2%/OS%d_var%.baf~ BEGIN
+			COPY ~%npc_baf_iwd2%/OS%d_var%.baf~ ~%temp_baf%/%d_var_1%.baf~ EVALUATE_BUFFER
+		END ELSE BEGIN
+			COPY ~id_def.baf~ ~%temp_baf%/%d_var_1%.baf~ EVALUATE_BUFFER
+		END
+		ACTION_IF ( ins_type = 1 ) BEGIN
+			SILENT
+				COPY ~%temp_baf%/%d_var_1%.baf~ ~%temp_baf%~ APPEND_FILE   ~%add_baf%/iwd2_rem_invul.baf~
+				COPY ~%temp_baf%/%d_var_1%.baf~ ~%temp_baf%~ INSERT_FILE 0 ~%add_baf%/iwd2_add_invul.baf~
+			VERBOSE
+		END
+		SILENT
+			COPY ~%temp_baf%/%d_var_1%.baf~ ~%temp_baf%~ APPEND_FILE   ~%add_baf%/iwd1_ohsmode.baf~
+			COPY ~%temp_baf%/%d_var_1%.baf~ ~%temp_baf%~ INSERT_FILE 0 ~%add_baf%/iwd2_npc_reload.baf~
+		VERBOSE
+		// DREAM_SCRIPT
+		ACTION_IF FILE_EXISTS ~%npc_baf_iwd2%/DS%d_var%.baf~ BEGIN
+			COPY ~%npc_baf_iwd2%/DS%d_var%.baf~ ~%temp_baf%/%d_var_5%.baf~ EVALUATE_BUFFER
+		END
+	END
+	ACTION_IF (~%d_var_7%~ = 2 ) BEGIN
+		// IWD2_NPC DIALOGUES
+		OUTER_SPRINT ~zPDIAL~ ~P%d_var%~
+		ACTION_IF FILE_EXISTS ~%npc_dial_iwd2%/%zPDIAL%.d~ BEGIN
+			COMPILE ~%npc_dial_iwd2%/%zPDIAL%.d~ EVALUATE_BUFFER
+		END ELSE BEGIN
+			//OUTER_SPRINT ~PDIALOG_IWD2~ ~%d_var_3%~
+			//COMPILE ~%f_dialog%/iwd2_pdialog.d~ EVALUATE_BUFFER
+			/* type 2 PDialog with AreaCheck */
+		END
+		OUTER_SPRINT ~zPDIAL~ ~D%d_var%~
+		ACTION_IF FILE_EXISTS ~%npc_dial_iwd2%/%zPDIAL%.d~ BEGIN
+			COMPILE ~%npc_dial_iwd2%/%zPDIAL%.d~ EVALUATE_BUFFER
+		END
+		OUTER_SPRINT ~zPDIAL~ ~J%d_var%~
+		ACTION_IF FILE_EXISTS ~%npc_dial_iwd2%/%zPDIAL%.d~ BEGIN
+			COMPILE ~%npc_dial_iwd2%/%zPDIAL%.d~ EVALUATE_BUFFER
+		END
+		OUTER_SPRINT ~zPDIAL~ ~B%d_var%~
+		ACTION_IF FILE_EXISTS ~%npc_dial_iwd2%/%zPDIAL%.d~ BEGIN
+			COMPILE ~%npc_dial_iwd2%/%zPDIAL%.d~ EVALUATE_BUFFER
+		END
+		// OVERRIDE_SCRIPT
+		ACTION_IF FILE_EXISTS ~%npc_baf_iwd2%/OS%d_var%.baf~ BEGIN
+			COPY ~%npc_baf_iwd2%/OS%d_var%.baf~ ~%temp_baf%/%d_var_1%.baf~ EVALUATE_BUFFER
+		END ELSE BEGIN
+			COPY ~id_def.baf~ ~%temp_baf%/%d_var_1%.baf~ EVALUATE_BUFFER
+		END
+		ACTION_IF ( ins_type = 1 ) BEGIN
+			SILENT
+				COPY ~%temp_baf%/%d_var_1%.baf~ ~%temp_baf%~ APPEND_FILE   ~%add_baf%/iwd2_rem_invul.baf~
+				COPY ~%temp_baf%/%d_var_1%.baf~ ~%temp_baf%~ INSERT_FILE 0 ~%add_baf%/iwd2_add_invul.baf~
+			VERBOSE
+		END
+		SILENT
+			COPY ~%temp_baf%/%d_var_1%.baf~ ~%temp_baf%~ APPEND_FILE   ~%add_baf%/iwd2_add_xp.baf~
+			COPY ~%temp_baf%/%d_var_1%.baf~ ~%temp_baf%~ APPEND_FILE   ~%add_baf%/iwd1_ohsmode.baf~
+		VERBOSE
+		// DREAM_SCRIPT
+		ACTION_IF FILE_EXISTS ~%npc_baf_iwd2%/DS%d_var%.baf~ BEGIN
+			COPY ~%npc_baf_iwd2%/DS%d_var%.baf~ ~%temp_baf%/%d_var_5%.baf~ EVALUATE_BUFFER
+		END
+	END
+END
+
+//BLOCKEND
+
+//BLOCK GENERATE IDPSCRDL & OTHER
+<<<<<<<<IDPSCRDL.baf
+IF
+	Global("PARTY_IN_ICEWIND_DALE","GLOBAL",0)
+	GlobalLT("PLAYER_EQUIPMENT","MYAREA",3)
+	NumInParty(1)
+THEN
+	RESPONSE #100
+		SetGlobal("PLAYER_EQUIPMENT","MYAREA",3)
+		SetAreaScript("",OVERRIDE)
+END
+
+IF
+	Global("PARTY_IN_ICEWIND_DALE","GLOBAL",0)
+	GlobalLT("PLAYER_EQUIPMENT","MYAREA",3)
+	Global("TP_NUM_IN_PARTY_IWD","GLOBAL",1)
+	NumInParty(2)
+THEN
+	RESPONSE #100
+		SetGlobal("PLAYER_EQUIPMENT","MYAREA",3)
+		SetAreaScript("",OVERRIDE)
+END
+
+IF
+	Global("PARTY_IN_ICEWIND_DALE","GLOBAL",0)
+	GlobalLT("PLAYER_EQUIPMENT","MYAREA",3)
+	Global("TP_NUM_IN_PARTY_IWD","GLOBAL",2)
+	NumInParty(3)
+THEN
+	RESPONSE #100
+		SetGlobal("PLAYER_EQUIPMENT","MYAREA",3)
+		SetAreaScript("",OVERRIDE)
+END
+
+IF
+	Global("PARTY_IN_ICEWIND_DALE","GLOBAL",0)
+	GlobalLT("PLAYER_EQUIPMENT","MYAREA",3)
+	Global("TP_NUM_IN_PARTY_IWD","GLOBAL",3)
+	NumInParty(4)
+THEN
+	RESPONSE #100
+		SetGlobal("PLAYER_EQUIPMENT","MYAREA",3)
+		SetAreaScript("",OVERRIDE)
+END
+
+IF
+	Global("PARTY_IN_ICEWIND_DALE","GLOBAL",0)
+	GlobalLT("PLAYER_EQUIPMENT","MYAREA",3)
+	Global("TP_NUM_IN_PARTY_IWD","GLOBAL",4)
+	NumInParty(5)
+THEN
+	RESPONSE #100
+		SetGlobal("PLAYER_EQUIPMENT","MYAREA",3)
+		SetAreaScript("",OVERRIDE)
+END
+
+IF
+	Global("PARTY_IN_ICEWIND_DALE","GLOBAL",0)
+	GlobalLT("PLAYER_EQUIPMENT","MYAREA",3)
+	Global("TP_NUM_IN_PARTY_IWD","GLOBAL",5)
+	NumInParty(6)
+THEN
+	RESPONSE #100
+		SetGlobal("PLAYER_EQUIPMENT","MYAREA",3)
+		SetAreaScript("",OVERRIDE)
+END
+
+XXXXxxxxXXXX
+>>>>>>>>
+<<<<<<<<IDPLRES1.baf
+XXXXxxxxXXXX
+
+IF
+	Global("TP_PLAYERS_RESTORE","MYAREA",1)
+THEN
+	RESPONSE #100
+		SetGlobal("TP_PLAYERS_RESTORE","MYAREA",2)
+		SetAreaScript("IDPLRES2",OVERRIDE)
+END
+>>>>>>>>
+<<<<<<<<IDPLRES2.baf
+IF
+	Global("TP_PLAYERS_RESTORE","MYAREA",2)
+	Global("TP_NUM_IN_PARTY_IWD","GLOBAL",0)
+THEN
+	RESPONSE #100
+		SetGlobal("TP_PLAYERS_RESTORE","MYAREA",3)
+		SetGlobal("IMPORT_GOLD","MYAREA",0)
+		SetAreaScript("IDPLRES3",OVERRIDE)
+END
+
+XXXXxxxxXXXX
+>>>>>>>>
+COPY ~IDPSCRDL.baf~ ~%temp_dir%/IDPSCRDL.baf~
+     ~IDPLRES1.baf~ ~%temp_dir%/IDPLRES1.baf~
+     ~IDPLRES2.baf~ ~%temp_dir%/IDPLRES2.baf~
+
+ACTION_PHP_EACH NEW_NPC_ARRAY_I2 AS d_var => scr BEGIN
+	ACTION_IF !(VARIABLE_IS_SET $NEW_NPC_ARRAY(~%d_var%~)) BEGIN
+		ACTION_DEFINE_ASSOCIATIVE_ARRAY NEW_NPC_ARRAY BEGIN
+			~%d_var%~, ~%d_var_1%~, ~%d_var_2%~, ~%d_var_3%~, ~%d_var_4%~, ~%d_var_5%~, ~%d_var_6%~, ~%d_var_7%~, ~%d_var_8%~  => ~~
+		END
+	END
+END
+
+ACTION_PHP_EACH NEW_NPC_ARRAY AS d_var => scr BEGIN
+	ACTION_IF !( ~%d_var_7%~ = 2 ) BEGIN
+		ACTION_IF ( ~%d_var_7%~ = 0 ) BEGIN
+			OUTER_SPRINT ~CAIS~ ~ChangeAIScript("%d_var_8%",OVERRIDE)~
+			OUTER_SPRINT ~SDIA~ ~~
+		END ELSE BEGIN
+			OUTER_SPRINT ~CAIS~ ~ChangeAIScript("",OVERRIDE)~
+			OUTER_SPRINT ~SDIA~ ~SetDialog("%d_var_4%")~
+		END
+		OUTER_SPRINT ~script_block~ ~%LNL%IF%LNL%InParty("%d_var%")%LNL%Global("%d_var%_ADDED","MYAREA",0)%LNL%THEN%LNL%RESPONSE #100%LNL%SetGlobal("%d_var%_ADDED","MYAREA",1)%LNL%ChangeAIScript("%d_var_1%",OVERRIDE)%LNL%%SDIA%%LNL%IncrementGlobal("TP_NUM_IN_PARTY_IWD","GLOBAL",1)%LNL%END%LNL%%LNL%XXXXxxxxXXXX~
+		OUTER_SPRINT ~script_block2~ ~%LNL%IF%LNL%InPartyAllowDead("%d_var%")%LNL%!Global("%d_var%_ADDED","MYAREA",0)%LNL%THEN%LNL%RESPONSE #100%LNL%SetGlobal("%d_var%_ADDED","MYAREA",0)%LNL%SetGlobal("%d_var%_MOVED","MYAREA",0)%LNL%IncrementGlobal("TP_NUM_IN_PARTY_IWD","GLOBAL",-1)%LNL%SetGlobal("SPRITE_IS_DEAD%d_var%","GLOBAL",0)%LNL%ActionOverride("%d_var%",ApplySpellRES("bdresurr",Myself))%LNL%SmallWait(1)%LNL%ActionOverride("%d_var%",SetGlobal("ID_IMOEN_BELT","LOCALS",0))%LNL%ActionOverride("%d_var%",SetGlobal("IdKickedOut","LOCALS",0))%LNL%SmallWait(1)%LNL%ActionOverride("%d_var%",ApplySpellRES("bddispel",Myself))%LNL%ActionOverride("%d_var%",ApplySpellRES("bdrejuve",Myself))%LNL%ActionOverride("%d_var%",ApplySpellRES("idimbltr",Myself))%LNL%%CAIS%%LNL%END%LNL%%LNL%IF%LNL%!InParty("%d_var%")%LNL%!Global("%d_var%_ADDED","MYAREA",0)%LNL%InMyArea("%d_var%")%LNL%THEN%LNL%RESPONSE #100%LNL%SetGlobal("%d_var%_ADDED","MYAREA",0)%LNL%SetGlobal("%d_var%_MOVED","MYAREA",0)%LNL%IncrementGlobal("TP_NUM_IN_PARTY_IWD","GLOBAL",-1)%LNL%SetGlobal("SPRITE_IS_DEAD%d_var%","GLOBAL",0)%LNL%ActionOverride("%d_var%",ApplySpellRES("bdresurr",Myself))%LNL%SmallWait(1)%LNL%ActionOverride("%d_var%",SetGlobal("ID_IMOEN_BELT","LOCALS",0))%LNL%ActionOverride("%d_var%",SetGlobal("IdKickedOut","LOCALS",0))%LNL%SmallWait(1)%LNL%ActionOverride("%d_var%",ApplySpellRES("bddispel",Myself))%LNL%ActionOverride("%d_var%",ApplySpellRES("bdrejuve",Myself))%LNL%ActionOverride("%d_var%",ApplySpellRES("idimbltr",Myself))%LNL%%CAIS%%LNL%ActionOverride("%d_var%",JoinPartyOverride())%LNL%END%LNL%%LNL%IF%LNL%!InParty("%d_var%")%LNL%!Global("%d_var%_ADDED","MYAREA",0)%LNL%Global("%d_var%_MOVED","MYAREA",0)%LNL%!InMyArea("%d_var%")%LNL%THEN%LNL%RESPONSE #100%LNL%SetGlobal("%d_var%_MOVED","MYAREA",1)%LNL%MoveGlobalObject("%d_var%",Player1)%LNL%ActionOverride("%d_var%",ApplySpellRES("bdresurr",Myself))%LNL%END%LNL%%LNL%IF%LNL%!Global("%d_var%_ADDED","MYAREA",0)%LNL%!Global("%d_var%_MOVED","MYAREA",0)%LNL%OR(2)%LNL%!InMyArea("%d_var%")%LNL%!InParty("%d_var%")%LNL%THEN%LNL%RESPONSE #100%LNL%SetGlobal("%d_var%_ADDED","MYAREA",0)%LNL%SetGlobal("%d_var%_MOVED","MYAREA",0)%LNL%IncrementGlobal("TP_NUM_IN_PARTY_IWD","GLOBAL",-1)%LNL%END%LNL%%LNL%XXXXxxxxXXXX~
+		SILENT
+			COPY ~%temp_dir%/IDPSCRDL.baf~ ~%temp_dir%/IDPSCRDL.baf~
+				REPLACE_TEXTUALLY ~XXXXxxxxXXXX~ ~%script_block%~ EVALUATE_BUFFER
+			COPY ~%temp_dir%/IDPLRES2.baf~ ~%temp_dir%/IDPLRES2.baf~
+				REPLACE_TEXTUALLY ~XXXXxxxxXXXX~ ~%script_block2%~ EVALUATE_BUFFER
+		VERBOSE
+	END ELSE BEGIN
+		OUTER_SPRINT ~script_block~ ~%LNL%XXXXxxxxXXXX%LNL%%LNL%IF%LNL%InParty("%d_var%")%LNL%THEN%LNL%RESPONSE #100%LNL%ActionOverride("%d_var%",LeaveParty())%LNL%ActionOverride("%d_var%",DestroySelf())%LNL%END~
+		SILENT
+			COPY ~%temp_dir%/IDPLRES1.baf~ ~%temp_dir%/IDPLRES1.baf~
+				REPLACE_TEXTUALLY ~XXXXxxxxXXXX~ ~%script_block%~ EVALUATE_BUFFER
+		VERBOSE
+	END
+END
+
+COPY ~%temp_dir%/IDPSCRDL.baf~ ~%temp_dir%/IDPSCRDL.baf~
+     ~%temp_dir%/IDPLRES1.baf~ ~%temp_dir%/IDPLRES1.baf~
+     ~%temp_dir%/IDPLRES2.baf~ ~%temp_dir%/IDPLRES2.baf~
+	REPLACE_TEXTUALLY ~XXXXxxxxXXXX~ ~~
+COMPILE ~%temp_dir%/IDPSCRDL.baf~
+        ~%temp_dir%/IDPLRES1.baf~
+        ~%temp_dir%/IDPLRES2.baf~
+
+//BLOCKEND
+
+//BLOCK COMPILE Game/Test BAF files
+ACTION_IF ( ins_type = 0 ) BEGIN
+	COMPILE ~%f_baf%/FCSHCUT1.baf~
+	        ~%f_baf%/IDTOEET1.baf~
+END ELSE BEGIN
+	OUTER_SPRINT ~cut_to_iwd1~ ~FCSHCUT1~
+	OUTER_SPRINT ~cut_to_iwd2~ ~IWSHCUT1~
+	COMPILE ~%f_baf%/test_mode/FCSHCUT1.baf~
+	        ~%f_baf%/test_mode/IDTOEET1.baf~
+	        ~%f_baf%/test_mode/IWSHCUT1.baf~
+	        ~%f_baf%/test_mode/IWTOEET1.baf~
+	EXTEND_TOP ~BG2700.bcs~ ~%f_baf%/test_mode/_BG2700.baf~ EVALUATE_BUFFER
+END
+COMPILE ~%f_baf%/IDPLRES3.baf~
+        ~%f_baf%/IDPLRES4.baf~
+        ~%f_baf%/IDPLRES5.baf~
+//BLOCKEND
+
+//BLOCK SPELLS
+//IMOEN BELT SPELL
+COPY ~%MOD_FOLDER%/spl/spell.spl~ ~override/idimblta.spl~
+	LPF ADD_SPELL_EFFECT INT_VAR opcode=367 target=2 parameter2=2 timing=9 resist_dispel=2 END
+	LPF ADD_SPELL_EFFECT INT_VAR opcode=206 target=2 timing=9 resist_dispel=2 STR_VAR resource="SPWM113" END
+	LPF ADD_SPELL_EFFECT INT_VAR opcode=206 target=2 timing=9 resist_dispel=2 STR_VAR resource="SPWI415" END
+	LPF ADD_SPELL_EFFECT INT_VAR opcode=208 target=2 timing=9 parameter1=5 resist_dispel=2 END
+	LPF ADD_SPELL_EFFECT INT_VAR opcode=101 target=2 timing=9 parameter2=134 resist_dispel=2 END
+	LPF ADD_SPELL_EFFECT INT_VAR opcode=101 target=2 timing=9 parameter2=13 resist_dispel=2 END
+	LPF ADD_SPELL_EFFECT INT_VAR opcode=101 target=2 timing=9 parameter2=55 resist_dispel=2 END
+	LPF ADD_SPELL_EFFECT INT_VAR opcode=101 target=2 timing=9 parameter2=211 resist_dispel=2 END
+	LPF ADD_SPELL_EFFECT INT_VAR opcode=101 target=2 timing=9 parameter2=5 resist_dispel=2 END
+	LPF ADD_SPELL_EFFECT INT_VAR opcode=101 target=2 timing=9 parameter2=209 resist_dispel=2 END
+	LPF ADD_SPELL_EFFECT INT_VAR opcode=101 target=2 timing=9 parameter2=238 resist_dispel=2 END
+COPY ~%MOD_FOLDER%/spl/spell.spl~ ~override/idimbltr.spl~
+	LPF ADD_SPELL_EFFECT INT_VAR opcode=321 target=2 STR_VAR resource="idimblta" END
+
+// HOLY SYMBOLS
+COPY_EXISTING ~CDHLYSYM.spl~ ~override/CDHLYSYZ.spl~
+	LPF ADD_SPELL_EFFECT INT_VAR insert_point=0 opcode=318 target=2 timing=0 parameter2=IWDAREA_index duration=1 STR_VAR resource="CDHLYSYZ" END
+	LPF ADD_SPELL_EFFECT INT_VAR insert_point=0 opcode=318 target=2 timing=0 parameter1=21 parameter2=137 duration=1 STR_VAR resource="CDHLYSYZ" END
+	LPF ADD_SPELL_EFFECT INT_VAR opcode=321 target=2 STR_VAR resource="CDHLYSYM" END
+COPY_EXISTING ~CDHLYSYM.spl~ ~override~
+	LPF DELETE_SPELL_EFFECT INT_VAR opcode_to_delete="-1" END
+	LPF ADD_SPELL_EFFECT INT_VAR opcode=272 target=1 timing=9 parameter1=60 parameter2=3 STR_VAR resource="CDHLYSYM" END
+COPY ~%MOD_FOLDER%/spl/effect.eff~ ~override/CDHLYSYM.eff~
+	WRITE_LONG  0x10 146
+	WRITE_LONG  0x14 2
+	WRITE_LONG  0x20 1
+	WRITE_LONG  0x24 1
+	WRITE_SHORT 0x2c 100
+	WRITE_ASCII 0x30 ~CDHLYSYZ~ (8)
+COPY_EXISTING ~CDHLYSY2.spl~ ~override~
+	WRITE_LONG 0x08 "-1"
+	WRITE_LONG 0x0c "-1"
+	LPF ADD_SPELL_EFFECT INT_VAR opcode=206 target=2 timing=9 STR_VAR resource="CDHLYSYZ" END
+	LPF ADD_SPELL_EFFECT INT_VAR opcode=321 target=2 STR_VAR resource="CDHLYSYM" END
+//BLOCKEND
+
+//BLOCK PATCH_WORLD_SCRIPT
+ACTION_IF ( ins_type = 1 ) BEGIN
+	<<<<<<<<bld1.baf
+	IF
+		!Global("PARTY_IN_ICEWIND_DALE","GLOBAL",0)
+	THEN
+		RESPONSE #100
+			NoAction()
+	END
+	>>>>>>>>
+	EXTEND_TOP ~baldur.bcs~ ~bld1.baf~
+	//IWD1
+	COPY_EXISTING ~ICEWIND.bcs~ ~%temp_dir%/ICEWIND.baf~
+		DECOMPILE_BCS_TO_BAF
+	EXTEND_TOP ~baldur.bcs~ ~%temp_dir%/ICEWIND.baf~
+	/*IWD2*/
+	COPY_EXISTING ~ICEWIND2.bcs~ ~%temp_dir%/ICEWIND2.baf~
+		DECOMPILE_BCS_TO_BAF
+	EXTEND_TOP ~baldur.bcs~ ~%temp_dir%/ICEWIND2.baf~
+END
+//BLOCKEND
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

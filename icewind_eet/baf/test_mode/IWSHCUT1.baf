@@ -1,0 +1,121 @@
+IF
+	True()
+THEN
+	RESPONSE #100
+		CutSceneId(Player1)
+		Wait(1)
+		ApplySpellRES("clearcld",Myself)
+		SmallWait(2)
+		ContainerEnable("IWD_Container",TRUE)
+		//ChangeStat(Player1,XP,2500000,SET)
+		//ChangeStat(Player2,XP,2500000,SET)
+		//ChangeStat(Player3,XP,2500000,SET)
+		//ChangeStat(Player4,XP,2500000,SET)
+		//ChangeStat(Player5,XP,2500000,SET)
+		//ChangeStat(Player6,XP,2500000,SET)
+		ApplySpellRES("idimbltz",Myself)
+		ActionOverride(Player2,ApplySpellRES("idimbltz",Myself))
+		ActionOverride(Player3,ApplySpellRES("idimbltz",Myself))
+		ActionOverride(Player4,ApplySpellRES("idimbltz",Myself))
+		ActionOverride(Player5,ApplySpellRES("idimbltz",Myself))
+		ActionOverride(Player6,ApplySpellRES("idimbltz",Myself))
+		//ReputationSet(15)
+		//GiveGoldForce(250000)
+		SetGlobal("IWD_PARTY_GOLD","GLOBAL",0)
+		SmallWait(2)
+		//StorePartyLocations()
+		Wait(2)
+		CreateVisualEffectObject("PORTALH",Myself)
+		CreateVisualEffectObject("PORTALH",Player2)
+		CreateVisualEffectObject("PORTALH",Player3)
+		CreateVisualEffectObject("PORTALH",Player4)
+		CreateVisualEffectObject("PORTALH",Player5)
+		CreateVisualEffectObject("PORTALH",Player6)
+		SmallWait(7)
+		MultiPlayerSync()
+		//ActionOverride(Player2,PlayDead(70))
+		//ActionOverride(Player3,PlayDead(70))
+		//ActionOverride(Player4,PlayDead(70))
+		//ActionOverride(Player5,PlayDead(70))
+		//ActionOverride(Player6,PlayDead(70))
+		//SmallWait(7)
+		//MultiPlayerSync()
+		//PlayDead(70)
+		FadeToColor([30.0],0)
+		Wait(3)
+		ActionOverride("IWD_Container",TakeCreatureItems(Player1,ALL))
+		ActionOverride("IWD_Container",TakeCreatureItems(Player2,ALL))
+		ActionOverride("IWD_Container",TakeCreatureItems(Player3,ALL))
+		ActionOverride("IWD_Container",TakeCreatureItems(Player4,ALL))
+		ActionOverride("IWD_Container",TakeCreatureItems(Player5,ALL))
+		ActionOverride("IWD_Container",TakeCreatureItems(Player6,ALL))
+		ApplySpellRES("bdresurr",Player1)
+		ApplySpellRES("bdresurr",Player2)
+		ApplySpellRES("bdresurr",Player3)
+		ApplySpellRES("bdresurr",Player4)
+		ApplySpellRES("bdresurr",Player5)
+		ApplySpellRES("bdresurr",Player6)
+		SmallWait(1)
+		ApplySpellRES("bddispel",Player1)
+		ApplySpellRES("bddispel",Player2)
+		ApplySpellRES("bddispel",Player3)
+		ApplySpellRES("bddispel",Player4)
+		ApplySpellRES("bddispel",Player5)
+		ApplySpellRES("bddispel",Player6)
+		//SetGlobal("SOA_COMPLETE","GLOBAL",1)
+		BitSet("IWDEET_COMPLETE","GLOBAL",BITS_SOA)
+		DayNight(DAWN_END)
+		ApplySpellRES("bdrejuve",Player1)
+		ApplySpellRES("bdrejuve",Player2)
+		ApplySpellRES("bdrejuve",Player3)
+		ApplySpellRES("bdrejuve",Player4)
+		ApplySpellRES("bdrejuve",Player5)
+		ApplySpellRES("bdrejuve",Player6)
+		Wait(1)
+		LeaveAreaLUAPanic("IW0000","",[320.240],0)
+		LeaveAreaLUA("IW0000","",[320.240],0)
+		ActionOverride(Player2,LeaveAreaLUA("IW0000","",[360.280],0))
+		ActionOverride(Player3,LeaveAreaLUA("IW0000","",[360.360],0))
+		ActionOverride(Player4,LeaveAreaLUA("IW0000","",[320.360],0))
+		ActionOverride(Player5,LeaveAreaLUA("IW0000","",[280.360],0))
+		ActionOverride(Player6,LeaveAreaLUA("IW0000","",[280.280],0))
+		MultiPlayerSync()
+		Wait(1)
+		EndCutSceneMode()
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

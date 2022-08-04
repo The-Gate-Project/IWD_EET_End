@@ -1,0 +1,23 @@
+IF
+	GlobalLT("SHERRY_PLOT","GLOBAL",95)
+	//GlobalLT("bd_plot","GLOBAL",400)
+	AreaCheckObject("BD3000",Player1)
+THEN
+	RESPONSE #100
+		SetGlobal("SHERRY_PLOT","GLOBAL",95)
+		MoveGlobal("BD3000","fcsherri",[1292.1788])
+		ActionOverride("fcsherri",Face(6))
+		Continue()
+END
+
+IF
+	GlobalLT("SHERRY_PLOT","GLOBAL",104)
+	GlobalGT("bd_plot","GLOBAL",401)
+	AreaCheckObject("BD3000",Player1)
+THEN
+	RESPONSE #100
+		SetGlobal("SHERRY_PLOT","GLOBAL",104)
+		MoveGlobal("BD3000","fcsherri",[1725.55])
+		ActionOverride("fcsherri",Face(0))
+		Continue()
+END

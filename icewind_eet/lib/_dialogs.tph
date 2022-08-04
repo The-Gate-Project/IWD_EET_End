@@ -1,0 +1,7 @@
+
+OUTER_SPRINT ~action_type_01~ ~SmallWait(1) CreateVisualEffectObject("MSUMM1H",Myself) SmallWait(8) ApplySpellRES("IDINVIS3",Myself) SmallWait(8) MoveGlobal("ID0000",Myself,[150.150])~
+
+//Проверка локаций, куда возвращаться
+OUTER_SPRINT ~trigger_type_02~ ~/**/~
+
+OUTER_SPRINT ~action_type_02~ ~SetGlobal("KickedOut","LOCALS",1)/**/~

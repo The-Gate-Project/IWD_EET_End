@@ -1,0 +1,11 @@
+IF
+	GlobalTimerNotExpired("SHERRY_TIMER_PLOT","GLOBAL")
+	GlobalLT("VELETA_RELESIN","GLOBAL",30)
+	Global("VELREL_INNS","GLOBAL",1)
+THEN
+	RESPONSE #100
+		FadeToColor([0.0],0)
+		ClearAllActions()
+		StartCutSceneMode()
+		StartCutScene("FCSHCUT4")
+END

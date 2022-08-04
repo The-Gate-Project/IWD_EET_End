@@ -1,0 +1,196 @@
+INCLUDE ~%MOD_FOLDER%/lib.tph~
+
+OUTER_SPRINT ~cmpl~ ~%MOD_FOLDER%/others/files~
+
+COPY ~%cmpl%/#evasion.SPL~ ~override~
+	SAY 0x9e @100002
+
+COPY_EXISTING ~kitlist.2da~ ~override~
+  COUNT_2DA_ROWS 10 num_rows
+  FOR ( i = 0 ; i < num_rows ; ++i ) BEGIN
+    READ_2DA_ENTRY i 8 10 cls
+    PATCH_IF ( IS_AN_INT ~cls~ ) BEGIN
+      PATCH_IF ( ~cls~ = ~20~ ) BEGIN
+        READ_2DA_ENTRY i 5 10 file
+        PATCH_IF (!VARIABLE_IS_SET $monk_clab(~%file%~)) AND (FILE_EXISTS_IN_GAME ~%file%.2da~) BEGIN
+          DEFINE_ASSOCIATIVE_ARRAY monk_clab BEGIN ~%file%~ => ~~ END
+        END
+      END
+      PATCH_IF ( ~cls~ = ~5~ ) BEGIN
+        READ_2DA_ENTRY i 5 10 file
+        PATCH_IF (!VARIABLE_IS_SET $bard_clab(~%file%~)) AND (FILE_EXISTS_IN_GAME ~%file%.2da~) BEGIN
+          DEFINE_ASSOCIATIVE_ARRAY bard_clab BEGIN ~%file%~ => ~~ END
+        END
+      END
+      PATCH_IF ( ~cls~ = ~4~ ) BEGIN
+        READ_2DA_ENTRY i 5 10 file
+        PATCH_IF (!VARIABLE_IS_SET $thief_clab(~%file%~)) AND (FILE_EXISTS_IN_GAME ~%file%.2da~) BEGIN
+          DEFINE_ASSOCIATIVE_ARRAY thief_clab BEGIN ~%file%~ => ~~ END
+        END
+      END
+    END
+  END
+  SPRINT file ~CLABMO01~
+  PATCH_IF (!VARIABLE_IS_SET $monk_clab(~%file%~)) AND (FILE_EXISTS_IN_GAME ~%file%.2da~) BEGIN
+    DEFINE_ASSOCIATIVE_ARRAY monk_clab BEGIN ~%file%~ => ~~ END
+  END
+  SPRINT file ~CLABBA01~
+  PATCH_IF (!VARIABLE_IS_SET $bard_clab(~%file%~)) AND (FILE_EXISTS_IN_GAME ~%file%.2da~) BEGIN
+    DEFINE_ASSOCIATIVE_ARRAY bard_clab BEGIN ~%file%~ => ~~ END
+  END
+  SPRINT file ~CLABTH01~
+  PATCH_IF (!VARIABLE_IS_SET $thief_clab(~%file%~)) AND (FILE_EXISTS_IN_GAME ~%file%.2da~) BEGIN
+    DEFINE_ASSOCIATIVE_ARRAY thief_clab BEGIN ~%file%~ => ~~ END
+  END
+  BUT_ONLY_IF_IT_CHANGES
+
+//OUTER_SET added = 0
+ACTION_PHP_EACH monk_clab AS file => dummy BEGIN
+  COPY_EXISTING ~%file%.2da~ ~override~
+    COUNT_2DA_ROWS 15 rows
+    SET added = 0
+    SET num = 0
+    FOR ( i = 0 ; i < rows ; ++i ) BEGIN
+      SET num = i + 1
+      PATCH_IF ( added = 0 ) BEGIN
+        READ_2DA_ENTRY i 8 15 rw
+        PATCH_IF ( ~%rw%~ STRING_EQUAL ~****~ ) BEGIN
+          SET_2DA_ENTRY i 8 15 ~AP_#EVASION~
+          SET added = 1
+        END
+      END
+    END
+    PATCH_IF ( added = 0 ) BEGIN
+      SET num = num + 1
+      INNER_ACTION BEGIN
+        APPEND ~%file%.2da~ ~ABILITY%num%  ****       ****       ****       ****       ****       ****       ****       AP_#EVASION ****       ****       ****       ****       ****       ****       ****       ****       ****       ****       ****       ****       ****       ****       ****       ****       ****       ****       ****       ****       ****       ****       ****       ****       ****       ****       ****       ****       ****       ****       ****       ****~
+      END
+      SET added = 1
+    END
+    PRETTY_PRINT_2DA
+END
+
+ACTION_PHP_EACH bard_clab AS file => dummy BEGIN
+  COPY_EXISTING ~%file%.2da~ ~override~
+    COUNT_2DA_ROWS 15 rows
+    SET added = 0
+    SET num = 0
+    FOR ( i = 0 ; i < rows ; ++i ) BEGIN
+      SET num = i + 1
+      PATCH_IF ( added = 0 ) BEGIN
+        READ_2DA_ENTRY i 9 15 rw
+        PATCH_IF ( ~%rw%~ STRING_EQUAL ~****~ ) BEGIN
+          SET_2DA_ENTRY i 9 15 ~AP_#EVASION~
+          SET added = 1
+        END
+      END
+    END
+    PATCH_IF ( added = 0 ) BEGIN
+      SET num = num + 1
+      INNER_ACTION BEGIN
+        APPEND ~%file%.2da~ ~ABILITY%num%  ****       ****       ****       ****       ****       ****       ****       ****       AP_#EVASION ****       ****       ****       ****       ****       ****       ****       ****       ****       ****       ****       ****       ****       ****       ****       ****       ****       ****       ****       ****       ****       ****       ****       ****       ****       ****       ****       ****       ****       ****       ****~
+      END
+      SET added = 1
+    END
+    PRETTY_PRINT_2DA
+END
+
+ACTION_PHP_EACH thief_clab AS file => dummy BEGIN
+  COPY_EXISTING ~%file%.2da~ ~override~
+    COUNT_2DA_ROWS 15 rows
+    SET added = 0
+    SET num = 0
+    FOR ( i = 0 ; i < rows ; ++i ) BEGIN
+      SET num = i + 1
+      PATCH_IF ( added = 0 ) BEGIN
+        READ_2DA_ENTRY i 6 15 rw
+        PATCH_IF ( ~%rw%~ STRING_EQUAL ~****~ ) BEGIN
+          SET_2DA_ENTRY i 6 15 ~AP_#EVASION~
+          SET added = 1
+        END
+      END
+    END
+    PATCH_IF ( added = 0 ) BEGIN
+      SET num = num + 1
+      INNER_ACTION BEGIN
+        APPEND ~%file%.2da~ ~ABILITY%num%  ****       ****       ****       ****       ****       AP_#EVASION ****       ****       ****       ****       ****       ****       ****       ****       ****       ****       ****       ****       ****       ****       ****       ****       ****       ****       ****       ****       ****       ****       ****       ****       ****       ****       ****       ****       ****       ****       ****       ****       ****       ****~
+      END
+      SET added = 1
+    END
+    PRETTY_PRINT_2DA
+END
+
+ACTION_CLEAR_ARRAY ~monk_clab~
+ACTION_CLEAR_ARRAY ~bard_clab~
+ACTION_CLEAR_ARRAY ~thief_clab~
+
+COPY_EXISTING ~CAMPAIGN.2DA~ ~override~
+	COUNT_2DA_ROWS 15 rws
+	FOR ( i = 0 ; i < rws ; ++i ) BEGIN
+		READ_2DA_ENTRY i 11 15 dial
+		PATCH_IF (!VARIABLE_IS_SET $pdialog_arr(~%dial%~)) AND (FILE_EXISTS_IN_GAME ~%dial%.2da~) BEGIN
+			DEFINE_ASSOCIATIVE_ARRAY pdialog_arr BEGIN ~%dial%~ => ~~ END
+		END
+	END
+	BUT_ONLY_IF_IT_CHANGES
+
+ACTION_PHP_EACH pdialog_arr AS dial => dummy BEGIN
+  ACTION_IF FILE_EXISTS_IN_GAME ~%dial%.2da~ THEN BEGIN
+    COPY_EXISTING ~%dial%.2DA~ ~override~
+      COUNT_2DA_ROWS 4 rows
+      FOR ( i = 0 ; i < rows ; ++i ) BEGIN
+        READ_2DA_ENTRY i 0 4 aname
+        PATCH_IF (!VARIABLE_IS_SET $actor_name(~%aname%~)) BEGIN
+  	      DEFINE_ASSOCIATIVE_ARRAY actor_name BEGIN ~%aname%~ => ~~ END
+  	    END
+      END
+      BUT_ONLY_IF_IT_CHANGES
+  END
+END
+
+COPY_EXISTING_REGEXP GLOB ~.*\.cre~ ~override~
+	READ_BYTE 0x273 cls
+	SET added = 0
+	PATCH_IF ( cls = 4 )  OR
+	         ( cls = 5 )  OR
+	         ( cls = 9 )  OR
+	         ( cls = 10 ) OR
+	         ( cls = 13 ) OR
+	         ( cls = 15 ) OR
+	         ( cls = 20 ) BEGIN
+	  READ_ASCII 0x280 ~sname~ (32) NULL
+	  PATCH_IF (!VARIABLE_IS_SET $actor_name(~%sname%~)) BEGIN
+	    READ_BYTE 0x234 lvl1
+	    READ_BYTE 0x235 lvl2
+	    READ_BYTE 0x236 lvl3
+	    PATCH_IF ( lvl2 > 1 ) BEGIN lvl1 = lvl1 + lvl2 END
+	    PATCH_IF ( lvl3 > 1 ) BEGIN lvl1 = lvl1 + lvl3 END
+	    PATCH_MATCH cls WITH
+    	  4 9         BEGIN PATCH_IF ( lvl1 > 6 ) BEGIN SET added = 1 END END
+    	  10 13 15 20 BEGIN PATCH_IF ( lvl1 > 8 ) BEGIN SET added = 1 END END
+    	  5           BEGIN PATCH_IF ( lvl1 > 9 ) BEGIN SET added = 1 END END
+    	  DEFAULT added = 0
+	    END
+	    PATCH_IF ( added = 1 ) BEGIN
+	      LPF ADD_CRE_EFFECT INT_VAR opcode=328 power=1 target=1 timing=9  parameter2=252 special=1  END
+	    END
+	  END
+	END
+	BUT_ONLY_IF_IT_CHANGES
+
+ACTION_CLEAR_ARRAY ~pdialog_arr~
+ACTION_CLEAR_ARRAY ~actor_name~
+
+
+
+
+
+
+
+
+
+
+
+
+
+

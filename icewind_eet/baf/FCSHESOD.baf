@@ -1,0 +1,133 @@
+IF
+	AttackedBy([GOODCUTOFF],DEFAULT)
+THEN
+	RESPONSE #100
+		ApplySpell(Myself,DRYAD_TELEPORT)
+		DestroySelf()
+END
+
+IF
+	GlobalGT("SHERRY_PLOT","GLOBAL",104)
+	AreaCheck("BD3000")
+THEN
+	RESPONSE #100
+		DestroySelf()
+END
+
+IF
+	Global("SHERRY_PLOT","GLOBAL",104)
+	!See(Player1)
+THEN
+	RESPONSE #100
+		MoveToObject(Player1)
+END
+
+IF
+	OR(2)
+		Global("SHERRY_PLOT","GLOBAL",95)
+		Global("SHERRY_PLOT","GLOBAL",104)
+	See(Player1)
+	Range(Player1,8)
+	!StateCheck(Player1,CD_STATE_NOTVALID)
+THEN
+	RESPONSE #100
+		Dialogue(Player1)
+END
+
+//BLOCK Moving in BD3000
+IF
+	Global("Move_01","LOCALS",0)
+	AreaCheck("BD3000")
+	NearLocation(Myself,1163,1298,5)
+THEN
+	RESPONSE #100
+		//SetHomeLocation([1163.1298])
+		SetGlobal("Move_01","LOCALS",1)
+		Continue()
+END
+
+IF
+	Global("Move_01","LOCALS",0)
+	AreaCheck("BD3000")
+	Global("SHERRY_PLOT","GLOBAL",100)
+THEN
+	RESPONSE #100
+		MoveToPoint([1163.1298])
+END
+
+IF
+	Global("Move_01","LOCALS",1)
+	AreaCheck("BD3000")
+	NearLocation(Myself,1058,1016,5)
+THEN
+	RESPONSE #100
+		//SetHomeLocation([1058.1016])
+		SetGlobal("Move_01","LOCALS",2)
+		Continue()
+END
+
+IF
+	Global("Move_01","LOCALS",1)
+	AreaCheck("BD3000")
+	Global("SHERRY_PLOT","GLOBAL",100)
+THEN
+	RESPONSE #100
+		MoveToPoint([1058.1016])
+END
+
+IF
+	Global("Move_01","LOCALS",2)
+	AreaCheck("BD3000")
+	NearLocation(Myself,1624,569,5)
+THEN
+	RESPONSE #100
+		//SetHomeLocation([1624.569])
+		SetGlobal("Move_01","LOCALS",3)
+		Continue()
+END
+
+IF
+	Global("Move_01","LOCALS",2)
+	AreaCheck("BD3000")
+	Global("SHERRY_PLOT","GLOBAL",100)
+THEN
+	RESPONSE #100
+		MoveToPoint([1624.569])
+END
+
+IF
+	Global("Move_01","LOCALS",3)
+	AreaCheck("BD3000")
+	NearLocation(Myself,1549,27,4)
+THEN
+	RESPONSE #100
+		//SetHomeLocation([-1.-1])
+		SetGlobal("Move_01","LOCALS",0)
+		DestroySelf()
+END
+
+IF
+	Global("Move_01","LOCALS",3)
+	AreaCheck("BD3000")
+	Global("SHERRY_PLOT","GLOBAL",100)
+THEN
+	RESPONSE #100
+		MoveToPoint([1549.27])
+END
+//BLOCKEND
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,10 @@
+IF
+	Global("SHERRI_GLOBAL","GLOBAL",0)
+THEN
+	RESPONSE #100
+		SetGlobal("SHERRI_GLOBAL","GLOBAL",1)
+		CreateCreature("fcsherri",[205.95],0)
+		ActionOverride("fcsherri",MakeGlobal())
+		ActionOverride("fcsherri",DestroySelf())
+		Continue()
+END

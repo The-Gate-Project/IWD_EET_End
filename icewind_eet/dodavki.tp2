@@ -1,0 +1,161 @@
+//EET ispravleniya
+1. K#TELBGT.BCS: bg_plot -> bd_plot
+2. BD0010.BCS: DisplayStringHead("Angry Flaming Fist 1",9989) -> DisplayStringHead("Angry Flaming Fist 1",209989)
+             : DisplayStringHead("Angry Refugee 4",18402) -> DisplayStringHead("Angry Refugee 4",218402)
+3. BD3000.BCS: Warnings
+4. BD4300.BCS: Warnings
+5. BD5100AW:BCS: Warnings
+6. BD5300.BCS: Warnings
+7. BD6100.BCS: Warnings
+8. SPSH004.SPL: не та строка - надо прибавить 200000
+9. BDDRAGSP.BCS: spsdrubr -> spsdrbur
+10. BD7300.BCS: bdcorwin -> bdschael
+11. BDNUBER.BCS: ReallyForceSpellDead(Myself,2975) -> ReallyForceSpellDead(Myself,WHITE_HOLY_MIGHT)
+
+
+
+LPF ADD_SPELL_EFFECT
+  INT_VAR opcode = 143 target = 1 parameter1 = X timing = 1 probability1 = Y probability2 = Z
+  STR_VAR resource = **
+END
+
+
+//BLOCK  EET-END
+
+//BLOCK1. CAMPAING + LUA
+//BLOCKEND
+//BLOCK2. ITEM_IMPORT
+//BLOCK ORIGINAL
+COPY_EXISTING ~BDSODIMP.BCS~ ~override~
+	DECOMPILE_AND_PATCH BEGIN
+		REPLACE_EVALUATE CASE_INSENSITIVE ~PartyHasItem("\([^"]+\)")~ BEGIN
+			DEFINE_ASSOCIATIVE_ARRAY item_import_list BEGIN ~%MATCH1%~ => dummy END
+		END ~PartyHasItem("%MATCH1%")~
+	END
+BUT_ONLY
+
+COPY_EXISTING ~IMPORT01.2DA~ ~override~
+	~IMPORT02.2DA~ ~override~
+	~IMPORT03.2DA~ ~override~
+	~K#IMPORT.2DA~ ~override~
+	COUNT_2DA_ROWS 2 "cntrow"
+	FOR (cnt = 1; cnt < "%cntrow%"; cnt = cnt + 1) BEGIN
+		READ_2DA_ENTRY cnt 1 2 "item"
+		DEFINE_ASSOCIATIVE_ARRAY item_import_list BEGIN ~%item%~ => dummy END
+	END
+BUT_ONLY
+
+<<<<<<<< .../K#TELBGT-et.baf
+IF
+  Global("K#FrameDelay","LOCALS",0)
+  PartyHasItem("%item%")
+THEN
+  RESPONSE #100
+    TakePartyItem("%item%")
+    DestroyItem("%item%")
+	AddStoreItem("K#IMPORT","%item%",1,1)
+    Continue()
+END
+>>>>>>>>
+ACTION_PHP_EACH item_import_list AS item => dummy BEGIN
+	EXTEND_TOP ~K#TELBGT.BCS~ ~.../K#TELBGT-et.baf~ EVALUATE_BUFFER
+END
+//BLOCKEND
+//BLOCK NEW
+
+<<<<<<<< .../K#TELBGT-et.baf
+IF
+  Global("K#FrameDelay","LOCALS",0)
+  PartyHasItem("%item%")
+THEN
+  RESPONSE #100
+    TakePartyItem("%item%")
+    DestroyItem("%item%")
+	%action%
+    Continue()
+END
+>>>>>>>>
+
+DEFINE_ACTION_FUNCTION TELBGT_IMPORT
+INT_VAR
+  type = 0 // 0 - store, 1 - area, 2 - creature
+  charge1 = 1
+  charge2 = 1
+  charge3 = 0
+  to_store = 1 //1 - если в area или actor ошибка, то отправяет в магазин, 2 - ищет контейнер или  слот
+STR_VAR
+  item = "*"
+  store = "*"
+  area  = "*"
+  container = "*"
+  actor  = "*"
+  slot = "*"
+  equip = "*"
+BEGIN
+  RANDOM_SEED 90
+  ACTION_IF ( item STRING_EQUAL ~*~ ) = 0 BEGIN
+    //STORE
+    ACTION_IF ( type = 0 ) BEGIN
+      ACTION_IF ( store STRING_EQUAL ~*~ ) BEGIN
+        rnd = RANDOM (1 5)
+        ACTION_MATCH rnd WITH
+          1 BEGIN SPRINT store ~RIBALD~ END
+          2 BEGIN SPRINT store ~WMART1~ END
+          3 BEGIN SPRINT store ~WMART2~ END
+          4 BEGIN SPRINT store ~BERNARD~ END
+          5 BEGIN SPRINT store ~MERCHANT~ END
+        END
+      END
+      SPRINT action ~AddStoreItem("%store%","%item%",%charge1%,%charge2%)~
+      EXTEND_TOP ~K#TELBGT.BCS~ ~.../K#TELBGT-et.baf~ EVALUATE_BUFFER
+    END //STORE
+    //AREA
+    ACTION_IF ( type = 1 ) BEGIN
+    
+    END //AREA
+  END
+END
+
+COPY_EXISTING ~BDSODIMP.BCS~ ~override~
+	DECOMPILE_AND_PATCH BEGIN
+		REPLACE_EVALUATE CASE_INSENSITIVE ~PartyHasItem("\([^"]+\)")~ BEGIN
+			DEFINE_ASSOCIATIVE_ARRAY item_import_list BEGIN ~%MATCH1%~ => dummy END
+		END ~PartyHasItem("%MATCH1%")~
+	END
+BUT_ONLY
+
+COPY_EXISTING //~IMPORT01.2DA~ ~override~
+	//~IMPORT02.2DA~ ~override~
+	//~IMPORT03.2DA~ ~override~
+  ~K#IMPORT.2DA~ ~override~
+	COUNT_2DA_ROWS 2 "cntrow"
+	FOR (cnt = 1; cnt < "%cntrow%"; cnt = cnt + 1) BEGIN
+		READ_2DA_ENTRY cnt 1 2 "item"
+		DEFINE_ASSOCIATIVE_ARRAY item_import_list BEGIN ~%item%~ => dummy END
+	END
+BUT_ONLY
+//CIMPORT.2DA
+//TYPE	ITEM	CHARGE1	CHARGE2	CHARGE3	STORE	AREA	CONTAINER	CREATURE	SLOT	EQUIP	TO_STORE
+
+<<<<<<<< .../K#TELBGT-et.baf
+IF
+  Global("K#FrameDelay","LOCALS",0)
+  PartyHasItem("%item%")
+THEN
+  RESPONSE #100
+    TakePartyItem("%item%")
+    DestroyItem("%item%")
+	AddStoreItem("K#IMPORT","%item%",1,1)
+    Continue()
+END
+>>>>>>>>
+ACTION_PHP_EACH item_import_list AS item => dummy BEGIN
+	EXTEND_TOP ~K#TELBGT.BCS~ ~.../K#TELBGT-et.baf~ EVALUATE_BUFFER
+END
+//BLOCKEND
+//BLOCKEND
+//BLOCK3. Counter K$DaysPassed
+//BLOCKEND
+//BLOCK4. AdvanceTime
+//BLOCKEND
+//BLOCKEND

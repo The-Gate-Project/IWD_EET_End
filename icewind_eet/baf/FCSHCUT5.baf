@@ -1,0 +1,66 @@
+IF
+	True()
+THEN
+	RESPONSE #100
+		CutSceneId([PC])
+		SmallWait(5)
+		CreateCreature("cutspy",[380.750],0)
+		SmallWait(5)
+		MoveViewObject("cutspy",BD_NORMAL)
+		Wait(1)
+		ActionOverride("fcrelesi",FaceObject([PC]))
+		SmallWait(10)
+		ActionOverride("fcrelesi",Face(NNW))
+		Wait(4)
+		OpenDoor("Door0616")
+		SmallWait(5)
+		CreateCreature("fcveleta",[395.640],SSE)
+		SmallWait(5)
+		CloseDoor("Door0616")
+		Wait(1)
+		ActionOverride("fcveleta",MoveToPoint([485.737]))
+		Wait(1)
+		ActionOverride("fcveleta",FaceObject("fcrelesi"))
+		ActionOverride("fcrelesi",FaceObject("fcveleta"))
+		SmallWait(5)
+		DisplayStringHead("fcrelesi",~Встретилась с ним?~)
+		Wait(3)
+		DisplayStringHead("fcveleta",~Нет. Он куда-то уехал. Куда? Не знаю. Никто ничего не говорит.~)
+		Wait(3)
+		DisplayStringHead("fcrelesi",~О, боги! Что же нам так не везет?~)
+		Wait(3)
+		DisplayStringHead("fcveleta",~Не знаю. Как-будто за этим стоит какая-то сила.~)
+		Wait(3)
+		DisplayStringHead("fcrelesi",~Но нам все равно нужно продолжить поиски, я полагаю.~)
+		Wait(2)
+		FadeToColor([15.0],0)
+		Wait(1)
+		SmallWait(5)
+		ActionOverride("fcveleta",DestroySelf())
+		ActionOverride("fcrelesi",DestroySelf())
+		ActionOverride("cutspy",DestroySelf())
+		MoveViewObject([PC],INSTANT)
+		SmallWait(7)
+		SetGlobal("VELETA_RELESIN","GLOBAL",31)
+		SetGlobal("VELREL_INNS","GLOBAL",2)
+		SetGlobal("VELREL_IRON_THRONE","GLOBAL",1)
+		IncrementGlobal("CNT_VELETA_RELESIN","GLOBAL",1)
+		FadeFromColor([15.0],0)
+		Wait(1)
+		SmallWait(8)
+		EndCutSceneMode()
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+

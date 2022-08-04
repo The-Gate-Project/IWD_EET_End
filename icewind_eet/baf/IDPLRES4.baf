@@ -1,0 +1,85 @@
+
+IF
+	Switch("IWD_PARTY_REPUT","MYAREA")
+THEN
+	RESPONSE #1
+		ReputationSet(1)
+		IncrementGlobal("All_Restored","MYAREA",1)
+		DestroySelf()
+	RESPONSE #2
+		ReputationSet(2)
+		IncrementGlobal("All_Restored","MYAREA",1)
+		DestroySelf()
+	RESPONSE #3
+		ReputationSet(3)
+		IncrementGlobal("All_Restored","MYAREA",1)
+		DestroySelf()
+	RESPONSE #4
+		ReputationSet(4)
+		IncrementGlobal("All_Restored","MYAREA",1)
+		DestroySelf()
+	RESPONSE #5
+		ReputationSet(5)
+		IncrementGlobal("All_Restored","MYAREA",1)
+		DestroySelf()
+	RESPONSE #6
+		ReputationSet(6)
+		IncrementGlobal("All_Restored","MYAREA",1)
+		DestroySelf()
+	RESPONSE #7
+		ReputationSet(7)
+		IncrementGlobal("All_Restored","MYAREA",1)
+		DestroySelf()
+	RESPONSE #8
+		ReputationSet(8)
+		IncrementGlobal("All_Restored","MYAREA",1)
+		DestroySelf()
+	RESPONSE #9
+		ReputationSet(9)
+		IncrementGlobal("All_Restored","MYAREA",1)
+		DestroySelf()
+	RESPONSE #10
+		ReputationSet(10)
+		IncrementGlobal("All_Restored","MYAREA",1)
+		DestroySelf()
+	RESPONSE #11
+		ReputationSet(11)
+		IncrementGlobal("All_Restored","MYAREA",1)
+		DestroySelf()
+	RESPONSE #12
+		ReputationSet(12)
+		IncrementGlobal("All_Restored","MYAREA",1)
+		DestroySelf()
+	RESPONSE #13
+		ReputationSet(13)
+		IncrementGlobal("All_Restored","MYAREA",1)
+		DestroySelf()
+	RESPONSE #14
+		ReputationSet(14)
+		IncrementGlobal("All_Restored","MYAREA",1)
+		DestroySelf()
+	RESPONSE #15
+		ReputationSet(15)
+		IncrementGlobal("All_Restored","MYAREA",1)
+		DestroySelf()
+	RESPONSE #16
+		ReputationSet(16)
+		IncrementGlobal("All_Restored","MYAREA",1)
+		DestroySelf()
+	RESPONSE #17
+		ReputationSet(17)
+		IncrementGlobal("All_Restored","MYAREA",1)
+		DestroySelf()
+	RESPONSE #18
+		ReputationSet(18)
+		IncrementGlobal("All_Restored","MYAREA",1)
+		DestroySelf()
+	RESPONSE #19
+		ReputationSet(19)
+		IncrementGlobal("All_Restored","MYAREA",1)
+		DestroySelf()
+	RESPONSE #20
+		ReputationSet(20)
+		IncrementGlobal("All_Restored","MYAREA",1)
+		DestroySelf()
+END

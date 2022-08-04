@@ -1,0 +1,238 @@
+//BLOCK REPUTATION
+IF
+  Global("REPOT_CHECK","MYAREA",0)
+  Reputation(Player1,20)
+THEN
+  RESPONSE #100
+    SetGlobal("IWD_PARTY_REPUT","MYAREA",20)
+    SetGlobal("REPOT_CHECK","MYAREA",1)
+END
+
+IF
+  Global("REPOT_CHECK","MYAREA",0)
+  Reputation(Player1,19)
+THEN
+  RESPONSE #100
+    SetGlobal("IWD_PARTY_REPUT","MYAREA",19)
+    SetGlobal("REPOT_CHECK","MYAREA",1)
+END
+
+IF
+  Global("REPOT_CHECK","MYAREA",0)
+  Reputation(Player1,18)
+THEN
+  RESPONSE #100
+    SetGlobal("IWD_PARTY_REPUT","MYAREA",18)
+    SetGlobal("REPOT_CHECK","MYAREA",1)
+END
+
+IF
+  Global("REPOT_CHECK","MYAREA",0)
+  Reputation(Player1,17)
+THEN
+  RESPONSE #100
+    SetGlobal("IWD_PARTY_REPUT","MYAREA",17)
+    SetGlobal("REPOT_CHECK","MYAREA",1)
+END
+
+IF
+  Global("REPOT_CHECK","MYAREA",0)
+  Reputation(Player1,16)
+THEN
+  RESPONSE #100
+    SetGlobal("IWD_PARTY_REPUT","MYAREA",16)
+    SetGlobal("REPOT_CHECK","MYAREA",1)
+END
+
+IF
+  Global("REPOT_CHECK","MYAREA",0)
+  Reputation(Player1,15)
+THEN
+  RESPONSE #100
+    SetGlobal("IWD_PARTY_REPUT","MYAREA",15)
+    SetGlobal("REPOT_CHECK","MYAREA",1)
+END
+
+IF
+  Global("REPOT_CHECK","MYAREA",0)
+  Reputation(Player1,14)
+THEN
+  RESPONSE #100
+    SetGlobal("IWD_PARTY_REPUT","MYAREA",14)
+    SetGlobal("REPOT_CHECK","MYAREA",1)
+END
+
+IF
+  Global("REPOT_CHECK","MYAREA",0)
+  Reputation(Player1,13)
+THEN
+  RESPONSE #100
+    SetGlobal("IWD_PARTY_REPUT","MYAREA",13)
+    SetGlobal("REPOT_CHECK","MYAREA",1)
+END
+
+IF
+  Global("REPOT_CHECK","MYAREA",0)
+  Reputation(Player1,12)
+THEN
+  RESPONSE #100
+    SetGlobal("IWD_PARTY_REPUT","MYAREA",12)
+    SetGlobal("REPOT_CHECK","MYAREA",1)
+END
+
+IF
+  Global("REPOT_CHECK","MYAREA",0)
+  Reputation(Player1,11)
+THEN
+  RESPONSE #100
+    SetGlobal("IWD_PARTY_REPUT","MYAREA",11)
+    SetGlobal("REPOT_CHECK","MYAREA",1)
+END
+
+IF
+  Global("REPOT_CHECK","MYAREA",0)
+  Reputation(Player1,10)
+THEN
+  RESPONSE #100
+    SetGlobal("IWD_PARTY_REPUT","MYAREA",10)
+    SetGlobal("REPOT_CHECK","MYAREA",1)
+END
+
+IF
+  Global("REPOT_CHECK","MYAREA",0)
+  Reputation(Player1,9)
+THEN
+  RESPONSE #100
+    SetGlobal("IWD_PARTY_REPUT","MYAREA",9)
+    SetGlobal("REPOT_CHECK","MYAREA",1)
+END
+
+IF
+  Global("REPOT_CHECK","MYAREA",0)
+  Reputation(Player1,8)
+THEN
+  RESPONSE #100
+    SetGlobal("IWD_PARTY_REPUT","MYAREA",8)
+    SetGlobal("REPOT_CHECK","MYAREA",1)
+END
+
+IF
+  Global("REPOT_CHECK","MYAREA",0)
+  Reputation(Player1,7)
+THEN
+  RESPONSE #100
+    SetGlobal("IWD_PARTY_REPUT","MYAREA",7)
+    SetGlobal("REPOT_CHECK","MYAREA",1)
+END
+
+IF
+  Global("REPOT_CHECK","MYAREA",0)
+  Reputation(Player1,6)
+THEN
+  RESPONSE #100
+    SetGlobal("IWD_PARTY_REPUT","MYAREA",6)
+    SetGlobal("REPOT_CHECK","MYAREA",1)
+END
+
+IF
+  Global("REPOT_CHECK","MYAREA",0)
+  Reputation(Player1,5)
+THEN
+  RESPONSE #100
+    SetGlobal("IWD_PARTY_REPUT","MYAREA",5)
+    SetGlobal("REPOT_CHECK","MYAREA",1)
+END
+
+IF
+  Global("REPOT_CHECK","MYAREA",0)
+  Reputation(Player1,4)
+THEN
+  RESPONSE #100
+    SetGlobal("IWD_PARTY_REPUT","MYAREA",4)
+    SetGlobal("REPOT_CHECK","MYAREA",1)
+END
+
+IF
+  Global("REPOT_CHECK","MYAREA",0)
+  Reputation(Player1,3)
+THEN
+  RESPONSE #100
+    SetGlobal("IWD_PARTY_REPUT","MYAREA",3)
+    SetGlobal("REPOT_CHECK","MYAREA",1)
+END
+
+IF
+  Global("REPOT_CHECK","MYAREA",0)
+  Reputation(Player1,2)
+THEN
+  RESPONSE #100
+    SetGlobal("IWD_PARTY_REPUT","MYAREA",2)
+    SetGlobal("REPOT_CHECK","MYAREA",1)
+END
+
+IF
+  Global("REPOT_CHECK","MYAREA",0)
+  Reputation(Player1,1)
+THEN
+  RESPONSE #100
+    SetGlobal("IWD_PARTY_REPUT","MYAREA",1)
+    SetGlobal("REPOT_CHECK","MYAREA",1)
+END
+
+IF
+  Global("REPOT_CHECK","MYAREA",1)
+  Alignment(Player1,LAWFUL_GOOD)
+THEN
+  RESPONSE #100
+    ReputationSet(12)
+    SetGlobal("REPOT_CHECK","MYAREA",2)
+END
+
+IF
+  Global("REPOT_CHECK","MYAREA",1)
+  OR(2)
+    Alignment(Player1,NEUTRAL_GOOD)
+    Alignment(Player1,CHAOTIC_GOOD)
+THEN
+  RESPONSE #100
+    ReputationSet(11)
+    SetGlobal("REPOT_CHECK","MYAREA",2)
+END
+
+IF
+  Global("REPOT_CHECK","MYAREA",1)
+  Alignment(Player1,MASK_GENEUTRAL)
+THEN
+  RESPONSE #100
+    ReputationSet(10)
+    SetGlobal("REPOT_CHECK","MYAREA",2)
+END
+
+IF
+  Global("REPOT_CHECK","MYAREA",1)
+  OR(2)
+    Alignment(Player1,LAWFUL_EVIL)
+    Alignment(Player1,NEUTRAL_EVIL)
+THEN
+  RESPONSE #100
+    ReputationSet(9)
+    SetGlobal("REPOT_CHECK","MYAREA",2)
+END
+
+IF
+  Global("REPOT_CHECK","MYAREA",1)
+  Alignment(Player1,CHAOTIC_EVIL)
+THEN
+  RESPONSE #100
+    ReputationSet(8)
+    SetGlobal("REPOT_CHECK","MYAREA",2)
+END
+
+IF
+	True()
+THEN
+	RESPONSE #100
+		IncrementGlobal("All_Installed","MYAREA",1)
+		DestroySelf()
+END
+//BLOCKEND

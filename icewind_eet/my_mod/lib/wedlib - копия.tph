@@ -1,0 +1,527 @@
+/*SORT_NUMERIC_ARRAY*/
+	// making sure offsets are in correct order
+	// SET sort_size = offsets
+	// TEXT_SPRINT sort_array_name ~offsets~
+	// LPM SORT_NUMERIC_ARRAY
+DEFINE_PATCH_MACRO SORT_NUMERIC_ARRAY
+BEGIN
+  LOCAL_SET idx = 0 LOCAL_SET i = 0 LOCAL_SET j = 0 LOCAL_SET v1 = 0 LOCAL_SET v2 = 0
+  LOCAL_SET r = VARIABLE_IS_SET ~sort_reverse~ ? sort_reverse : 0
+  LOCAL_SET s = VARIABLE_IS_SET ~sort_size~ ? sort_size : "-1"
+
+  PATCH_IF (NOT ~%sort_array_name%~ STR_EQ ~~) BEGIN
+    // Auto-detect array size
+    PATCH_IF (s < 0) BEGIN
+      SET idx = 0
+      WHILE (idx != "-1") BEGIN
+        PATCH_IF (VARIABLE_IS_SET EVAL ~%sort_array_name%_%idx%~) BEGIN
+          SET idx += 1
+        END ELSE BEGIN
+          SET s = idx
+          SET idx = "-1"
+        END
+      END
+    END
+
+    // Sort array using "Selection Sort" algorithm
+    FOR (j = 0; j < s - 1; ++j) BEGIN
+      // Find and mark index of lowest/highest value in remaining sublist
+      SET idx = j
+      SET v1 = EVAL ~%sort_array_name%_%idx%~
+      FOR (i = j + 1; i < s; ++i) BEGIN
+        SET v2 = EVAL ~%sort_array_name%_%i%~
+        PATCH_IF ((r && v2 > v1) || (NOT r && v2 < v1)) BEGIN
+          SET idx = i
+          SET v1 = EVAL ~%sort_array_name%_%idx%~
+        END
+      END
+
+      // Swap values if needed
+      PATCH_IF (idx != j) BEGIN
+        SET v1 = EVAL ~%sort_array_name%_%idx%~
+        SET EVAL ~%sort_array_name%_%idx%~ = EVAL ~%sort_array_name%_%j%~
+        SET EVAL ~%sort_array_name%_%j%~ = v1
+      END
+    END
+  END
+END
+
+/*ZZ_WRITE_WED_FILES*/
+DEFINE_PATCH_MACRO ZZ_WRITE_WED_FILES
+/*	INT_VAR
+	
+	STR_VAR
+		type = overlay //overlay, door, wall_poly, 
+		               //overlays: tilemap_overlay
+		               //doors: tilemap_door, poly_open, poly_close
+		               //wall_poly: wall_group,
+		               //wall_lookup - идет в wall_group*/
+BEGIN
+	SET offsets = 0
+	CLEAR_ARRAY offsets_array
+	READ_LONG 0x08 overlays_Num
+	READ_LONG 0x0c doors_Num
+	
+	READ_LONG 0x10 overlays_Off
+	SET EVAL ~offsets_%offsets%~ = overlays_Off SET offsets += 1
+	
+	SET tmap_first_Off = "-1"
+	SET tmap_lkup_first_Off = "-1"
+	FOR ( i = 0 ; i < overlays_Num ; ++i ) BEGIN
+		READ_LONG overlays_Off + 0x30 tmap_Off /*структура тайла с указанием тайла открытой двери */
+		SET EVAL ~offsets_%offsets%~ = tmap_Off SET offsets += 1
+		
+		READ_LONG overlays_Off + 0x34 tmap_lkup_Off /* тайлы с открытыми дверями */
+		SET EVAL ~offsets_%offsets%~ = tmap_lkup_Off SET offsets += 1
+		
+		SET EVAL ~tmap_Off_%i%~ = tmap_Off
+		SET EVAL ~tmap_lkup_Off_%i%~ = tmap_lkup_Off
+		
+		PATCH_IF ( i = 0 ) BEGIN SET tmap_first_Off = tmap_Off SET tmap_lkup_first_Off = tmap_lkup_Off END
+	END
+	
+	READ_LONG 0x14 sec_head_Off
+	SET ~offsets_%offsets%~ = sec_head_Off SET offsets += 1
+	
+	READ_LONG 0x18 doors_Off
+	SET ~offsets_%offsets%~ = doors_Off SET offsets += 1
+	
+	SET poly_open_first_Off = "-1"
+	SET poly_closed_first_Off = "-1"
+	FOR ( i = 0 ; i < doors_Num ; ++i ) BEGIN
+		READ_LONG doors_Off + 0x12 poly_open_Off
+		SET ~offsets_%offsets%~ = poly_open_Off SET offsets += 1
+		
+		READ_LONG doors_Off + 0x16 poly_closed_Off
+		SET ~offsets_%offsets%~ = poly_closed_Off SET offsets += 1
+		
+		SET EVAL ~poly_open_Off_%i%~ = poly_open_Off
+		SET EVAL ~poly_closed_Off_%i%~ = poly_closed_Off
+		
+		PATCH_IF ( i = 0 ) BEGIN SET poly_open_first_Off = poly_open_Off SET poly_closed_first_Off = poly_closed_Off END
+	END
+	
+	READ_LONG 0x1c door_tmap_lkup_Off /*тайлы открытой двери*/
+	SET ~offsets_%offsets%~ = door_tmap_lkup_Off SET offsets += 1
+	
+	READ_LONG sec_head_Off + 0x00 wall_poly_Num
+	
+	READ_LONG sec_head_Off + 0x04 wall_poly_Off
+	SET ~offsets_%offsets%~ = wall_poly_Off SET offsets += 1
+	
+	READ_LONG sec_head_Off + 0x08 vertex_Off
+	SET ~offsets_%offsets%~ = vertex_Off SET offsets += 1
+	
+	READ_LONG sec_head_Off + 0x0c wall_group_Off
+	SET ~offsets_%offsets%~ = wall_group_Off SET offsets += 1
+	
+	READ_LONG sec_head_Off + 0x10 wall_poly_lkup_Off /*wall_lookup*/
+	SET ~offsets_%offsets%~ = wall_poly_lkup_Off SET offsets += 1
+	
+	SET sort_size = offsets
+    TEXT_SPRINT sort_array_name ~offsets~
+    LPM SORT_NUMERIC_ARRAY
+    
+
+END
+
+/* remove_walls */
+
+DEFINE_PATCH_FUNCTION ZZ_ADD_WED_OPENED_TILES
+	INT_VAR
+		LastTile = 0
+		overlay_idx = 0
+		//tile_0, tilr_1 etc.
+BEGIN
+	SPRINT r_type "closed_tiles"
+	LPM ZZ_WRITE_WED_FILESM
+END
+
+DEFINE_PATCH_FUNCTION ZZ_ADD_WED_DOOR
+	INT_VAR
+		is_door = 1
+		//tile_0, til_1 etc. (lookup tiles)
+		poly_opened_cnt = 0
+		poly_closed_cnt = 0
+		//	1, flags_2 etc. ( Count = poly_opened_cnt + poly_closed_cnt )
+		//vertex_cnt_1, vertex_cnt_2 etc. ( Count = poly_opened_cnt + poly_closed_cnt )
+		//vertex_1, vertex_2 etc.
+		wall_groups = 1
+		lookup_table = 1
+		LastTile = 0
+		overlay_idx = 0
+	STR_VAR
+		name = ""
+		vertex_type = "door"
+	RET
+		/*door_line
+		lookup_line
+		poly_line*/
+BEGIN
+	SET poly_num = poly_opened_cnt + poly_closed_cnt
+	SPRINT r_type "closed_tiles"
+	LPM ZZ_WRITE_WED_FILESM
+	PATCH_PRINT ~111111~
+	SPRINT r_type "vertex"
+	LPM ZZ_WRITE_WED_FILESM
+	PATCH_PRINT ~222222~
+	SPRINT r_type "polygon"
+	LPM ZZ_WRITE_WED_FILESM
+	PATCH_PRINT ~333333~
+	SPRINT r_type "lookup_tiles"
+	LPM ZZ_WRITE_WED_FILESM 
+	PATCH_PRINT ~444444~
+	SPRINT r_type "doors"
+	LPM ZZ_WRITE_WED_FILESM /* current 1 */
+	PATCH_PRINT ~555555~
+END
+
+    /* Structure positions in wed
+    0.  Secondary Header Offset
+    1.  Overlays - 0x18
+    2.  Doors - 0x1a
+    3.  Tilemap in Overlays - 0x0a (структура тайла)
+    4.  Tilemap lookup in Doors - 0x02 (тайлы открытой двери)
+    5.  Tilemap lookup in Overlays - 0x02 (тайлы открытой двери)
+    6.  Wall groups - 0x04 (группы полигонов стен или дверей)
+    7.  Wall polygons - 0x12 (полигоны стен)
+    8.  Doors open/closed wall polygons - 0x12 (полигоны стен дверей)
+    9.  Tilemap lookup walls - 0x02 (идет в wall_group)
+    10. Vertex of wall groups - 0x04
+    11. Vertex of open/closrd doors - 0x04
+     */
+     /* update offsets
+     	SET overlays_Off = overlays_Off + len
+		WRITE_LONG 0x10 overlays_Off + len
+		SET sec_head_Off = sec_head_Off + len
+		WRITE_LONG 0x14 sec_head_Off
+		SET doors_Off = doors_Off + len
+		WRITE_LONG 0x18 doors_Off		
+		FOR ( i = 0 ; i < overlays_Num ; ++i ) BEGIN
+			WRITE_LONG overlays_Off + i * 0x18 + 0x30 THIS + len
+		END
+		WRITE_LONG 0x1c door_tmap_lkup_Off + len
+		FOR ( i = 0 ; i < overlays_Num ; ++i ) BEGIN
+			WRITE_LONG overlays_Off + i * 0x18 + 0x34 THIS + len
+		END
+		WRITE_LONG sec_head_Off + 0x0c wall_group_Off + len
+		WRITE_LONG sec_head_Off + 0x04 wall_poly_Off + len
+		FOR ( i = 0 ; i < doors_Num ; ++i ) BEGIN
+			WRITE_LONG doors_Off + i * 0x1a + 0x12 THIS + len
+			WRITE_LONG doors_Off + i * 0x1a + 0x16 THIS + len
+		END
+		WRITE_LONG sec_head_Off + 0x10 wall_poly_lkup_Off + len
+		WRITE_LONG sec_head_Off + 0x08 vertex_Off + len
+     */
+DEFINE_PATCH_MACRO ZZ_WRITE_WED_DOOR BEGIN
+	SPRINT door_line ~~
+	INNER_PATCH_SAVE door_line ~%door_line%~ BEGIN
+		INSERT_BYTES 0 0x1a
+		WRITE_EVALUATED_ASCII 0x00 ~%name%~ (8)
+		WRITE_SHORT 0x08 is_door
+		WRITE_SHORT 0x0a lookup_first
+		WRITE_SHORT 0x0c lookup_cnt
+		WRITE_SHORT 0x0e poly_opened_cnt
+		WRITE_SHORT 0x10 poly_closed_cnt
+		SET offs = wall_poly_Off + wall_poly_Num * 0x12
+		WRITE_LONG  0x12 offs
+		SET offs = offs + poly_opened_cnt * 0x12
+		WRITE_LONG  0x16 offs
+	END
+	SET offs = doors_Off + doors_Num * 0x1a
+	INSERT_BYTES offs 0x1a
+	WRITE_ASCIIE offs ~%door_line%~
+	WRITE_LONG 0x0c ( doors_Num + 1 )
+	/* add_poly */
+END /**/
+
+DEFINE_PATCH_MACRO ZZ_WRITE_DOOR_LOOKUP_TILES BEGIN //RET lookup_first, lookup_cnt
+	SET lookup_cnt = 0
+	SPRINT lookup_line ~~
+	SET lookup_offs = door_tmap_lkup_Off
+	PATCH_IF ( VARIABLE_IS_SET $tile(0) ) BEGIN
+		FOR ( i = 0 ; i < 65535 ; ++i ) BEGIN
+			PATCH_IF ( VARIABLE_IS_SET $tile(~%i%~) ) BEGIN
+				INNER_PATCH_SAVE lookup_line ~%lookup_line%~ BEGIN
+					INSERT_BYTES i * 2 2
+					SET vpatch = $tile(~%i%~)
+					WRITE_SHORT i * 2 vpatch
+				END
+				SET lookup_cnt = lookup_cnt + 1
+			END ELSE BEGIN SET i = 65535 END
+		END
+	END
+	SET lookup_first = 0
+	PATCH_IF ( lookup_cnt > 0 ) BEGIN
+		SET lkpf = 0
+		FOR ( i = 0 ; i < doors_Num ; ++i ) BEGIN
+			READ_SHORT doors_Off + i * 0x1a + 0x0a lkpn
+			READ_SHORT doors_Off + i * 0x1a + 0x0c lkpc
+			PATCH_IF ( lkpn >= lkpf ) BEGIN SET lkpf = lkpn END
+			SET lookup_first = lkpf + lkpc
+		END
+		SET lookup_offs = lookup_offs + lookup_first * 0x02
+		SET len = lookup_cnt * 0x02
+		INSERT_BYTES lookup_offs len
+		WRITE_ASCIIE lookup_offs ~%lookup_line%~
+		
+		FOR ( i = 0 ; i < overlays_Num ; ++i ) BEGIN
+			WRITE_LONG overlays_Off + i * 0x18 + 0x34 THIS + len
+		END
+		WRITE_LONG sec_head_Off + 0x0c wall_group_Off + len
+		WRITE_LONG sec_head_Off + 0x04 wall_poly_Off + len
+		FOR ( i = 0 ; i < doors_Num ; ++i ) BEGIN
+			WRITE_LONG doors_Off + i * 0x1a + 0x12 THIS + len
+			WRITE_LONG doors_Off + i * 0x1a + 0x16 THIS + len
+		END
+		WRITE_LONG sec_head_Off + 0x10 wall_poly_lkup_Off + len
+		WRITE_LONG sec_head_Off + 0x08 vertex_Off + len
+		
+	END
+END
+
+DEFINE_PATCH_FUNCTION ZZ_GET_POLY_MINMAX_COORDS
+	INT_VAR
+		length = 0
+	STR_VAR
+		str = ""
+	RET
+		mnX mxX mnY mxY
+BEGIN
+	SET mnX = 10000 SET mxX = 0 SET mnY = 10000 SET mxY = 0
+	SET lng = STRING_LENGTH ~%str%~
+	PATCH_IF ( lng >= length ) BEGIN
+		FOR ( j = 0 ; j < lng ; ++8 ) BEGIN
+			INNER_PATCH_SAVE str ~%str%~ BEGIN
+				READ_SHORT 0x00 + j mnXi
+				READ_SHORT 0x02 + j mxXi
+				READ_SHORT 0x04 + j mnYi
+				READ_SHORT 0x06 + j mxYi
+			END
+			PATCH_IF ( mnXi <= mnX ) BEGIN SET mnX = mnXi END
+			PATCH_IF ( mxXi >= mxX ) BEGIN SET mxX = mxXi END
+			PATCH_IF ( mnYi <= mnY ) BEGIN SET mnY = mnYi END
+			PATCH_IF ( mxYi >= mxY ) BEGIN SET mxY = mxYi END
+		END
+	END
+END
+
+DEFINE_PATCH_MACRO ZZ_WRITE_WED_POLYGON BEGIN
+	PATCH_IF ( poly_num ) BEGIN
+		/* добавить для обычных стен */
+		SET vtxf = vertex_first
+		SPRINT vtxln ~%vertex_line%~
+		SPRINT poly_line ~~
+		FOR ( i = 0 ; i < poly_num ; ++i ) BEGIN
+			SPRINT poly_ln ~~
+			SPRINT coord ~~
+			INNER_PATCH_SAVE poly_ln ~%poly_ln%~ BEGIN
+				INSERT_BYTES 0 0x12
+				WRITE_LONG 0x00 vtxf
+				PATCH_IF ( VARIABLE_IS_SET $vertex_cnt(~%i%~) ) BEGIN SET vtxcnt = $vertex_cnt(~%i%~) END ELSE BEGIN SET vtxcnt = 0 END
+				WRITE_LONG 0x04 vtxcnt
+				SET vtxf = vtxf + vtxcnt
+				PATCH_IF ( VARIABLE_IS_SET $flags(~%i%~) ) BEGIN SET flg = $flags(~%i%~) END ELSE BEGIN SET flg = 0 END
+				WRITE_BYTE 0x08 flg
+				SET length = vtxcnt * 0x04
+				INNER_PATCH_SAVE vtxln ~%vtxln%~ BEGIN
+					WRITE_ASCIIE 0x00 ~%coord%~ (length)
+					DELETE_BYTES 0x00 length
+				END
+				LPF ZZ_GET_POLY_MINMAX_COORDS INT_VAR length STR_VAR str = EVAL ~%coord%~ RET mnX mxX mnY mxY END
+				WRITE_SHORT 0x0a mnX
+				WRITE_SHORT 0x0c mxX
+				WRITE_SHORT 0x0e mnY
+				WRITE_SHORT 0x10 mxY
+			END
+			INNER_PATCH_SAVE poly_line ~%poly_line%~ BEGIN
+				INSERT_BYTES i * 0x12 0x12
+				WRITE_ASCIIE i * 0x12 ~%poly_ln%~
+			END
+		END
+		SET len = poly_num * 0x12
+		SET offs = wall_poly_Off + wall_poly_Num * 0x12
+		SET nums = 0
+		SET first_poly = wall_poly_Num
+		PATCH_IF ( ~%vertex_type%~ STR_EQ ~door~ ) BEGIN
+			FOR ( i = 0 ; i < doors_Num ; ++i ) BEGIN
+				READ_SHORT doors_Off + i * 0x1a + 0x0e plo
+				READ_SHORT doors_Off + i * 0x1a + 0x0e plc
+				SET nums = nums + plo + plc
+			END
+			SET offs = offs + nums * 0x12
+			SET first_poly = first_poly + nums
+		END
+		INSERT_BYTES offs len
+		WRITE_ASCIIE offs ~%poly_line%~ (len)
+		SET write_len = len
+		SET lookup_len = 0
+		SET wall_group_len = 0
+		PATCH_IF ( lookup_table ) BEGIN LPM ZZ_WRITE_LOOKUP_TABLE END
+		PATCH_IF ( wall_groups )  BEGIN LPM ZZ_WRITE_WALL_GROUPS  END
+		
+		WRITE_LONG sec_head_Off + 0x04 wall_poly_Off + wall_group_len
+		FOR ( i = 0 ; i < doors_Num ; ++i ) BEGIN
+			WRITE_LONG doors_Off + i * 0x1a + 0x12 ( THIS + write_len + wall_group_len )
+			WRITE_LONG doors_Off + i * 0x1a + 0x16 ( THIS + write_len + wall_group_len )
+		END
+		WRITE_LONG sec_head_Off + 0x10 ( wall_poly_lkup_Off + write_len + wall_group_len )
+		WRITE_LONG sec_head_Off + 0x08 ( vertex_Off + write_len + wall_group_len + lookup_len )
+	END
+END
+
+DEFINE_PATCH_MACRO ZZ_WRITE_LOOKUP_TABLE BEGIN
+	SET lookup_size = ( vertex_Off - wall_poly_lkup_Off )
+	SET lookup_cnt = lookup_size / 2
+	SPRINT lookup_line ~~
+	FOR ( i = 0 ; i < poly_num ; ++i ) BEGIN
+		INNER_PATCH_SAVE lookup_line ~%lookup_line%~ BEGIN
+			INSERT_BYTES i * 2 2
+			WRITE_BYTE i * 2 ( first_poly + i )
+		END
+	END
+	SET lookup_len = poly_num * 2
+	SET offs = wall_poly_lkup_Off + lookup_size * 2
+	INSERT_BYTES offs lookup_len
+	WRITE_ASCIIE offs ~%lookup_line%~
+END
+
+DEFINE_PATCH_MACRO ZZ_WRITE_WALL_GROUPS BEGIN
+	SPRINT wall_group_line ~~
+	INNER_PATCH_SAVE wall_group_line ~%wall_group_line%~ BEGIN
+		INSERT_BYTES 0 4
+		WRITE_SHORT 0x00 lookup_size
+		WRITE_SHORT 0x02 poly_num
+	END
+	SET wall_group_len = 4
+	SET wall_group_size = ( wall_poly_Off - wall_group_Off )
+	SET offs = wall_group_Off + wall_group_size * 4
+	INSERT_BYTES offs wall_group_len
+	WRITE_ASCIIE offs ~%wall_group_line%~
+END
+
+DEFINE_PATCH_MACRO ZZ_WRITE_WED_VERTEX BEGIN //RET vertex_first, vertex_cnt, vertex_line
+	SPRINT vertex_line ~~
+	SET vertex_cnt = 0
+	SET vertex_offs = vertex_Off
+	PATCH_IF ( VARIABLE_IS_SET $vertex(0) ) BEGIN
+		FOR ( i = 0 ; i < 65535 ; ++i ) BEGIN
+			PATCH_IF ( VARIABLE_IS_SET $vertex(~%i%~) ) BEGIN
+				INNER_PATCH_SAVE vertex_line ~%vertex_line%~ BEGIN
+					INSERT_BYTES i * 4 4
+					SET vpatch = $vertex(~%i%~)
+					WRITE_LONG i * 4 vpatch
+				END
+				SET vertex_cnt = vertex_cnt + 1
+			END ELSE BEGIN SET i = 65535 END
+		END
+	END
+	SET vertex_first = 0
+	PATCH_IF ( vertex_cnt ) BEGIN
+		SET fvtx = 0
+		FOR ( i = 0 ; i < wall_poly_Num ; ++i ) BEGIN
+			READ_LONG wall_poly_Off + i * 0x12 + 0x04 vvtx
+			SET fvtx = fvtx + vvtx
+		END
+		SET vertex_offs = vertex_offs + fvtx * 0x04
+		SET vertex_first = vertex_first + fvtx
+		PATCH_IF ( ~%vertex_type%~ STR_EQ ~door~ ) BEGIN
+			SET fvtx = 0
+			SET pcnt = 0
+			FOR ( i = 0 ; i < doors_Num ; ++i ) BEGIN
+				READ_SHORT doors_Off + i * 0x1a + 0x0e plo
+				READ_SHORT doors_Off + i * 0x1a + 0x10 plt
+				SET pcnt = pcnt + plo + plt
+			END
+			FOR ( i = 0 ; i < pcnt ; ++i ) BEGIN
+				READ_LONG vertex_offs + i * 0x12 + 0x04 vvtx
+				SET fvtx = fvtx + vvtx
+			END
+			SET vertex_offs = vertex_offs + fvtx * 0x04
+			SET vertex_first = vertex_first + fvtx
+		END
+		SET len = vertex_cnt * 4
+		INSERT_BYTES vertex_offs len
+		WRITE_ASCIIE vertex_offs ~%vertex_line%~
+	END
+END
+
+DEFINE_PATCH_MACRO ZZ_WRITE_CLOZED_TILES BEGIN
+	PATCH_IF ( VARIABLE_IS_SET $tile(0) ) BEGIN
+		SET num = overlays_Num - 1
+		PATCH_IF ( overlay_idx > num ) BEGIN SET overlay_idx = num END
+		FOR ( i = 0 ; i < 65535 ; ++i ) BEGIN
+			PATCH_IF ( VARIABLE_IS_SET $tile(~%i%~) ) BEGIN
+				SET cls_tile = LastTile + i
+				SET cur_tile = $tile(~%i%~)
+				WRITE_SHORT overlays_Off + overlay_idx * 0x18 + cur_tile * 0x0a + 0x04 cls_tile
+			END ELSE BEGIN SET i = 65535 END
+		END
+	END
+END
+
+/* osnovnaoy macros */
+DEFINE_PATCH_MACRO ZZ_WRITE_WED_FILESM BEGIN
+	READ_LONG 0x08 overlays_Num
+	READ_LONG 0x0c doors_Num
+	READ_LONG 0x10 overlays_Off
+	SET tmap_Off = "-1"
+	SET tmap_lkup_Off = "-1"
+	FOR ( i = 0 ; i < overlays_Num ; ++i ) BEGIN
+		READ_LONG overlays_Off + i * 0x18 + 0x30 tmap_OffZ
+		PATCH_IF ( tmap_OffZ <= tmap_Off ) BEGIN SET tmap_Off = tmap_OffZ END
+		READ_LONG overlays_Off + i * 0x18 + 0x34 tmap_lkup_OffZ
+		PATCH_IF ( tmap_lkup_OffZ <= tmap_lkup_Off ) BEGIN SET tmap_lkup_Off = tmap_lkup_OffZ END
+	END
+	READ_LONG 0x14 sec_head_Off
+	READ_LONG 0x18 doors_Off
+	SET poly_doors_Off = "-1"
+	FOR ( i = 0 ; i < doors_Num ; ++i ) BEGIN
+		READ_SHORT doors_Off + 0x0e plo
+		READ_SHORT doors_Off + 0x10 plc
+		PATCH_IF ( plo > 0 ) BEGIN
+			READ_LONG doors_Off + i * 0x1a + 0x12 poly_open_OffZ
+			PATCH_IF ( poly_open_OffZ <= poly_doors_Off ) BEGIN SET poly_doors_Off = poly_open_OffZ END
+		END
+		PATCH_IF ( plc > 0 ) BEGIN
+			READ_LONG doors_Off + i * 0x1a + 0x16 poly_closed_OffZ
+			PATCH_IF ( poly_closed_OffZ <= poly_doors_Off ) BEGIN SET poly_doors_Off = poly_closed_OffZ END
+		END
+	END
+	READ_LONG 0x1c door_tmap_lkup_Off
+	READ_LONG sec_head_Off + 0x00 wall_poly_Num
+	READ_LONG sec_head_Off + 0x04 wall_poly_Off
+	READ_LONG sec_head_Off + 0x08 vertex_Off
+	READ_LONG sec_head_Off + 0x0c wall_group_Off
+	READ_LONG sec_head_Off + 0x10 wall_poly_lkup_Off
+	PATCH_IF ( tmap_lkup_Off < 0 ) BEGIN tmap_lkup_Off = door_tmap_lkup_Off END
+	PATCH_IF ( tmap_Off < 0 ) BEGIN tmap_Off = tmap_lkup_Off END
+	PATCH_IF ( poly_doors_Off < 0 ) BEGIN poly_doors_Off = door_tmap_lkup_Off END
+    
+	PATCH_MATCH ~%r_type%~ WITH
+		~closed_tiles~ BEGIN LPM ZZ_WRITE_CLOZED_TILES      END
+		~vertex~       BEGIN LPM ZZ_WRITE_WED_VERTEX        END
+		~lookup_tiles~ BEGIN LPM ZZ_WRITE_DOOR_LOOKUP_TILES END
+		~polygon~      BEGIN LPM ZZ_WRITE_WED_POLYGON       END
+		~doors~        BEGIN LPM ZZ_WRITE_WED_DOOR          END
+	DEFAULT
+	END /* match */
+	
+	//PATCH_IF ( ~%r_type%~ STR_EQ ~closed_tiles~ ) BEGIN
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

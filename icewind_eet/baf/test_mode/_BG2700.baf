@@ -1,0 +1,75 @@
+IF
+	InParty("IMOEN2")
+	OR(2)
+		Global("MOVING_TO_IWD","GLOBAL",0)
+		Global("MOVING_TO_IWD","GLOBAL",3)
+THEN
+	RESPONSE #100
+		SetGlobalTimer("TIMER_MOVING_TO_IWD","GLOBAL",9)
+		IncrementGlobal("MOVING_TO_IWD","GLOBAL",1)
+END
+
+/*IF
+	InParty("IMOEN2")
+	GlobalTimerExpired("TIMER_MOVING_TO_IWD","GLOBAL")
+	Switch("MOVING_TO_IWD","GLOBAL")
+THEN
+	RESPONSE #1
+		SetGlobal("MOVING_TO_IWD","GLOBAL",2)
+		ClearAllActions()
+		StartCutSceneMode()
+		StartCutScene("%cut_to_iwd1%")
+	RESPONSE #4
+		SetGlobal("MOVING_TO_IWD","GLOBAL",5)
+		ClearAllActions()
+		StartCutSceneMode()
+		StartCutScene("%cut_to_iwd2%")
+END*/
+
+IF
+	InParty("IMOEN2")  // Имоен
+	GlobalTimerExpired("TIMER_MOVING_TO_IWD","GLOBAL")
+	Global("MOVING_TO_IWD","GLOBAL",1)
+THEN
+	RESPONSE #100
+		SetGlobal("MOVING_TO_IWD","GLOBAL",2)
+		ClearAllActions()
+		StartCutSceneMode()
+		StartCutScene("%cut_to_iwd1%")
+END
+
+IF
+	InParty("IMOEN2")  // Имоен
+	GlobalTimerExpired("TIMER_MOVING_TO_IWD","GLOBAL")
+	Global("MOVING_TO_IWD","GLOBAL",4)
+THEN
+	RESPONSE #100
+		SetGlobal("MOVING_TO_IWD","GLOBAL",5)
+		ClearAllActions()
+		StartCutSceneMode()
+		StartCutScene("%cut_to_iwd2%")
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

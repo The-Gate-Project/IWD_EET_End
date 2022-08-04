@@ -1,0 +1,23 @@
+IF
+	Global("FC_HAS_BG1","GLOBAL",0)
+THEN
+	RESPONSE #100
+		SetGlobal("FC_HAS_BG1","GLOBAL",1)
+		Continue()
+END
+
+IF
+	//Global("FC_GLOBAL_IWD_VARIABLE","GLOBAL",0)
+	Global("FCIWDELM_SPAWN","MYAREA",0)
+	GlobalGT("Chapter","GLOBAL",6)
+THEN
+	RESPONSE #100
+		//SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",1)
+		SetGlobal("FCIWDELM_SPAWN","MYAREA",1)
+		CreateCreature("FCIWDELM",[332.466],6)
+END
+
+
+
+
+

@@ -1,0 +1,10 @@
+IF
+	Global("VELETA_RELESIN","GLOBAL",0)
+THEN
+	RESPONSE #100
+		FadeToColor([0.0],0)
+		ClearAllActions()
+		SmallWait(4)
+		StartCutSceneMode()
+		StartCutScene("FCSHCUT2")
+END

@@ -1,0 +1,209 @@
+//BLOCK FUNCTIONS
+DEFINE_PATCH_FUNCTION CREATE_B_BCS_NAME
+	STR_VAR
+		namez = ""
+		prefix = ""
+		suffix = ""
+	RET
+		result
+BEGIN
+	SPRINT ~result~ ~%prefix%%namez%~
+	SET lng  = STRING_LENGTH ~%result%~
+	SET lngs = STRING_LENGTH ~%suffix%~
+	PATCH_IF ( lng > 8 ) BEGIN SNPRINT 8 ~result~ ~%result%~ END
+	PATCH_IF ( lngs > 0 ) BEGIN
+		SET zzz = 8 - lngs
+		SNPRINT zzz ~result~ ~%result%~
+		SPRINT ~result~ ~%result%%suffix%~
+	END
+END
+//BLOCKEND
+
+//BLOCK NPC_IWD1
+<<<<<<<<zIDDIALOG.2DA
+2DA V1.0
+NONE
+                  POST_DIALOG_FILE  JOIN_DIALOG_FILE  DREAM_SCRIPT_FILE
+%IDDIALOGU%
+>>>>>>>>
+
+<<<<<<<<zIDBANTER.2DA
+2DA      V1.0
+NONE
+         FILE
+%IDBANTERU%
+>>>>>>>>
+
+<<<<<<<<CRE_NPC_IWD1.2DA
+2DA V1.0
+NONE
+	OVERRIDE_SCRIPT	DIALOG	POST_DIALOG_FILE	JOIN_DIALOG_FILE	DREAM_SCRIPT_FILE	BANTER_FILE	ORIGINAL
+%CRE_NPC_IWD1U%
+>>>>>>>>
+
+ACTION_DEFINE_ASSOCIATIVE_ARRAY ORIGINAL_NPC BEGIN
+	~KIVAN~    => ~~
+	~ALORA~    => ~~
+	~MINSC~    => ~~
+	~DYNAHEIR~ => ~~
+	~YESLICK~  => ~~
+	~CORAN~    => ~~
+	~AJANTIS~  => ~~
+	~KHALID~   => ~~
+	~JAHEIRA~  => ~~
+	~GARRICK~  => ~~
+	~SAFANA~   => ~~
+	~FALDORN~  => ~~
+	~BRANWEN~  => ~~
+	~QUAYLE~   => ~~
+	~XAN~      => ~~
+	~SKIE~     => ~~
+	~ELDOTH~   => ~~
+	~XZAR~     => ~~
+	~MONTARON~ => ~~
+	~TIAX~     => ~~
+	~KAGAIN~   => ~~
+	~SHARTEEL~ => ~~
+	~EDWIN~    => ~~
+	~VICONIA~  => ~~
+	~IMOEN2~   => ~~
+	~NEERA~    => ~~
+	~DORN~     => ~~
+	~RASAAD~   => ~~
+	~BAELOTH~  => ~~
+END
+
+OUTER_SPRINT ~IDDIALOGU~ ~~
+OUTER_SPRINT ~IDBANTERU~ ~~
+OUTER_SPRINT ~CRE_NPC_IWD1U~ ~~
+OUTER_SPRINT ~adds~ ~TTXAN             TTXANP            TTXANJ%LNL%TTBRAN            TTBRANP           TTBRANJ%LNL%TTIMOEN           TTIMOENP          TTIMOENJ%LNL%TTJAHEIR          TTJAHEIP          TTJAHEIJ%LNL%TTMINSC           TTMINSCP          TTMINSCJ~
+
+COPY_EXISTING ~BGDIALOG.2DA~ ~override~
+	COUNT_2DA_ROWS 4 num_rows
+	FOR ( i = 0 ; i < num_rows ; ++i ) BEGIN
+		READ_2DA_ENTRY i 0 4 dv
+		READ_2DA_ENTRY i 1 4 pdf
+		READ_2DA_ENTRY i 2 4 jdf
+		READ_2DA_ENTRY i 3 4 dsf
+		TO_UPPER ~dv~
+		TO_UPPER ~pdf~
+		TO_UPPER ~jdf~
+		TO_UPPER ~dsf~
+		PATCH_IF !(VARIABLE_IS_SET $NPC_ARRAY_Z(~%dv%~)) BEGIN
+			LPF CREATE_B_BCS_NAME STR_VAR namez = EVAL "%pdf%" prefix = "ID"  suffix = "P"  RET pdfz = result END
+			LPF CREATE_B_BCS_NAME STR_VAR namez = EVAL "%jdf%" prefix = "ID"  suffix = "J"  RET jdfz = result END
+			LPF CREATE_B_BCS_NAME STR_VAR namez = EVAL "%dsf%" prefix = "ID"  suffix = "D"  RET dsfz = result END
+			LPF CREATE_B_BCS_NAME STR_VAR namez = EVAL "%dv%"  prefix = "ID"  suffix = "OS" RET ovs  = result END
+			SET orig = 0
+			PATCH_IF (VARIABLE_IS_SET $ORIGINAL_NPC(~%dv%~)) BEGIN SET orig = 1 END
+			DEFINE_ASSOCIATIVE_ARRAY NPC_ARRAY_Z BEGIN ~%dv%~, ~%ovs%~, ~*~, ~%pdfz%~, ~%jdfz%~, ~%dsfz%~, ~NONE~, ~%orig%~  => ~~ END
+		END
+	END
+	BUT_ONLY_IF_IT_CHANGES
+
+COPY_EXISTING ~BGBANTER.2DA~ ~override~
+	COUNT_2DA_ROWS 2 num_rows
+	FOR ( i = 0 ; i < num_rows ; ++i ) BEGIN
+		READ_2DA_ENTRY i 0 2 dv
+		READ_2DA_ENTRY i 1 2 bnf
+		TO_UPPER ~dv~
+		TO_UPPER ~bnf~
+		PATCH_IF (VARIABLE_IS_SET $NPC_ARRAY_Z2(~%dv%~)) BEGIN
+			LPF CREATE_B_BCS_NAME STR_VAR namez = EVAL "%bnf%" prefix = "ID" RET bnfz = result END
+			DEFINE_ASSOCIATIVE_ARRAY NPC_ARRAY_Z2 BEGIN ~%dv%~, ~%bnfz%~ => ~~ END
+		END
+	END
+	BUT_ONLY_IF_IT_CHANGES
+
+ACTION_PHP_EACH NPC_ARRAY_Z AS d_var => scr BEGIN
+	ACTION_IF (VARIABLE_IS_SET $NPC_ARRAY_Z2(~%d_var%~)) AND (~%d_var_6%~ STRING_COMPARE_CASE ~NONE~) BEGIN
+		OUTER_SPRINT ~bnt~ ~%d_var_6%~
+	END ELSE BEGIN
+		COPY_EXISTING ~BGDIALOG.2DA~ ~override~
+			LPF CREATE_B_BCS_NAME STR_VAR namez = EVAL "%d_var%" prefix = "IDB" RET bnt = result END
+			BUT_ONLY_IF_IT_CHANGES
+	END
+	ACTION_DEFINE_ASSOCIATIVE_ARRAY NEW_NPC_ARRAY BEGIN
+		~%d_var%~, ~%d_var_1%~, ~%d_var_2%~, ~%d_var_3%~, ~%d_var_4%~, ~%d_var_5%~, ~%bnt%~, ~%d_var_7%~  => ~~
+	END
+END
+
+ACTION_PHP_EACH NEW_NPC_ARRAY AS d_var => scr BEGIN
+	OUTER_SPRINT ~IDDIALOGU~ ~%IDDIALOGU%%d_var%%TAB%%d_var_3%%TAB%%d_var_4%%TAB%%d_var_5%%LNL%~
+	OUTER_SPRINT ~IDBANTERU~ ~%IDBANTERU%%d_var%%TAB%%d_var_6%%LNL%~
+	OUTER_SPRINT ~CRE_NPC_IWD1U~ ~%CRE_NPC_IWD1U%%d_var%%TAB%%d_var_1%%TAB%%d_var_2%%TAB%%d_var_3%%TAB%%d_var_4%%TAB%%d_var_5%%TAB%%d_var_6%%TAB%%d_var_7%%LNL%~
+END
+
+OUTER_SPRINT ~IDDIALOGU~ ~%IDDIALOGU%%adds%%LNL%~
+
+COPY ~zIDDIALOG.2DA~    ~override/IDDIALOG.2DA~ EVALUATE_BUFFER
+COPY ~zIDBANTER.2DA~    ~override/IDBANTER.2DA~ EVALUATE_BUFFER
+COPY ~CRE_NPC_IWD1.2DA~ ~override/NPC_IWD1.2DA~ EVALUATE_BUFFER
+
+ACTION_CLEAR_ARRAY NPC_ARRAY_Z
+ACTION_CLEAR_ARRAY NPC_ARRAY_Z2
+ACTION_CLEAR_ARRAY NEW_NPC_ARRAY
+ACTION_CLEAR_ARRAY ORIGINAL_NPC
+
+//BLOCK NEW_NPC
+
+/* не забыть добавлять в IDDIALOG, IDBANTER и NPC_IWD1. У них вместо * будет имя файла диалога в NPC_IWD1, а ORIGINAL будет = 1 */
+//BLOCKEND
+
+COPY ~override/IDDIALOG.2DA~ ~override~
+     ~override/IDBANTER.2DA~ ~override~
+     ~override/NPC_IWD1.2DA~ ~override~
+	PRETTY_PRINT_2DA
+
+CLEAR_IDS_MAP
+
+//BLOCK SCRIPTS & DIALOGUES OF ORIGINAL NPC
+//сначала просто создать все диалоги в одном файле, а потом просто делать через CHAIN и APPEND
+//диалоги делать через EVALUATE_BUFFER
+/* скрипты
+сделать названия baf-файлов по script_name персонажей, потом:
+COPY ~%script_name%.baf~ ~override/%OVERRIDE_SCRIPT%.bcs~
+	COMPILE_BAF_TO_BCS
+	EVALUATE_BUFFER
+*/
+
+//BLOCKEND
+
+//BLOCK GENERATE OVERRIDE SCRIPT & IDPSCRDL & PDIALOG
+//BLOCK IDPSCRDL
+//Когда мертвого выгнали из партии, то чтобы оживить, то ReallyForceSpellDeadRES
+
+//BLOCKEND
+
+//BLOCKEND
+
+
+//BLOCKEND
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

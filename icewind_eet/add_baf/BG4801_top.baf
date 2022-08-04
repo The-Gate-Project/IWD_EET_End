@@ -1,0 +1,11 @@
+IF
+	GlobalLT("Chapter","GLOBAL",8)
+	Global("SHERRY_PLOT","GLOBAL",0)
+THEN
+	RESPONSE #100
+		//CreateCreature("fcsherri",[850.300],14)
+		MoveGlobal("BG4801","fcsherri",[850.300])
+		ActionOverride("fcsherri",Face(14))
+		SetGlobal("SHERRY_PLOT","GLOBAL",1)
+		Continue()
+END

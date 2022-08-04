@@ -1,0 +1,9 @@
+IF
+	!Global("IdKickedOut","LOCALS",1)
+	OR(2)
+		StateCheck(Myself,STATE_STONE_DEATH)
+		StateCheck(Myself,STATE_FROZEN_DEATH)
+THEN
+	RESPONSE #100
+		SetGlobal("IdKickedOut","LOCALS",1)
+END

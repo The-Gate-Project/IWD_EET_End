@@ -1,0 +1,119 @@
+INCLUDE ~%MOD_FOLDER%/lib/functions.tph~
+
+COPY ~%mod%/UELM_BL.bmp~  ~override~
+     ~%mod%/FCIWDELM.bmp~ ~override~
+
+LAF FIND_FREE_ANIM_SLOT INT_VAR slotMin = 0x6400 RET slot END
+LAF TO_HEX_NUMBER INT_VAR value = slot minDigits = 4 RET hexNumber END
+COPY_EXISTING ~6401.ini~ ~override/%hexNumber%.ini~
+	REPLACE_TEXTUALLY ~elminster~ ~elminster blue~
+	REPLACE_TEXTUALLY ~cast_frame=4~ ~cast_frame=4	
+new_palette=UELM_BL~
+APPEND ~ANIMATE.IDS~ ~0x%hexNumber% ELMINSTER_BLUE~
+
+COPY_EXISTING ~AMELM01.cre~ ~override/FCIWDELM.cre~
+	SAY         0x008 @1023
+	SAY         0x00c @1023
+	WRITE_LONG  0x028 slot
+	WRITE_BYTE  0x02e 58
+	WRITE_ASCII 0x034 ~FCIWDELM~ (8)
+	FOR ( i = 0xa4 ; i < 0x234 ; i = i + 4 ) BEGIN
+		WRITE_LONG i ~-1~
+	END
+	SAY         0x0a4 ~~ [WILTN02]
+	WRITE_ASCII 0x248 ~FCIWDELM~ (8)
+	WRITE_BYTE  0x274 18
+	WRITE_BYTE  0x27b 34
+	WRITE_ASCII 0x280 ~FCIWDELM~ (32)
+	WRITE_ASCII 0x2cc ~FCIWDELM~ (8)
+	REMOVE_CRE_ITEMS
+	ADD_CRE_ITEM ~STAF01~ #0 #0 #0 ~NONE~ ~WEAPON1~ EQUIP TWOHANDED
+
+//BG1 PART
+COPY_EXISTING ~BG1001.are~ ~override~
+	READ_ASCII  0x094 ~script~ (8) NULL
+	PATCH_IF ( ~%script%~ STR_CMP ~BG1001~ ) BEGIN
+		WRITE_ASCII 0x094 ~BG1001~ (8)
+	END
+	LPF fj_are_structure
+		INT_VAR
+			fj_loc_x = 344
+			fj_loc_y = 433
+			fj_type = 6
+			fj_flags = 32
+			fj_trap_loc_x = 374
+			fj_trap_loc_y = 347
+			fj_box_left = 293
+			fj_box_top = 381
+			fj_box_right = 326
+			fj_box_bottom = 406
+			fj_vertex_0 = 312 + ( 381 << 16 )
+			fj_vertex_1 = 326 + ( 394 << 16 )
+			fj_vertex_2 = 310 + ( 406 << 16 )
+			fj_vertex_3 = 293 + ( 394 << 16 )
+		STR_VAR
+			fj_structure_type = container
+			fj_name = IWD_Container
+	END
+	BUT_ONLY_IF_IT_CHANGES
+
+ACTION_IF FILE_EXISTS_IN_GAME ~BG1001.bcs~ BEGIN
+	EXTEND_BOTTOM ~BG1001.bcs~ ~%mod%/BG1001.baf~
+END ELSE BEGIN
+	COMPILE ~%mod%/BG1001.baf~
+END
+EXTEND_TOP ~BG2600.bcs~ ~%mod%/BG2600.baf~
+
+//BG2 PART
+COPY_EXISTING ~AR0406.are~ ~override~
+	LPF fj_are_structure
+		INT_VAR
+			fj_loc_x = 1014
+			fj_loc_y = 1267
+			fj_type = 8
+			fj_flags = 32
+			fj_trap_loc_x = 996
+			fj_trap_loc_y = 1389
+			fj_box_left = 1084
+			fj_box_top = 1221
+			fj_box_right = 1118
+			fj_box_bottom = 1263
+			fj_vertex_0 = 1085 + ( 1221 << 16 )
+			fj_vertex_1 = 1118 + ( 1246 << 16 )
+			fj_vertex_2 = 1117 + ( 1263 << 16 )
+			fj_vertex_3 = 1084 + ( 1242 << 16 )
+		STR_VAR
+			fj_structure_type = container
+			fj_name = IWD_Container
+	END
+	BUT_ONLY_IF_IT_CHANGES
+
+EXTEND_TOP ~AR0406.bcs~ ~%mod%/AR0406.baf~
+EXTEND_TOP ~AR0602.bcs~ ~%mod%/AR0602.baf~
+
+
+
+
+
+//all
+COMPILE ~%mod%/FCIWDELM.baf~
+COMPILE ~%mod%/FCIWDELM.d~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

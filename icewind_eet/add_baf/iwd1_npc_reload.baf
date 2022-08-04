@@ -1,0 +1,70 @@
+
+
+IF
+	!InParty(Myself)
+	!StateCheck(Myself,STATE_REALLY_DEAD)
+	AreaType(IWDAREA)
+	!AreaCheck("ID0000")
+	Global("IdKickedOut","LOCALS",1)
+THEN
+	RESPONSE #100
+		SmallWait(2)
+		CreateVisualEffectObject("MSUMM1H",Myself)
+		SmallWait(8)
+		ApplySpellRES("IDINVIS3",Myself)
+		SmallWait(8)
+		DropInventory()
+		SmallWait(5)
+		DestroySelf()
+END
+
+/*IF
+	!InParty(Myself)
+	!StateCheck(Myself,STATE_REALLY_DEAD)
+	AreaType(IWDAREA)
+	!AreaCheck("ID0000")
+	Global("IdKickedOut","LOCALS",1)
+THEN
+	RESPONSE #100
+		SmallWait(2)
+		CreateVisualEffectObject("MSUMM1H",Myself)
+		//SmallWait(1)
+		//ReallyForceSpellDeadRES("bddispel",Myself)
+		//ReallyForceSpellDeadRES("bdrejuve",Myself)
+		//ReallyForceSpellDeadRES("IDRM517",Myself)
+		SmallWait(8)
+		ApplySpellRES("IDINVIS6",Myself)
+		SmallWait(8)
+		DropInventory()
+		SmallWait(5)
+		DestroySelf()
+END
+
+IF
+	!InParty(Myself)
+	StateCheck(Myself,STATE_REALLY_DEAD)
+	AreaType(IWDAREA)
+	!AreaCheck("ID0000")
+THEN
+	RESPONSE #100
+		SmallWait(3)
+		ReallyForceSpellDeadRES("bdresurr",Myself)
+		SmallWait(1)
+		SetSequence(SEQ_DIE)
+		CreateVisualEffectObject("MSUMM1H",Myself)
+		ReallyForceSpellDeadRES("bddispel",Myself)
+		ReallyForceSpellDeadRES("bdrejuve",Myself)
+		ReallyForceSpellDeadRES("IDRM517",Myself)
+		SmallWait(7)
+		ApplySpellRES("IDINVIS6",Myself)
+		SmallWait(4)
+		SetSequence(SEQ_AWAKE)
+		DropInventory()
+		SmallWait(5)
+		MoveGlobal("ID0000",Myself,[150.150])
+END*/
+
+
+
+
+

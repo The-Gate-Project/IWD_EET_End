@@ -1,0 +1,534 @@
+COPY_EXISTING ~idgols1.cre~ ~override/iwdmove.cre~
+	WRITE_ASCII 0x280 ~iwdmove~ (32)
+
+//BLOCK GENERATE NPC ARAY
+ACTION_DEFINE_ASSOCIATIVE_ARRAY FC_NPC_NONE_SCRIPTNAME BEGIN
+	~TTXAN~ => ~~
+	~TTBRAN~ => ~~
+	~TTIMOEN~ => ~~
+	~TTJAHEIR~ => ~~
+	~TTMINSC~ => ~~
+	~IDIOT01~ => ~~
+	~CVSANDR~ => ~~
+END
+ACTION_DEFINE_ASSOCIATIVE_ARRAY FC_NPC_NONE_PDIALOG BEGIN
+	~TTXANP~ => ~~
+	~TTBRANP~ => ~~
+	~TTIMOENP~ => ~~
+	~TTJAHEIP~ => ~~
+	~TTMINSCP~ => ~~
+	~IDIOTP~ => ~~
+	~BDIMOEN~ => ~~
+	~CVSANDRP~ => ~~
+END
+ACTION_DEFINE_ASSOCIATIVE_ARRAY FC_NPC_NONE_JDIALOG BEGIN
+	~TTXANJ~ => ~~
+	~TTBRANJ~ => ~~
+	~TTIMOENJ~ => ~~
+	~TTJAHEIJ~ => ~~
+	~TTMINSCJ~ => ~~
+	~IDIOTP~ => ~~
+	~BDIMOEN~ => ~~
+	~CVSANDRJ~ => ~~
+END
+
+ACTION_CLEAR_ARRAY FC_NPC_SCRIPTNAME
+ACTION_CLEAR_ARRAY FC_NPC_PDIALOG
+ACTION_CLEAR_ARRAY FC_NPC_JDIALOG
+ACTION_CLEAR_ARRAY FC_NPC_SCRIPTS
+
+COPY_EXISTING ~pdialog.2da~ ~override~
+              ~bgdialog.2da~ ~override~
+              ~bddialog.2da~ ~override~
+              ~25dialog.2da~ ~override~
+	COUNT_2DA_ROWS 4 rws
+	PATCH_IF ( rws > 0 ) BEGIN
+		FOR ( i = 0 ; i < rws ; ++i ) BEGIN
+			READ_2DA_ENTRY i 0 4 s_name
+			TO_UPPER s_name
+			PATCH_IF ( ~%s_name%~ STR_CMP ~POST_DIALOG_FILE~ ) AND ( NOT VARIABLE_IS_SET $FC_NPC_SCRIPTNAME( ~%s_name%~ ) ) AND ( ( NOT VARIABLE_IS_SET $FC_NPC_NONE_SCRIPTNAME( ~%s_name%~ ) ) ) BEGIN
+				DEFINE_ASSOCIATIVE_ARRAY FC_NPC_SCRIPTNAME BEGIN ~%s_name%~ => ~_~ END
+			END
+			READ_2DA_ENTRY i 1 4 p_dia
+			TO_UPPER p_dia
+			PATCH_IF ( FILE_EXISTS_IN_GAME ~%p_dia%.dlg~ ) AND ( NOT VARIABLE_IS_SET $FC_NPC_PDIALOG( ~%p_dia%~ ) ) AND ( NOT VARIABLE_IS_SET $FC_NPC_NONE_PDIALOG( ~%p_dia%~ ) ) BEGIN
+				DEFINE_ASSOCIATIVE_ARRAY FC_NPC_PDIALOG BEGIN ~%p_dia%~ => ~_~ END
+			END
+			READ_2DA_ENTRY i 2 4 p_dia
+			TO_UPPER p_dia
+			PATCH_IF ( FILE_EXISTS_IN_GAME ~%p_dia%.dlg~ ) AND ( NOT VARIABLE_IS_SET $FC_NPC_JDIALOG( ~%p_dia%~ ) ) AND ( NOT VARIABLE_IS_SET $FC_NPC_NONE_JDIALOG( ~%p_dia%~ ) ) BEGIN
+				DEFINE_ASSOCIATIVE_ARRAY FC_NPC_JDIALOG BEGIN ~%p_dia%~ => ~_~ END
+			END
+		END
+	END
+	BUT_ONLY_IF_IT_CHANGES
+
+/*<<<<<<<<a_type.baf
+IF
+	AreaType(IWDAREA)
+THEN
+	RESPONSE #100
+		NoAction()
+END
+>>>>>>>>*/
+
+OUTER_SET num_npc_patch = 0
+COPY_EXISTING_REGEXP GLOB ~.+\.cre~ ~override~
+	READ_ASCII 0x280 s_name (32) NULL
+	TO_UPPER s_name
+	PATCH_IF ( VARIABLE_IS_SET $FC_NPC_SCRIPTNAME ( ~%s_name%~ ) ) BEGIN
+		READ_ASCII 0x248 o_scr (8) NULL
+		TO_UPPER o_scr
+		PATCH_IF ( NOT VARIABLE_IS_SET $FC_NPC_SCRIPTS ( ~%o_scr%~ ) ) BEGIN
+			DEFINE_ASSOCIATIVE_ARRAY FC_NPC_SCRIPTS BEGIN ~%o_scr%~ => _ END
+			SET num_npc_patch = num_npc_patch + 1
+		END
+	END
+	BUT_ONLY_IF_IT_CHANGES
+
+ACTION_IF ( num_npc_patch ) BEGIN
+	ACTION_PHP_EACH FC_NPC_SCRIPTS AS o_scr => _ BEGIN
+		ACTION_IF FILE_EXISTS_IN_GAME ~%o_scr%.bcs~ BEGIN
+			//EXTEND_TOP ~%o_scr%.bcs~ ~a_type.baf~
+			COPY_EXISTING ~%o_scr%.bcs~ ~override~
+				DECOMPILE_AND_PATCH BEGIN
+					REPLACE_TEXTUALLY ~^IF$~ ~IF !AreaType(IWDAREA)~
+				END
+				BUT_ONLY_IF_IT_CHANGES
+		END
+	END
+END
+
+//BLOCKEND
+
+OUTER_SPRINT ~tilde~ "~"
+//BLOCK SCRIPTS & DIALOGUES OF ORIGINAL NPC
+ACTION_PHP_EACH FC_NPC_PDIALOG AS PDIALOG_IWD1 => ~~ BEGIN
+	OUTER_SPRINT ~state_trigger_add~ ~~
+	COPY_EXISTING ~%PDIALOG_IWD1%.dlg~ ~override~
+		READ_LONG 0x08 states
+		READ_LONG 0x0c states_off
+		PATCH_IF ( states > 0 ) BEGIN
+			FOR ( i = 0 ; i < states ; ++i ) BEGIN
+				READ_LONG states_off + i * 0x10 + 0x0c trig_idx
+				PATCH_IF ( trig_idx >= 0 ) BEGIN
+					SPRINT ~state_trigger_add~ ~%state_trigger_add%%LNL%ADD_STATE_TRIGGER %PDIALOG_IWD1% %i% %tilde%!Global("PARTY_IN_ICEWIND_DALE","GLOBAL",1)%tilde%~
+				END
+			END
+		END
+		BUT_ONLY_IF_IT_CHANGES
+	COMPILE ~icewind_eet\dlg\iwd1_pdialog.d~ EVALUATE_BUFFER
+END
+//BLOCK SCRIPTS & DIALOGUES OF ORIGINAL NPC
+ACTION_PHP_EACH FC_NPC_JDIALOG AS JDIALOG_IWD1 => ~~ BEGIN
+	OUTER_SPRINT ~state_trigger_add~ ~~
+	COPY_EXISTING ~%JDIALOG_IWD1%.dlg~ ~override~
+		READ_LONG 0x08 states
+		READ_LONG 0x0c states_off
+		PATCH_IF ( states > 0 ) BEGIN
+			FOR ( i = 0 ; i < states ; ++i ) BEGIN
+				READ_LONG states_off + i * 0x10 + 0x0c trig_idx
+				PATCH_IF ( trig_idx >= 0 ) BEGIN
+					SPRINT ~state_trigger_add~ ~%state_trigger_add%%LNL%ADD_STATE_TRIGGER %JDIALOG_IWD1% %i% %tilde%!Global("PARTY_IN_ICEWIND_DALE","GLOBAL",1)%tilde%~
+				END
+			END
+		END
+		BUT_ONLY_IF_IT_CHANGES
+	COMPILE ~icewind_eet\dlg\iwd1_pdialog.d~ EVALUATE_BUFFER
+END
+
+//BLOCKEND
+
+//BLOCK GENERATE IDPSCRDL & OTHER
+<<<<<<<<IDPSCRDL.baf
+IF
+	Global("TP_NUM_IN_PARTY_IWD","GLOBAL",1)
+	NumInParty(1)
+THEN
+	RESPONSE #100
+		IncrementGlobal("All_Installed","MYAREA",1)
+		DestroySelf()
+END
+
+IF
+	Global("TP_NUM_IN_PARTY_IWD","GLOBAL",2)
+	NumInParty(2)
+THEN
+	RESPONSE #100
+		IncrementGlobal("All_Installed","MYAREA",1)
+		DestroySelf()
+END
+
+IF
+	Global("TP_NUM_IN_PARTY_IWD","GLOBAL",3)
+	NumInParty(3)
+THEN
+	RESPONSE #100
+		IncrementGlobal("All_Installed","MYAREA",1)
+		DestroySelf()
+END
+
+IF
+	Global("TP_NUM_IN_PARTY_IWD","GLOBAL",4)
+	NumInParty(4)
+THEN
+	RESPONSE #100
+		IncrementGlobal("All_Installed","MYAREA",1)
+		DestroySelf()
+END
+
+IF
+	Global("TP_NUM_IN_PARTY_IWD","GLOBAL",5)
+	NumInParty(5)
+THEN
+	RESPONSE #100
+		IncrementGlobal("All_Installed","MYAREA",1)
+		DestroySelf()
+END
+
+IF
+	Global("TP_NUM_IN_PARTY_IWD","GLOBAL",6)
+	NumInParty(6)
+THEN
+	RESPONSE #100
+		IncrementGlobal("All_Installed","MYAREA",1)
+		DestroySelf()
+END
+
+IF
+	Global("PLAYER1_ADDED","MYAREA",0)
+THEN
+	RESPONSE #100
+		SetGlobal("PLAYER1_ADDED","MYAREA",1)
+		IncrementGlobal("TP_NUM_IN_PARTY_IWD","GLOBAL",1)
+END
+
+XXXXxxxxXXXX
+>>>>>>>>
+<<<<<<<<IDPLRES1.baf
+XXXXxxxxXXXX
+
+
+>>>>>>>>
+<<<<<<<<IDPLRES2.baf
+IF
+	!Global("PLAYER1_ADDED","MYAREA",0)
+THEN
+	RESPONSE #100
+		SetGlobal("PLAYER1_ADDED","MYAREA",0)
+		IncrementGlobal("TP_NUM_IN_PARTY_IWD","GLOBAL",-1)
+END
+
+XXXXxxxxXXXX
+>>>>>>>>
+COPY ~IDPSCRDL.baf~ ~%temp_dir%/IDPSCRDL.baf~
+     ~IDPLRES1.baf~ ~%temp_dir%/IDPLRES1.baf~
+     ~IDPLRES2.baf~ ~%temp_dir%/IDPLRES2.baf~
+
+ACTION_PHP_EACH FC_NPC_SCRIPTNAME AS d_var => ~_~ BEGIN
+	OUTER_SPRINT ~script_block~ ~%LNL%IF%LNL%InParty("%d_var%")%LNL%Global("%d_var%_ADDED","MYAREA",0)%LNL%THEN%LNL%RESPONSE #100%LNL%SetGlobal("%d_var%_ADDED","MYAREA",1)%LNL%IncrementGlobal("TP_NUM_IN_PARTY_IWD","GLOBAL",1)%LNL%END%LNL%%LNL%XXXXxxxxXXXX~
+	OUTER_SPRINT ~script_block2~ ~%LNL%IF%LNL%InPartyAllowDead("%d_var%")%LNL%!Global("%d_var%_ADDED","MYAREA",0)%LNL%THEN%LNL%RESPONSE #100%LNL%SetGlobal("%d_var%_ADDED","MYAREA",0)%LNL%SetGlobal("%d_var%_MOVED","MYAREA",0)%LNL%IncrementGlobal("TP_NUM_IN_PARTY_IWD","GLOBAL",-1)%LNL%SetGlobal("SPRITE_IS_DEAD%d_var%","GLOBAL",0)%LNL%ActionOverride("%d_var%",ApplySpellRES("bdresurr",Myself))%LNL%SmallWait(1)%LNL%ActionOverride("%d_var%",SetGlobal("ID_IMOEN_BELT","LOCALS",0))%LNL%ActionOverride("%d_var%",SetGlobal("IdKickedOut","LOCALS",0))%LNL%SmallWait(1)%LNL%ActionOverride("%d_var%",ApplySpellRES("bddispel",Myself))%LNL%ActionOverride("%d_var%",ApplySpellRES("bdrejuve",Myself))%LNL%ActionOverride("%d_var%",ApplySpellRES("idimbltr",Myself))%LNL%ActionOverride("%d_var%",ApplySpellRES("IDRM517",Myself))%LNL%ActionOverride("%d_var%",ApplySpell(Myself,RESTORE_FULL_HEALTH))%LNL%ActionOverride("%d_var%",ApplySpellRES("IDINVIS6",Myself))%LNL%END%LNL%%LNL%IF%LNL%!InPartyAllowDead("%d_var%")%LNL%!Global("%d_var%_ADDED","MYAREA",0)%LNL%InMyArea("%d_var%")%LNL%THEN%LNL%RESPONSE #100%LNL%SetGlobal("%d_var%_ADDED","MYAREA",0)%LNL%SetGlobal("%d_var%_MOVED","MYAREA",0)%LNL%IncrementGlobal("TP_NUM_IN_PARTY_IWD","GLOBAL",-1)%LNL%SetGlobal("SPRITE_IS_DEAD%d_var%","GLOBAL",0)%LNL%ActionOverride("%d_var%",ApplySpellRES("bdresurr",Myself))%LNL%SmallWait(1)%LNL%ActionOverride("%d_var%",SetGlobal("ID_IMOEN_BELT","LOCALS",0))%LNL%ActionOverride("%d_var%",SetGlobal("IdKickedOut","LOCALS",0))%LNL%SmallWait(1)%LNL%ActionOverride("%d_var%",ApplySpellRES("bddispel",Myself))%LNL%ActionOverride("%d_var%",ApplySpellRES("bdrejuve",Myself))%LNL%ActionOverride("%d_var%",ApplySpellRES("idimbltr",Myself))%LNL%ActionOverride("%d_var%",ApplySpellRES("IDRM517",Myself))%LNL%ActionOverride("%d_var%",ApplySpell(Myself,RESTORE_FULL_HEALTH))%LNL%ActionOverride("%d_var%",ApplySpellRES("IDINVIS6",Myself))%LNL%ActionOverride("%d_var%",JoinPartyOverride())%LNL%END%LNL%%LNL%IF%LNL%!InPartyAllowDead("%d_var%")%LNL%!Global("%d_var%_ADDED","MYAREA",0)%LNL%Global("%d_var%_MOVED","MYAREA",0)%LNL%!InMyArea("%d_var%")%LNL%THEN%LNL%RESPONSE #100%LNL%SetGlobal("%d_var%_MOVED","MYAREA",1)%LNL%MoveGlobalObject("%d_var%",Player1)%LNL%ActionOverride("%d_var%",ApplySpellRES("bdresurr",Myself))%LNL%END%LNL%%LNL%IF%LNL%!Global("%d_var%_ADDED","MYAREA",0)%LNL%!Global("%d_var%_MOVED","MYAREA",0)%LNL%OR(2)%LNL%!InMyArea("%d_var%")%LNL%!InParty("%d_var%")%LNL%THEN%LNL%RESPONSE #100%LNL%SetGlobal("%d_var%_ADDED","MYAREA",0)%LNL%SetGlobal("%d_var%_MOVED","MYAREA",0)%LNL%IncrementGlobal("TP_NUM_IN_PARTY_IWD","GLOBAL",-1)%LNL%END%LNL%%LNL%XXXXxxxxXXXX~
+	SILENT
+		COPY ~%temp_dir%/IDPSCRDL.baf~ ~%temp_dir%~
+			REPLACE_TEXTUALLY ~XXXXxxxxXXXX~ ~%script_block%~ EVALUATE_BUFFER
+		COPY ~%temp_dir%/IDPLRES2.baf~ ~%temp_dir%~
+			REPLACE_TEXTUALLY ~XXXXxxxxXXXX~ ~%script_block2%~ EVALUATE_BUFFER
+	VERBOSE
+END
+
+COPY ~%temp_dir%/IDPSCRDL.baf~ ~%temp_dir%~
+	REPLACE_TEXTUALLY ~XXXXxxxxXXXX~ ~IF
+	True()
+THEN
+	RESPONSE #100
+		IncrementGlobal("All_Installed","MYAREA",1)
+		DestroySelf()
+END~
+COPY ~%temp_dir%/IDPLRES1.baf~ ~%temp_dir%~
+     ~%temp_dir%/IDPLRES2.baf~ ~%temp_dir%~
+	REPLACE_TEXTUALLY ~XXXXxxxxXXXX~ ~IF
+	True()
+THEN
+	RESPONSE #100
+		IncrementGlobal("All_Restored","MYAREA",1)
+		DestroySelf()
+END~
+COMPILE ~%temp_dir%/IDPSCRDL.baf~
+        ~%temp_dir%/IDPLRES1.baf~
+        ~%temp_dir%/IDPLRES2.baf~
+
+
+<<<<<<<<f_TColor.baf
+IF
+	Global("Set_FadeToColor","MYAREA",0)
+THEN
+	RESPONSE #100
+		FadeToColor([0.0],0)
+		SetGlobal("Set_FadeToColor","MYAREA",1)
+		Continue()
+END
+>>>>>>>>
+EXTEND_TOP ~ID0000.bcs~ ~f_TColor.baf~
+EXTEND_TOP ~IW0000.bcs~ ~f_TColor.baf~
+//BLOCKEND
+
+//BLOCK COMPILE Game/Test BAF files
+ACTION_IF ( ~%ins_type%~ = 1 ) BEGIN
+	COMPILE ~%f_baf%/test_mode/IDSHCUT1.baf~
+	        ~%f_baf%/test_mode/IDTOEET1.baf~
+	        ~%f_baf%/test_mode/IWSHCUT1.baf~
+	        ~%f_baf%/test_mode/IWTOEET1.baf~
+END
+COPY_EXISTING ~IW0000.bcs~ ~override~
+	DECOMPILE_AND_PATCH BEGIN
+		REPLACE_TEXTUALLY ~IWPSCRDL~ ~IDPSCRDL~
+		REPLACE_TEXTUALLY ~IWSETREP~ ~IDSETREP~
+		REPLACE_TEXTUALLY ~IWPLRES1~ ~IDPLRES1~
+		REPLACE_TEXTUALLY ~IWPLRES2~ ~IDPLRES2~
+	END
+COMPILE ~%f_baf%/IDPLRES3.baf~
+        ~%f_baf%/IDPLRES4.baf~
+        ~%f_baf%/IDPLRES5.baf~
+//BLOCKEND
+
+//BLOCK SPELLS
+COPY ~%MOD_FOLDER%/spl/spell.spl~ ~override/idimblta.spl~
+	LPF ADD_SPELL_EFFECT INT_VAR opcode=367 target=2 parameter2=1 timing=9 resist_dispel=2 END
+	LPF ADD_SPELL_EFFECT INT_VAR opcode=206 target=2 timing=9 resist_dispel=2 STR_VAR resource="SPWM113" END
+	LPF ADD_SPELL_EFFECT INT_VAR opcode=206 target=2 timing=9 resist_dispel=2 STR_VAR resource="SPWI415" END
+	LPF ADD_SPELL_EFFECT INT_VAR opcode=208 target=2 timing=9 parameter1=5 resist_dispel=2 END
+	LPF ADD_SPELL_EFFECT INT_VAR opcode=98  target=2 timing=9 parameter1=6 parameter2=3 resist_dispel=2 duration=42 special=1 END
+	LPF ADD_SPELL_EFFECT INT_VAR opcode=101 target=2 timing=9 parameter2=134 resist_dispel=2 END
+	LPF ADD_SPELL_EFFECT INT_VAR opcode=101 target=2 timing=9 parameter2=13 resist_dispel=2 END
+	LPF ADD_SPELL_EFFECT INT_VAR opcode=101 target=2 timing=9 parameter2=55 resist_dispel=2 END
+	LPF ADD_SPELL_EFFECT INT_VAR opcode=101 target=2 timing=9 parameter2=211 resist_dispel=2 END
+	LPF ADD_SPELL_EFFECT INT_VAR opcode=101 target=2 timing=9 parameter2=5 resist_dispel=2 END
+	LPF ADD_SPELL_EFFECT INT_VAR opcode=101 target=2 timing=9 parameter2=209 resist_dispel=2 END
+	LPF ADD_SPELL_EFFECT INT_VAR opcode=101 target=2 timing=9 parameter2=238 resist_dispel=2 END
+COPY ~%MOD_FOLDER%/spl/spell.spl~ ~override/idimbltr.spl~
+	LPF ADD_SPELL_EFFECT INT_VAR opcode=321 target=2 STR_VAR resource="idimblta" END
+	LPF ADD_SPELL_EFFECT INT_VAR opcode=321 target=2 STR_VAR resource="idimbltz" END
+COPY ~%MOD_FOLDER%/spl/spell.spl~ ~override/idimbltz.spl~
+	LPF ADD_SPELL_EFFECT INT_VAR opcode=360 target=2 timing=9 resist_dispel=2 END
+
+
+//BLOCKEND
+
+//BLOCK PATCH_WORLD_SCRIPT
+ACTION_IF ( ins_type = 1 ) BEGIN
+	<<<<<<<<bld1.baf
+	IF
+		!Global("PARTY_IN_ICEWIND_DALE","GLOBAL",0)
+	THEN
+		RESPONSE #100
+			NoAction()
+	END
+	>>>>>>>>
+	EXTEND_TOP ~baldur.bcs~   ~bld1.baf~
+	EXTEND_TOP ~baldur25.bcs~ ~bld1.baf~
+	EXTEND_TOP ~bdbaldur.bcs~ ~bld1.baf~
+	//IWD1
+	COPY_EXISTING ~ICEWIND.bcs~ ~%temp_dir%/ICEWIND.baf~
+		DECOMPILE_BCS_TO_BAF
+	COPY ~%temp_dir%/ICEWIND.baf~ ~%temp_dir%/ICEWIND.baf~
+		REPLACE_TEXTUALLY ~^IF~ ~IF Global("PARTY_IN_ICEWIND_DALE","GLOBAL",1)~
+	EXTEND_TOP ~baldur.bcs~   ~%temp_dir%/ICEWIND.baf~
+	EXTEND_TOP ~baldur25.bcs~ ~%temp_dir%/ICEWIND.baf~
+	EXTEND_TOP ~bdbaldur.bcs~ ~%temp_dir%/ICEWIND.baf~
+	//IWD2
+	COPY_EXISTING ~ICEWIND2.bcs~ ~%temp_dir%/ICEWIND2.baf~
+		DECOMPILE_BCS_TO_BAF
+	COPY ~%temp_dir%/ICEWIND2.baf~ ~%temp_dir%/ICEWIND2.baf~
+		REPLACE_TEXTUALLY ~^IF~ ~IF Global("PARTY_IN_ICEWIND_DALE","GLOBAL",1)~
+	EXTEND_TOP ~baldur.bcs~   ~%temp_dir%/ICEWIND2.baf~
+	EXTEND_TOP ~baldur25.bcs~ ~%temp_dir%/ICEWIND2.baf~
+	EXTEND_TOP ~bdbaldur.bcs~ ~%temp_dir%/ICEWIND2.baf~
+END
+//BLOCKEND
+
+
+APPEND ~mastarea.2da~ ~ID0000 value~ UNLESS ~ID0000~
+APPEND ~mastarea.2da~ ~IW0000 value~ UNLESS ~IW0000~
+
+COPY_EXISTING ~ID0000.BCS~ ~override~
+	DECOMPILE_AND_PATCH BEGIN
+		REPLACE_TEXTUALLY ~SetGlobal("IWD1_CHAPTER","GLOBAL",0)~ ~SetGlobal("IWD_CHAPTER","GLOBAL",-1)~
+		REPLACE_TEXTUALLY ~SetMasterArea("BG2700")~ ~~
+	END
+
+COPY_EXISTING ~ID1006.BCS~ ~override~ //IWD1TXT0
+	DECOMPILE_AND_PATCH BEGIN
+		REPLACE_TEXTUALLY ~StartMovie("IDINTRO")~ ~~
+		REPLACE_TEXTUALLY ~IncrementGlobal("IWD1_CHAPTER","GLOBAL",1)~ ~IncrementGlobal("IWD_CHAPTER","GLOBAL",1)~
+		REPLACE_TEXTUALLY ~SetGlobal("IWD1_CHAPTER","GLOBAL",0)~ ~SetGlobal("IWD_CHAPTER","GLOBAL",0)~
+		REPLACE_TEXTUALLY ~\(TextScreen("IWD1TXT0")\)~ ~\1%LNL%%TAB%%TAB%AddJournalEntry(@2000080,INFO)~
+	END
+
+COPY_EXISTING ~ID2100.BCS~ ~override~ //IWD1TXT1
+	DECOMPILE_AND_PATCH BEGIN
+		REPLACE_TEXTUALLY ~IncrementGlobal("IWD1_CHAPTER","GLOBAL",1)~ ~IncrementGlobal("IWD_CHAPTER","GLOBAL",1)~
+		REPLACE_TEXTUALLY ~Global("IWD1_CHAPTER","GLOBAL",0)~ ~Global("IWD_CHAPTER","GLOBAL",0)~
+		REPLACE_TEXTUALLY ~GlobalGT("IWD1_CHAPTER","GLOBAL",3)~ ~GlobalGT("IWD_CHAPTER","GLOBAL",3)~
+		REPLACE_TEXTUALLY ~GlobalGT("IWD1_CHAPTER","GLOBAL",1)~ ~GlobalGT("IWD_CHAPTER","GLOBAL",1)~
+		REPLACE_TEXTUALLY ~\(TextScreen("IWD1TXT1")\)~ ~\1%LNL%%TAB%%TAB%AddJournalEntry(@2000081,INFO)~
+	END
+
+COPY_EXISTING ~ID4000.BCS~ ~override~ //IWD1TXT2
+	DECOMPILE_AND_PATCH BEGIN
+		REPLACE_TEXTUALLY ~IncrementGlobal("IWD1_CHAPTER","GLOBAL",1)~ ~IncrementGlobal("IWD_CHAPTER","GLOBAL",1)~
+		REPLACE_TEXTUALLY ~Global("IWD1_CHAPTER","GLOBAL",1)~ ~Global("IWD_CHAPTER","GLOBAL",1)~
+		REPLACE_TEXTUALLY ~\(TextScreen("IWD1TXT2")\)~ ~\1%LNL%%TAB%%TAB%AddJournalEntry(@2000082,INFO)~
+	END
+
+COPY_EXISTING ~ID5000.BCS~ ~override~ //IWD1TXT3
+	DECOMPILE_AND_PATCH BEGIN
+		REPLACE_TEXTUALLY ~IncrementGlobal("IWD1_CHAPTER","GLOBAL",1)~ ~IncrementGlobal("IWD_CHAPTER","GLOBAL",1)~
+		REPLACE_TEXTUALLY ~Global("IWD1_CHAPTER","GLOBAL",2)~ ~Global("IWD_CHAPTER","GLOBAL",2)~
+		REPLACE_TEXTUALLY ~\(TextScreen("IWD1TXT3")\)~ ~\1%LNL%%TAB%%TAB%AddJournalEntry(@2000083,INFO)~
+	END
+
+COPY_EXISTING ~ID6000.BCS~ ~override~ //IWD1TXT4
+	DECOMPILE_AND_PATCH BEGIN
+		REPLACE_TEXTUALLY ~IncrementGlobal("IWD1_CHAPTER","GLOBAL",1)~ ~IncrementGlobal("IWD_CHAPTER","GLOBAL",1)~
+		REPLACE_TEXTUALLY ~Global("IWD1_CHAPTER","GLOBAL",3)~ ~Global("IWD_CHAPTER","GLOBAL",3)~
+		REPLACE_TEXTUALLY ~\(TextScreen("IWD1TXT4")\)~ ~\1%LNL%%TAB%%TAB%AddJournalEntry(@2000084,INFO)~
+	END
+
+COPY_EXISTING ~ID7005.BCS~ ~override~ //IWD1TXT5
+	DECOMPILE_AND_PATCH BEGIN
+		REPLACE_TEXTUALLY ~IncrementGlobal("IWD1_CHAPTER","GLOBAL",1)~ ~IncrementGlobal("IWD_CHAPTER","GLOBAL",1)~
+		REPLACE_TEXTUALLY ~Global("IWD1_CHAPTER","GLOBAL",4)~ ~Global("IWD_CHAPTER","GLOBAL",4)~
+		REPLACE_TEXTUALLY ~\(TextScreen("IWD1TXT5")\)~ ~\1%LNL%%TAB%%TAB%AddJournalEntry(@2000085,INFO)~
+	END
+
+COPY_EXISTING ~ID8001.BCS~ ~override~ //IWD1TXT6
+	DECOMPILE_AND_PATCH BEGIN
+		REPLACE_TEXTUALLY ~IncrementGlobal("IWD1_CHAPTER","GLOBAL",1)~ ~IncrementGlobal("IWD_CHAPTER","GLOBAL",1)~
+		REPLACE_TEXTUALLY ~Global("IWD1_CHAPTER","GLOBAL",5)~ ~Global("IWD_CHAPTER","GLOBAL",5)~
+		REPLACE_TEXTUALLY ~\(TextScreen("IWD1TXT6")\)~ ~\1%LNL%%TAB%%TAB%AddJournalEntry(@2000086,INFO)~
+	END
+
+COPY_EXISTING ~ID1100.BCS~ ~override~ //IWD1CHP7
+	DECOMPILE_AND_PATCH BEGIN
+		REPLACE_TEXTUALLY ~\(TextScreen("IWD1CHP7")\)~ ~\1%LNL%%TAB%%TAB%AddJournalEntry(@2000094,INFO)~
+	END
+
+COPY_EXISTING ~DNATE.DLG~ ~override~
+	DECOMPILE_AND_PATCH BEGIN
+		REPLACE_TEXTUALLY ~GlobalLT("IWD1_CHAPTER","GLOBAL",2)~ ~GlobalLT("IWD_CHAPTER","GLOBAL",2)~
+		REPLACE_TEXTUALLY ~Global("IWD1_CHAPTER","GLOBAL",2)~   ~Global("IWD_CHAPTER","GLOBAL",2)~
+		REPLACE_TEXTUALLY ~GlobalGT("IWD1_CHAPTER","GLOBAL",2)~ ~GlobalGT("IWD_CHAPTER","GLOBAL",2)~
+	END
+
+COPY_EXISTING ~DPLANAR.DLG~ ~override~
+	DECOMPILE_AND_PATCH BEGIN
+		REPLACE_TEXTUALLY ~GlobalLT("IWD1_CHAPTER","GLOBAL",1)~ ~GlobalLT("IWD_CHAPTER","GLOBAL",1)~
+		REPLACE_TEXTUALLY ~Global("IWD1_CHAPTER","GLOBAL",1)~   ~Global("IWD_CHAPTER","GLOBAL",1)~
+		REPLACE_TEXTUALLY ~Global("IWD1_CHAPTER","GLOBAL",2)~   ~Global("IWD_CHAPTER","GLOBAL",2)~
+		REPLACE_TEXTUALLY ~Global("IWD1_CHAPTER","GLOBAL",3)~   ~Global("IWD_CHAPTER","GLOBAL",3)~
+		REPLACE_TEXTUALLY ~Global("IWD1_CHAPTER","GLOBAL",4)~   ~Global("IWD_CHAPTER","GLOBAL",4)~
+		REPLACE_TEXTUALLY ~Global("IWD1_CHAPTER","GLOBAL",5)~   ~Global("IWD_CHAPTER","GLOBAL",5)~
+		REPLACE_TEXTUALLY ~Global("IWD1_CHAPTER","GLOBAL",6)~   ~Global("IWD_CHAPTER","GLOBAL",6)~
+	END
+
+COPY_EXISTING ~IW0000.BCS~ ~override~
+	DECOMPILE_AND_PATCH BEGIN
+		REPLACE_TEXTUALLY ~SetGlobal("IWD2_CHAPTER","GLOBAL",0)~ ~SetGlobal("IWD_CHAPTER","GLOBAL",-1)~
+		REPLACE_TEXTUALLY ~SetMasterArea("BG2700")~ ~~
+	END
+
+COPY_EXISTING ~IW1000.bcs~ ~override~
+	DECOMPILE_AND_PATCH BEGIN
+		REPLACE_TEXTUALLY ~SetGlobal("IWD2_CHAPTER","GLOBAL",-1)~ ~Continue()~
+		REPLACE_TEXTUALLY ~Global("IWD2_CHAPTER","GLOBAL",-1)~ ~Global("IWD_CHAPTER","GLOBAL",-1)~
+		REPLACE_TEXTUALLY ~Global("IWD2_CHAPTER","GLOBAL",0)~ ~Global("IWD_CHAPTER","GLOBAL",0)~
+		REPLACE_TEXTUALLY ~IncrementGlobal("IWD2_CHAPTER","GLOBAL",1)~ ~IncrementGlobal("IWD_CHAPTER","GLOBAL",1)~
+		REPLACE_TEXTUALLY ~StartMovie("IWINTRO")~ ~~
+		REPLACE_TEXTUALLY ~\(TextScreen("IWD2TXT0")\)~ ~\1%LNL%%TAB%%TAB%AddJournalEntry(@2000100,INFO)~
+	END
+
+COPY_EXISTING ~IW2000.bcs~ ~override~
+	DECOMPILE_AND_PATCH BEGIN
+		REPLACE_TEXTUALLY ~Global("IWD2_CHAPTER","GLOBAL",0)~ ~Global("IWD_CHAPTER","GLOBAL",0)~
+		REPLACE_TEXTUALLY ~IncrementGlobal("IWD2_CHAPTER","GLOBAL",1)~ ~IncrementGlobal("IWD_CHAPTER","GLOBAL",1)~
+		REPLACE_TEXTUALLY ~\(TextScreen("IWD2TXT1")\)~ ~\1%LNL%%TAB%%TAB%AddJournalEntry(@2000101,INFO)~
+	END
+
+COPY_EXISTING ~IW4001.bcs~ ~override~
+	DECOMPILE_AND_PATCH BEGIN
+		REPLACE_TEXTUALLY ~IncrementGlobal("IWD2_CHAPTER","GLOBAL",1)~ ~IncrementGlobal("IWD_CHAPTER","GLOBAL",1)~
+		REPLACE_TEXTUALLY ~\(TextScreen("IWD2TXT2")\)~ ~\1%LNL%%TAB%%TAB%AddJournalEntry(@2000102,INFO)~
+	END
+
+COPY_EXISTING ~IW5000.bcs~ ~override~
+	DECOMPILE_AND_PATCH BEGIN
+		REPLACE_TEXTUALLY ~Global("IWD2_CHAPTER","GLOBAL",2)~ ~Global("IWD_CHAPTER","GLOBAL",2)~
+		REPLACE_TEXTUALLY ~Global("IWD2_CHAPTER","GLOBAL",3)~ ~Global("IWD_CHAPTER","GLOBAL",3)~
+		REPLACE_TEXTUALLY ~IncrementGlobal("IWD2_CHAPTER","GLOBAL",1)~ ~IncrementGlobal("IWD_CHAPTER","GLOBAL",1)~
+		REPLACE_TEXTUALLY ~\(TextScreen("IWD2TXT3")\)~ ~\1%LNL%%TAB%%TAB%AddJournalEntry(@2000103,INFO)~
+	END
+
+COPY_EXISTING ~IW5200.bcs~ ~override~
+	DECOMPILE_AND_PATCH BEGIN
+		REPLACE_TEXTUALLY ~Global("IWD2_CHAPTER","GLOBAL",3)~ ~Global("IWD_CHAPTER","GLOBAL",3)~
+		REPLACE_TEXTUALLY ~IncrementGlobal("IWD2_CHAPTER","GLOBAL",1)~ ~IncrementGlobal("IWD_CHAPTER","GLOBAL",1)~
+		REPLACE_TEXTUALLY ~\(TextScreen("IWD2TXT4")\)~ ~\1%LNL%%TAB%%TAB%AddJournalEntry(@2000104,INFO)~
+	END
+
+COPY_EXISTING ~IW6000.bcs~ ~override~
+	DECOMPILE_AND_PATCH BEGIN
+		REPLACE_TEXTUALLY ~Global("IWD2_CHAPTER","GLOBAL",4)~ ~Global("IWD_CHAPTER","GLOBAL",4)~
+		REPLACE_TEXTUALLY ~IncrementGlobal("IWD2_CHAPTER","GLOBAL",1)~ ~IncrementGlobal("IWD_CHAPTER","GLOBAL",1)~
+		REPLACE_TEXTUALLY ~\(TextScreen("IWD2TXT5")\)~ ~\1%LNL%%TAB%%TAB%AddJournalEntry(@2000105,INFO)~
+	END
+
+COPY_EXISTING ~IW6300.bcs~ ~override~
+	DECOMPILE_AND_PATCH BEGIN
+		REPLACE_TEXTUALLY ~Global("IWD2_CHAPTER","GLOBAL",5)~ ~Global("IWD_CHAPTER","GLOBAL",5)~
+		REPLACE_TEXTUALLY ~IncrementGlobal("IWD2_CHAPTER","GLOBAL",1)~ ~IncrementGlobal("IWD_CHAPTER","GLOBAL",1)~
+		REPLACE_TEXTUALLY ~\(TextScreen("IWD2TXT6")\)~ ~\1%LNL%%TAB%%TAB%AddJournalEntry(@2000106,INFO)~
+	END
+
+/* TextScreen IWD1 */
+LAF repl_textscreen_2da INT_VAR strr = RESOLVE_STR_REF (@2000087)          STR_VAR file = ~IWD1TXT0~ END
+LAF repl_textscreen_2da INT_VAR strr = RESOLVE_STR_REF (@2000088)          STR_VAR file = ~IWD1TXT1~ END
+LAF repl_textscreen_2da INT_VAR strr = RESOLVE_STR_REF (@2000089)          STR_VAR file = ~IWD1TXT2~ END
+LAF repl_textscreen_2da INT_VAR strr = RESOLVE_STR_REF (@2000090)          STR_VAR file = ~IWD1TXT3~ END
+LAF repl_textscreen_2da INT_VAR strr = RESOLVE_STR_REF (@2000091)          STR_VAR file = ~IWD1TXT4~ END
+LAF repl_textscreen_2da INT_VAR strr = RESOLVE_STR_REF (@2000092)          STR_VAR file = ~IWD1TXT5~ END
+LAF repl_textscreen_2da INT_VAR strr = RESOLVE_STR_REF (@2000093)          STR_VAR file = ~IWD1TXT6~ END
+/* TextScreen IWD2 */
+LAF repl_textscreen_2da INT_VAR strr = RESOLVE_STR_REF (@2000107)          STR_VAR file = ~IWD2TXT0~ END
+LAF repl_textscreen_2da INT_VAR strr = RESOLVE_STR_REF (@2000108)          STR_VAR file = ~IWD2TXT1~ END
+LAF repl_textscreen_2da INT_VAR strr = RESOLVE_STR_REF (@2000109)          STR_VAR file = ~IWD2TXT2~ END
+LAF repl_textscreen_2da INT_VAR strr = RESOLVE_STR_REF (@2000110)          STR_VAR file = ~IWD2TXT3~ END
+LAF repl_textscreen_2da INT_VAR strr = RESOLVE_STR_REF (@2000111)          STR_VAR file = ~IWD2TXT4~ END
+LAF repl_textscreen_2da INT_VAR strr = RESOLVE_STR_REF (@2000112)          STR_VAR file = ~IWD2TXT5~ END
+LAF repl_textscreen_2da INT_VAR strr = RESOLVE_STR_REF (@2000113)          STR_VAR file = ~IWD2TXT6~ END
+
+//BLOCKEND
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

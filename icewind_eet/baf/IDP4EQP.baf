@@ -1,0 +1,1103 @@
+
+IF
+	NumInPartyLT(4)
+THEN
+	RESPONSE #100
+		IncrementGlobal("All_Installed","MYAREA",1)
+		DestroySelf()
+END
+
+//BLOCK	ARMOR ////
+IF
+	Global("Player4_Equip","MYAREA",0)
+	OR(2)
+		Kit(Player4,BARBARIAN)
+		Kit(Player4,FERALAN)
+THEN
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",1)
+		GiveItemCreate("CHAN01",Player4,0,0,0)
+		XEquipItem("CHAN01",Player4,SLOT_ARMOR,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",1)
+		GiveItemCreate("LEAT01",Player4,0,0,0)
+		XEquipItem("LEAT01",Player4,SLOT_ARMOR,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",1)
+		GiveItemCreate("LEAT04",Player4,0,0,0)
+		XEquipItem("LEAT04",Player4,SLOT_ARMOR,EQUIP)
+END
+
+IF
+	Global("Player4_Equip","MYAREA",0)
+	Kit(Player4,BEASTFRIEND)
+THEN
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",1)
+		GiveItemCreate("LEAT01",Player4,0,0,0)
+		XEquipItem("LEAT01",Player4,SLOT_ARMOR,EQUIP)
+END
+
+IF
+	Global("Player4_Equip","MYAREA",0)
+	OR(7)
+		Class(Player4,THIEF)
+		Class(Player4,FIGHTER_THIEF)
+		Class(Player4,DRUID)
+		Kit(Player4,STALKER)
+		Kit(Player4,BEASTMASTER)
+		Class(Player4,CLERIC_THIEF)
+		Class(Player4,SHAMAN)
+	!Kit(Player4,SHAPESHIFTER)
+	!Kit(Player4,BEASTFRIEND)
+	!Kit(Player4,KENSAI)
+THEN
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",1)
+		GiveItemCreate("LEAT01",Player4,0,0,0)
+		XEquipItem("LEAT01",Player4,SLOT_ARMOR,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",1)
+		GiveItemCreate("LEAT04",Player4,0,0,0)
+		XEquipItem("LEAT04",Player4,SLOT_ARMOR,EQUIP)
+END
+
+IF
+	Global("Player4_Equip","MYAREA",0)
+	OR(7)
+		Class(Player4,MAGE)
+		Class(Player4,FIGHTER_MAGE)
+		Class(Player4,FIGHTER_MAGE_THIEF)
+		Class(Player4,MAGE_THIEF)
+		Class(Player4,CLERIC_MAGE)
+		Class(Player4,FIGHTER_MAGE_CLERIC)
+		Class(Player4,SORCERER)
+THEN
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",1)
+		GiveItemCreate("CLCK09",Player4,0,0,0)
+		ActionOverride(Player4,SetItemFlags("CLCK09",IDENTIFIED,TRUE))
+		XEquipItem("CLCK09",Player4,SLOT_ARMOR,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",1)
+		GiveItemCreate("CLCK10",Player4,0,0,0)
+		ActionOverride(Player4,SetItemFlags("CLCK10",IDENTIFIED,TRUE))
+		XEquipItem("CLCK10",Player4,SLOT_ARMOR,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",1)
+		GiveItemCreate("CLCK11",Player4,0,0,0)
+		ActionOverride(Player4,SetItemFlags("CLCK11",IDENTIFIED,TRUE))
+		XEquipItem("CLCK11",Player4,SLOT_ARMOR,EQUIP)
+END
+
+IF
+	Global("Player4_Equip","MYAREA",0)
+	OR(7)
+		Class(Player4,FIGHTER)
+		Class(Player4,CLERIC)
+		Class(Player4,PALADIN)
+		Class(Player4,FIGHTER_CLERIC)
+		Class(Player4,RANGER)
+		Class(Player4,FIGHTER_DRUID)
+		Class(Player4,CLERIC_RANGER)
+	!Kit(Player4,KENSAI)
+	!Kit(Player4,BARBARIAN)
+	!Kit(Player4,FERALAN)
+	!Kit(Player4,STALKER)
+	!Kit(Player4,BEASTMASTER)
+	!Class(Player4,MONK)
+THEN
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",1)
+		GiveItemCreate("CHAN01",Player4,0,0,0)
+		XEquipItem("CHAN01",Player4,SLOT_ARMOR,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",1)
+		GiveItemCreate("LEAT01",Player4,0,0,0)
+		XEquipItem("LEAT01",Player4,SLOT_ARMOR,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",1)
+		GiveItemCreate("LEAT04",Player4,0,0,0)
+		XEquipItem("LEAT04",Player4,SLOT_ARMOR,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",1)
+		GiveItemCreate("PLAT01",Player4,0,0,0)
+		XEquipItem("PLAT01",Player4,SLOT_ARMOR,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",1)
+		GiveItemCreate("PLAT04",Player4,0,0,0)
+		XEquipItem("PLAT04",Player4,SLOT_ARMOR,EQUIP)
+END
+
+IF
+	Global("Player4_Equip","MYAREA",0)
+THEN
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",1)
+END
+//BLOCKEND
+
+//BLOCK	WEAPON MELEE ////
+
+IF
+	Global("Player4_Equip","MYAREA",1)
+	Kit(Player4,BEASTMASTER)
+THEN
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",2)
+		GiveItemCreate("BLUN01",Player4,0,0,0) 
+		XEquipItem("BLUN01",Player4,SLOT_WEAPON0,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",2)
+		GiveItemCreate("STAF01",Player4,0,0,0) 
+		XEquipItem("STAF01",Player4,SLOT_WEAPON0,EQUIP)
+END
+
+IF
+	Global("Player4_Equip","MYAREA",1)
+	OR(2)
+		Class(Player4,MAGE)
+		Class(Player4,SORCERER)
+THEN
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",2)
+		GiveItemCreate("DAGG01",Player4,0,0,0) 
+		XEquipItem("DAGG01",Player4,SLOT_WEAPON0,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",2)
+		GiveItemCreate("STAF01",Player4,0,0,0) 
+		XEquipItem("STAF01",Player4,SLOT_WEAPON0,EQUIP)
+END
+
+IF
+	Global("Player4_Equip","MYAREA",1)
+	Class(Player4,SHAMAN)
+THEN
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",2)
+		GiveItemCreate("BLUN01",Player4,0,0,0) 
+		XEquipItem("BLUN01",Player4,SLOT_WEAPON0,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",2)
+		GiveItemCreate("DAGG01",Player4,0,0,0) 
+		XEquipItem("DAGG01",Player4,SLOT_WEAPON0,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",2)
+		GiveItemCreate("SPER01",Player4,0,0,0) 
+		XEquipItem("SPER01",Player4,SLOT_WEAPON0,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",2)
+		GiveItemCreate("STAF01",Player4,0,0,0) 
+		XEquipItem("STAF01",Player4,SLOT_WEAPON0,EQUIP)
+END
+
+IF
+	Global("Player4_Equip","MYAREA",1)
+	OR(2)
+		Class(Player4,DRUID)
+		Class(Player4,FIGHTER_DRUID)
+THEN
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",2)
+		GiveItemCreate("BLUN01",Player4,0,0,0) 
+		XEquipItem("BLUN01",Player4,SLOT_WEAPON0,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",2)
+		GiveItemCreate("DAGG01",Player4,0,0,0) 
+		XEquipItem("DAGG01",Player4,SLOT_WEAPON0,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",2)
+		GiveItemCreate("SPER01",Player4,0,0,0) 
+		XEquipItem("SPER01",Player4,SLOT_WEAPON0,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",2)
+		GiveItemCreate("STAF01",Player4,0,0,0) 
+		XEquipItem("STAF01",Player4,SLOT_WEAPON0,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",2)
+		GiveItemCreate("SW1H20",Player4,0,0,0) 
+		XEquipItem("SW1H20",Player4,SLOT_WEAPON0,EQUIP)
+END
+
+IF
+	Global("Player4_Equip","MYAREA",1)
+	Class(Player4,MONK)
+THEN
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",2)
+		GiveItemCreate("BLUN01",Player4,0,0,0) 
+		XEquipItem("BLUN01",Player4,SLOT_WEAPON0,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",2)
+		GiveItemCreate("DAGG01",Player4,0,0,0) 
+		XEquipItem("DAGG01",Player4,SLOT_WEAPON0,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",2)
+		GiveItemCreate("SW1H04",Player4,0,0,0) 
+		XEquipItem("SW1H04",Player4,SLOT_WEAPON0,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",2)
+		GiveItemCreate("SW1H07",Player4,0,0,0) 
+		XEquipItem("SW1H07",Player4,SLOT_WEAPON0,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",2)
+		GiveItemCreate("SW1H20",Player4,0,0,0) 
+		XEquipItem("SW1H20",Player4,SLOT_WEAPON0,EQUIP)
+END
+
+IF
+	Global("Player4_Equip","MYAREA",1)
+	OR(6)
+		Class(Player4,CLERIC)
+		Class(Player4,FIGHTER_CLERIC)
+		Class(Player4,CLERIC_MAGE)
+		Class(Player4,CLERIC_THIEF)
+		Class(Player4,FIGHTER_MAGE_CLERIC)
+		Class(Player4,CLERIC_RANGER)
+	!Kit(Player4,BEASTMASTER)
+THEN
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",2)
+		GiveItemCreate("BLUN01",Player4,0,0,0) 
+		XEquipItem("BLUN01",Player4,SLOT_WEAPON0,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",2)
+		GiveItemCreate("BLUN02",Player4,0,0,0) 
+		XEquipItem("BLUN02",Player4,SLOT_WEAPON0,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",2)
+		GiveItemCreate("BLUN04",Player4,0,0,0) 
+		XEquipItem("BLUN04",Player4,SLOT_WEAPON0,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",2)
+		GiveItemCreate("BLUN06",Player4,0,0,0) 
+		XEquipItem("BLUN06",Player4,SLOT_WEAPON0,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",2)
+		GiveItemCreate("HAMM01",Player4,0,0,0) 
+		XEquipItem("HAMM01",Player4,SLOT_WEAPON0,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",2)
+		GiveItemCreate("STAF01",Player4,0,0,0) 
+		XEquipItem("STAF01",Player4,SLOT_WEAPON0,EQUIP)
+END
+
+IF
+	Global("Player4_Equip","MYAREA",1)
+	OR(2)
+		Class(Player4,THIEF)
+		Class(Player4,MAGE_THIEF)
+THEN
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",2)
+		GiveItemCreate("BLUN01",Player4,0,0,0) 
+		XEquipItem("BLUN01",Player4,SLOT_WEAPON0,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",2)
+		GiveItemCreate("DAGG01",Player4,0,0,0) 
+		XEquipItem("DAGG01",Player4,SLOT_WEAPON0,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",2)
+		GiveItemCreate("STAF01",Player4,0,0,0) 
+		XEquipItem("STAF01",Player4,SLOT_WEAPON0,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",2)
+		GiveItemCreate("SW1H04",Player4,0,0,0) 
+		XEquipItem("SW1H04",Player4,SLOT_WEAPON0,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",2)
+		GiveItemCreate("SW1H07",Player4,0,0,0) 
+		XEquipItem("SW1H07",Player4,SLOT_WEAPON0,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",2)
+		GiveItemCreate("SW1H20",Player4,0,0,0) 
+		XEquipItem("SW1H20",Player4,SLOT_WEAPON0,EQUIP)
+END
+
+IF
+	Global("Player4_Equip","MYAREA",1)
+	OR(8)
+		Class(Player4,FIGHTER)
+		Class(Player4,BARD)
+		Class(Player4,PALADIN)
+		Class(Player4,FIGHTER_MAGE)
+		Class(Player4,FIGHTER_THIEF)
+		Class(Player4,FIGHTER_MAGE_THIEF)
+		Class(Player4,RANGER)
+		Kit(Player4,BARBARIAN)
+	!Kit(Player4,BEASTMASTER)
+THEN
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",2)
+		GiveItemCreate("AX1H01",Player4,0,0,0) 
+		XEquipItem("AX1H01",Player4,SLOT_WEAPON0,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",2)
+		GiveItemCreate("BLUN01",Player4,0,0,0) 
+		XEquipItem("BLUN01",Player4,SLOT_WEAPON0,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",2)
+		GiveItemCreate("BLUN02",Player4,0,0,0) 
+		XEquipItem("BLUN02",Player4,SLOT_WEAPON0,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",2)
+		GiveItemCreate("BLUN04",Player4,0,0,0) 
+		XEquipItem("BLUN04",Player4,SLOT_WEAPON0,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",2)
+		GiveItemCreate("BLUN06",Player4,0,0,0) 
+		XEquipItem("BLUN06",Player4,SLOT_WEAPON0,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",2)
+		GiveItemCreate("DAGG01",Player4,0,0,0) 
+		XEquipItem("DAGG01",Player4,SLOT_WEAPON0,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",2)
+		GiveItemCreate("HALB01",Player4,0,0,0) 
+		XEquipItem("HALB01",Player4,SLOT_WEAPON0,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",2)
+		GiveItemCreate("HAMM01",Player4,0,0,0) 
+		XEquipItem("HAMM01",Player4,SLOT_WEAPON0,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",2)
+		GiveItemCreate("SPER01",Player4,0,0,0) 
+		XEquipItem("SPER01",Player4,SLOT_WEAPON0,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",2)
+		GiveItemCreate("STAF01",Player4,0,0,0) 
+		XEquipItem("STAF01",Player4,SLOT_WEAPON0,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",2)
+		GiveItemCreate("SW1H01",Player4,0,0,0) 
+		XEquipItem("SW1H01",Player4,SLOT_WEAPON0,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",2)
+		GiveItemCreate("SW1H04",Player4,0,0,0) 
+		XEquipItem("SW1H04",Player4,SLOT_WEAPON0,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",2)
+		GiveItemCreate("SW1H07",Player4,0,0,0) 
+		XEquipItem("SW1H07",Player4,SLOT_WEAPON0,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",2)
+		GiveItemCreate("SW1H20",Player4,0,0,0) 
+		XEquipItem("SW1H20",Player4,SLOT_WEAPON0,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",2)
+		GiveItemCreate("SW2H01",Player4,0,0,0) 
+		XEquipItem("SW2H01",Player4,SLOT_WEAPON0,EQUIP)
+END
+
+IF
+	Global("Player4_Equip","MYAREA",1)
+THEN
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",2)
+END
+//BLOCKEND
+
+//BLOCK RANGED WEAPON ////
+
+IF
+	Global("Player4_Equip","MYAREA",2)
+	OR(2)
+		Kit(Player4,KENSAI)
+		Kit(Player4,CAVALIER)
+THEN
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",3)
+		GiveItemCreate("AX1H04",Player4,20,0,0) 
+		XEquipItem("AX1H04",Player4,SLOT_WEAPON1,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",3)
+		GiveItemCreate("DAGG05",Player4,20,0,0) 
+		XEquipItem("DAGG05",Player4,SLOT_WEAPON1,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",3)
+END
+
+IF
+	Global("Player4_Equip","MYAREA",2)
+	Kit(Player4,BEASTMASTER)
+THEN
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",3)
+		GiveItemCreate("BOW01",Player4,0,0,0) 
+		GiveItemCreate("AROW01",Player4,20,0,0) 
+		XEquipItem("BOW01",Player4,SLOT_WEAPON1,EQUIP)
+		XEquipItem("AROW01",Player4,SLOT_AMMO0,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",3)
+		GiveItemCreate("BOW03",Player4,0,0,0) 
+		GiveItemCreate("AROW01",Player4,20,0,0) 
+		XEquipItem("BOW03",Player4,SLOT_WEAPON1,EQUIP)
+		XEquipItem("AROW01",Player4,SLOT_AMMO0,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",3)
+		GiveItemCreate("BOW05",Player4,0,0,0) 
+		GiveItemCreate("AROW01",Player4,20,0,0) 
+		XEquipItem("BOW05",Player4,SLOT_WEAPON1,EQUIP)
+		XEquipItem("AROW01",Player4,SLOT_AMMO0,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",3)
+		GiveItemCreate("DART01",Player4,20,0,0) 
+		XEquipItem("DART01",Player4,SLOT_WEAPON1,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",3)
+		GiveItemCreate("SLNG01",Player4,0,0,0) 
+		GiveItemCreate("BULL01",Player4,20,0,0) 
+		XEquipItem("SLNG01",Player4,SLOT_WEAPON1,EQUIP)
+		XEquipItem("BULL01",Player4,SLOT_AMMO0,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",3)
+		GiveItemCreate("XBOW01",Player4,0,0,0) 
+		GiveItemCreate("BOLT01",Player4,20,0,0) 
+		XEquipItem("XBOW01",Player4,SLOT_WEAPON1,EQUIP)
+		XEquipItem("BOLT01",Player4,SLOT_AMMO0,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",3)
+		GiveItemCreate("XBOW04",Player4,0,0,0) 
+		GiveItemCreate("BOLT01",Player4,20,0,0) 
+		XEquipItem("XBOW04",Player4,SLOT_WEAPON1,EQUIP)
+		XEquipItem("BOLT01",Player4,SLOT_AMMO0,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",3)
+END
+
+IF
+	Global("Player4_Equip","MYAREA",2)
+	OR(6)
+		Class(Player4,CLERIC)
+		Class(Player4,FIGHTER_CLERIC)
+		Class(Player4,CLERIC_MAGE)
+		Class(Player4,CLERIC_THIEF)
+		Class(Player4,FIGHTER_MAGE_CLERIC)
+		Class(Player4,CLERIC_RANGER)
+	!Kit(Player4,KENSAI)
+THEN
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",3)
+		GiveItemCreate("SLNG01",Player4,0,0,0) 
+		GiveItemCreate("BULL01",Player4,20,0,0) 
+		XEquipItem("SLNG01",Player4,SLOT_WEAPON1,EQUIP)
+		XEquipItem("BULL01",Player4,SLOT_AMMO0,EQUIP)
+END
+
+IF
+	Global("Player4_Equip","MYAREA",2)
+	OR(2)
+		Class(Player4,THIEF)
+		Class(Player4,MAGE_THIEF)
+THEN
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",3)
+		GiveItemCreate("BOW05",Player4,0,0,0) 
+		GiveItemCreate("AROW01",Player4,20,0,0) 
+		XEquipItem("BOW05",Player4,SLOT_WEAPON1,EQUIP)
+		XEquipItem("AROW01",Player4,SLOT_AMMO0,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",3)
+		GiveItemCreate("DAGG05",Player4,20,0,0) 
+		XEquipItem("DAGG05",Player4,SLOT_WEAPON1,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",3)
+		GiveItemCreate("DART01",Player4,20,0,0) 
+		XEquipItem("DART01",Player4,SLOT_WEAPON1,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",3)
+		GiveItemCreate("SLNG01",Player4,0,0,0) 
+		GiveItemCreate("BULL01",Player4,20,0,0) 
+		XEquipItem("SLNG01",Player4,SLOT_WEAPON1,EQUIP)
+		XEquipItem("BULL01",Player4,SLOT_AMMO0,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",3)
+		GiveItemCreate("XBOW04",Player4,0,0,0) 
+		GiveItemCreate("BOLT01",Player4,20,0,0) 
+		XEquipItem("XBOW04",Player4,SLOT_WEAPON1,EQUIP)
+		XEquipItem("BOLT01",Player4,SLOT_AMMO0,EQUIP)
+END
+
+IF
+	Global("Player4_Equip","MYAREA",2)
+	Class(Player4,SHAMAN)
+THEN
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",3)
+		GiveItemCreate("AX1H04",Player4,20,0,0) 
+		XEquipItem("AX1H04",Player4,SLOT_WEAPON1,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",3)
+		GiveItemCreate("BOW05",Player4,0,0,0) 
+		GiveItemCreate("AROW01",Player4,20,0,0) 
+		XEquipItem("BOW05",Player4,SLOT_WEAPON1,EQUIP)
+		XEquipItem("AROW01",Player4,SLOT_AMMO0,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",3)
+		GiveItemCreate("DAGG05",Player4,20,0,0) 
+		XEquipItem("DAGG05",Player4,SLOT_WEAPON1,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",3)
+		GiveItemCreate("DART01",Player4,20,0,0) 
+		XEquipItem("DART01",Player4,SLOT_WEAPON1,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",3)
+		GiveItemCreate("SLNG01",Player4,0,0,0) 
+		GiveItemCreate("BULL01",Player4,20,0,0) 
+		XEquipItem("SLNG01",Player4,SLOT_WEAPON1,EQUIP)
+		XEquipItem("BULL01",Player4,SLOT_AMMO0,EQUIP)
+END
+
+IF
+	Global("Player4_Equip","MYAREA",2)
+	OR(5)
+		Class(Player4,MAGE)
+		Class(Player4,DRUID)
+		Class(Player4,FIGHTER_DRUID)
+		Class(Player4,SORCERER)
+		Class(Player4,MONK)
+THEN
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",3)
+		GiveItemCreate("DAGG05",Player4,20,0,0) 
+		XEquipItem("DAGG05",Player4,SLOT_WEAPON1,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",3)
+		GiveItemCreate("DART01",Player4,20,0,0) 
+		XEquipItem("DART01",Player4,SLOT_WEAPON1,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",3)
+		GiveItemCreate("SLNG01",Player4,0,0,0) 
+		GiveItemCreate("BULL01",Player4,20,0,0) 
+		XEquipItem("SLNG01",Player4,SLOT_WEAPON1,EQUIP)
+		XEquipItem("BULL01",Player4,SLOT_AMMO0,EQUIP)
+END
+
+IF
+	Global("Player4_Equip","MYAREA",2)
+	Class(Player4,BARD)
+THEN
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",3)
+		GiveItemCreate("AX1H04",Player4,20,0,0) 
+		XEquipItem("AX1H04",Player4,SLOT_WEAPON1,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",3)
+		GiveItemCreate("BOW03",Player4,0,0,0) 
+		GiveItemCreate("AROW01",Player4,20,0,0) 
+		XEquipItem("BOW03",Player4,SLOT_WEAPON1,EQUIP)
+		XEquipItem("AROW01",Player4,SLOT_AMMO0,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",3)
+		GiveItemCreate("BOW05",Player4,0,0,0) 
+		GiveItemCreate("AROW01",Player4,20,0,0) 
+		XEquipItem("BOW05",Player4,SLOT_WEAPON1,EQUIP)
+		XEquipItem("AROW01",Player4,SLOT_AMMO0,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",3)
+		GiveItemCreate("DAGG05",Player4,20,0,0) 
+		XEquipItem("DAGG05",Player4,SLOT_WEAPON1,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",3)
+		GiveItemCreate("DART01",Player4,20,0,0) 
+		XEquipItem("DART01",Player4,SLOT_WEAPON1,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",3)
+		GiveItemCreate("SLNG01",Player4,0,0,0) 
+		GiveItemCreate("BULL01",Player4,20,0,0) 
+		XEquipItem("SLNG01",Player4,SLOT_WEAPON1,EQUIP)
+		XEquipItem("BULL01",Player4,SLOT_AMMO0,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",3)
+		GiveItemCreate("XBOW01",Player4,0,0,0) 
+		GiveItemCreate("BOLT01",Player4,20,0,0) 
+		XEquipItem("XBOW01",Player4,SLOT_WEAPON1,EQUIP)
+		XEquipItem("BOLT01",Player4,SLOT_AMMO0,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",3)
+		GiveItemCreate("XBOW04",Player4,0,0,0) 
+		GiveItemCreate("BOLT01",Player4,20,0,0) 
+		XEquipItem("XBOW04",Player4,SLOT_WEAPON1,EQUIP)
+		XEquipItem("BOLT01",Player4,SLOT_AMMO0,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",3)
+END
+
+IF
+	Global("Player4_Equip","MYAREA",2)
+	OR(6)
+		Class(Player4,PALADIN)
+		Class(Player4,FIGHTER_MAGE)
+		Class(Player4,FIGHTER_THIEF)
+		Class(Player4,FIGHTER_MAGE_THIEF)
+		Class(Player4,RANGER)
+		Kit(Player4,BARBARIAN)
+	!Kit(Player4,KENSAI)
+	!Kit(Player4,CAVALIER)
+	!Kit(Player4,BEASTMASTER)
+THEN
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",3)
+		GiveItemCreate("AX1H04",Player4,20,0,0) 
+		XEquipItem("AX1H04",Player4,SLOT_WEAPON1,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",3)
+		GiveItemCreate("BOW01",Player4,0,0,0) 
+		GiveItemCreate("AROW01",Player4,20,0,0) 
+		XEquipItem("BOW01",Player4,SLOT_WEAPON1,EQUIP)
+		XEquipItem("AROW01",Player4,SLOT_AMMO0,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",3)
+		GiveItemCreate("BOW03",Player4,0,0,0) 
+		GiveItemCreate("AROW01",Player4,20,0,0) 
+		XEquipItem("BOW03",Player4,SLOT_WEAPON1,EQUIP)
+		XEquipItem("AROW01",Player4,SLOT_AMMO0,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",3)
+		GiveItemCreate("BOW05",Player4,0,0,0) 
+		GiveItemCreate("AROW01",Player4,20,0,0) 
+		XEquipItem("BOW05",Player4,SLOT_WEAPON1,EQUIP)
+		XEquipItem("AROW01",Player4,SLOT_AMMO0,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",3)
+		GiveItemCreate("DAGG05",Player4,20,0,0) 
+		XEquipItem("DAGG05",Player4,SLOT_WEAPON1,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",3)
+		GiveItemCreate("DART01",Player4,20,0,0) 
+		XEquipItem("DART01",Player4,SLOT_WEAPON1,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",3)
+		GiveItemCreate("SLNG01",Player4,0,0,0) 
+		GiveItemCreate("BULL01",Player4,20,0,0) 
+		XEquipItem("SLNG01",Player4,SLOT_WEAPON1,EQUIP)
+		XEquipItem("BULL01",Player4,SLOT_AMMO0,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",3)
+		GiveItemCreate("XBOW01",Player4,0,0,0) 
+		GiveItemCreate("BOLT01",Player4,20,0,0) 
+		XEquipItem("XBOW01",Player4,SLOT_WEAPON1,EQUIP)
+		XEquipItem("BOLT01",Player4,SLOT_AMMO0,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",3)
+		GiveItemCreate("XBOW04",Player4,0,0,0) 
+		GiveItemCreate("BOLT01",Player4,20,0,0) 
+		XEquipItem("XBOW04",Player4,SLOT_WEAPON1,EQUIP)
+		XEquipItem("BOLT01",Player4,SLOT_AMMO0,EQUIP)
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",3)
+END
+
+IF
+	Global("Player4_Equip","MYAREA",2)
+THEN
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",3)
+END
+//BLOCKEND
+
+//BLOCK CHECK WEIGHT
+//BLOCK ARMOR
+IF
+	Global("Player4_Equip","MYAREA",3)
+	Global("Player4_SlotArmor","MYAREA",0)
+	HasItem("PLAT04",Player4)
+	CheckStatLT(Player4,15,STR)
+THEN
+	RESPONSE #100
+		ActionOverride(Player4,DestroyItem("PLAT04"))
+		GiveItemCreate("PLAT01",Player4,0,0,0)
+		XEquipItem("PLAT01",Player4,SLOT_ARMOR,EQUIP)
+END
+
+IF
+	Global("Player4_Equip","MYAREA",3)
+	Global("Player4_SlotArmor","MYAREA",0)
+	HasItem("PLAT01",Player4)
+	CheckStatLT(Player4,12,STR)
+THEN
+	RESPONSE #100
+		ActionOverride(Player4,DestroyItem("PLAT01"))
+		GiveItemCreate("CHAN01",Player4,0,0,0)
+		XEquipItem("CHAN01",Player4,SLOT_ARMOR,EQUIP)
+END
+
+IF
+	Global("Player4_Equip","MYAREA",3)
+	Global("Player4_SlotArmor","MYAREA",0)
+	HasItem("CHAN01",Player4)
+	CheckStatLT(Player4,8,STR)
+THEN
+	RESPONSE #100
+		ActionOverride(Player4,DestroyItem("CHAN01"))
+		GiveItemCreate("LEAT04",Player4,0,0,0)
+		XEquipItem("LEAT04",Player4,SLOT_ARMOR,EQUIP)
+END
+
+IF
+	Global("Player4_Equip","MYAREA",3)
+	Global("Player4_SlotArmor","MYAREA",0)
+	HasItem("LEAT04",Player4)
+	CheckStatLT(Player4,6,STR)
+THEN
+	RESPONSE #100
+		ActionOverride(Player4,DestroyItem("LEAT04"))
+		GiveItemCreate("LEAT01",Player4,0,0,0)
+		XEquipItem("LEAT01",Player4,SLOT_ARMOR,EQUIP)
+END
+
+IF
+	Global("Player4_Equip","MYAREA",3)
+	Global("Player4_SlotArmor","MYAREA",0)
+	HasItem("LEAT01",Player4)
+	CheckStatLT(Player4,6,STR)
+THEN
+	RESPONSE #100
+		ActionOverride(Player4,DestroyItem("LEAT01"))
+		GiveItemCreate("LEAT01",Player4,0,0,0)
+		SetGlobal("Player4_SlotArmor","MYAREA",1)
+END
+//BLOCKEND
+
+//BLOCK MELEE
+IF
+	Global("Player4_Equip","MYAREA",3)
+	Global("Player4_SlotMelee","MYAREA",0)
+	HasItem("SW2H01",Player4)
+	CheckStatLT(Player4,14,STR)
+THEN
+	RESPONSE #100
+		ActionOverride(Player4,DestroyItem("SW2H01"))
+		GiveItemCreate("HALB01",Player4,0,0,0)
+		XEquipItem("HALB01",Player4,SLOT_WEAPON0,EQUIP)
+END
+
+IF
+	Global("Player4_Equip","MYAREA",3)
+	Global("Player4_SlotMelee","MYAREA",0)
+	HasItem("HALB01",Player4)
+	CheckStatLT(Player4,13,STR)
+THEN
+	RESPONSE #100
+		ActionOverride(Player4,DestroyItem("HALB01"))
+		GiveItemCreate("SW1H01",Player4,0,0,0)
+		XEquipItem("SW1H01",Player4,SLOT_WEAPON0,EQUIP)
+END
+
+IF
+	Global("Player4_Equip","MYAREA",3)
+	Global("Player4_SlotMelee","MYAREA",0)
+	HasItem("BLUN02",Player4)
+	CheckStatLT(Player4,13,STR)
+THEN
+	RESPONSE #100
+		ActionOverride(Player4,DestroyItem("BLUN02"))
+		GiveItemCreate("BLUN06",Player4,0,0,0)
+		XEquipItem("BLUN06",Player4,SLOT_WEAPON0,EQUIP)
+END
+
+IF
+	Global("Player4_Equip","MYAREA",3)
+	Global("Player4_SlotMelee","MYAREA",0)
+	HasItem("BLUN06",Player4)
+	CheckStatLT(Player4,11,STR)
+THEN
+	RESPONSE #100
+		ActionOverride(Player4,DestroyItem("BLUN06"))
+		GiveItemCreate("BLUN04",Player4,0,0,0)
+		XEquipItem("BLUN04",Player4,SLOT_WEAPON0,EQUIP)
+END
+
+IF
+	Global("Player4_Equip","MYAREA",3)
+	Global("Player4_SlotMelee","MYAREA",0)
+	HasItem("SW1H01",Player4)
+	CheckStatLT(Player4,11,STR)
+THEN
+	RESPONSE #100
+		ActionOverride(Player4,DestroyItem("SW1H01"))
+		GiveItemCreate("SW1H20",Player4,0,0,0)
+		XEquipItem("SW1H20",Player4,SLOT_WEAPON0,EQUIP)
+END
+
+IF
+	Global("Player4_Equip","MYAREA",3)
+	Global("Player4_SlotMelee","MYAREA",0)
+	HasItem("BLUN04",Player4)
+	CheckStatLT(Player4,10,STR)
+THEN
+	RESPONSE #100
+		ActionOverride(Player4,DestroyItem("BLUN04"))
+		GiveItemCreate("HAMM01",Player4,0,0,0)
+		XEquipItem("HAMM01",Player4,SLOT_WEAPON0,EQUIP)
+END
+
+IF
+	Global("Player4_Equip","MYAREA",3)
+	Global("Player4_SlotMelee","MYAREA",0)
+	HasItem("AX1H01",Player4)
+	CheckStatLT(Player4,10,STR)
+THEN
+	RESPONSE #100
+		ActionOverride(Player4,DestroyItem("AX1H01"))
+		GiveItemCreate("SW1H04",Player4,0,0,0)
+		XEquipItem("SW1H04",Player4,SLOT_WEAPON0,EQUIP)
+END
+
+IF
+	Global("Player4_Equip","MYAREA",3)
+	Global("Player4_SlotMelee","MYAREA",0)
+	HasItem("SW1H20",Player4)
+	!Class(Player4,DRUID_ALL)
+	CheckStatLT(Player4,10,STR)
+THEN
+	RESPONSE #100
+		ActionOverride(Player4,DestroyItem("SW1H20"))
+		GiveItemCreate("SW1H04",Player4,0,0,0)
+		XEquipItem("SW1H04",Player4,SLOT_WEAPON0,EQUIP)
+END
+
+IF
+	Global("Player4_Equip","MYAREA",3)
+	Global("Player4_SlotMelee","MYAREA",0)
+	HasItem("SW1H20",Player4)
+	Class(Player4,DRUID_ALL)
+	CheckStatLT(Player4,10,STR)
+THEN
+	RESPONSE #100
+		ActionOverride(Player4,DestroyItem("SW1H20"))
+		GiveItemCreate("BLUN01",Player4,0,0,0)
+		XEquipItem("BLUN01",Player4,SLOT_WEAPON0,EQUIP)
+	RESPONSE #100
+		ActionOverride(Player4,DestroyItem("SW1H20"))
+		GiveItemCreate("SPER01",Player4,0,0,0)
+		XEquipItem("SPER01",Player4,SLOT_WEAPON0,EQUIP)
+	RESPONSE #100
+		ActionOverride(Player4,DestroyItem("SW1H20"))
+		GiveItemCreate("STAF01",Player4,0,0,0)
+		XEquipItem("STAF01",Player4,SLOT_WEAPON0,EQUIP)
+END
+
+IF
+	Global("Player4_Equip","MYAREA",3)
+	Global("Player4_SlotMelee","MYAREA",0)
+	HasItem("HAMM01",Player4)
+	CheckStatLT(Player4,9,STR)
+THEN
+	RESPONSE #100
+		ActionOverride(Player4,DestroyItem("HAMM01"))
+		GiveItemCreate("BLUN01",Player4,0,0,0)
+		XEquipItem("BLUN01",Player4,SLOT_WEAPON0,EQUIP)
+END
+
+IF
+	Global("Player4_Equip","MYAREA",3)
+	Global("Player4_SlotMelee","MYAREA",0)
+	HasItem("SW1H04",Player4)
+	CheckStatLT(Player4,6,STR)
+THEN
+	RESPONSE #100
+		ActionOverride(Player4,DestroyItem("SW1H04"))
+		GiveItemCreate("SW1H07",Player4,0,0,0)
+		XEquipItem("SW1H07",Player4,SLOT_WEAPON0,EQUIP)
+END
+
+IF
+	Global("Player4_Equip","MYAREA",3)
+	Global("Player4_SlotMelee","MYAREA",0)
+	OR(4)
+		HasItem("BLUN01",Player4)
+		HasItem("SPER01",Player4)
+		HasItem("STAF01",Player4)
+		HasItem("SW1H07",Player4)
+	!Class(Player4,CLERIC_ALL)
+	CheckStatLT(Player4,5,STR)
+THEN
+	RESPONSE #100
+		ActionOverride(Player4,DestroyItem("BLUN01"))
+		ActionOverride(Player4,DestroyItem("SPER01"))
+		ActionOverride(Player4,DestroyItem("STAF01"))
+		ActionOverride(Player4,DestroyItem("SW1H07"))
+		GiveItemCreate("DAGG01",Player4,0,0,0)
+		XEquipItem("DAGG01",Player4,SLOT_WEAPON0,EQUIP)
+END
+
+IF
+	Global("Player4_Equip","MYAREA",3)
+	Global("Player4_SlotMelee","MYAREA",0)
+	OR(2)
+		HasItem("BLUN01",Player4)
+		HasItem("STAF01",Player4)
+	Class(Player4,CLERIC_ALL)
+	CheckStatLT(Player4,5,STR)
+THEN
+	RESPONSE #100
+		ActionOverride(Player4,DestroyItem("BLUN01"))
+		ActionOverride(Player4,DestroyItem("STAF01"))
+		GiveItemCreate("BLUN01",Player4,0,0,0)
+		SetGlobal("Player4_SlotMelee","MYAREA",1)
+	RESPONSE #100
+		ActionOverride(Player4,DestroyItem("BLUN01"))
+		ActionOverride(Player4,DestroyItem("STAF01"))
+		GiveItemCreate("STAF01",Player4,0,0,0)
+		SetGlobal("Player4_SlotMelee","MYAREA",1)
+END
+
+IF
+	Global("Player4_Equip","MYAREA",3)
+	Global("Player4_SlotMelee","MYAREA",0)
+	HasItem("DAGG01",Player4)
+	CheckStatLT(Player4,3,STR)
+THEN
+	RESPONSE #100
+		ActionOverride(Player4,DestroyItem("DAGG01"))
+		GiveItemCreate("DAGG01",Player4,0,0,0)
+		SetGlobal("Player4_SlotMelee","MYAREA",1)
+END
+//BLOCKEND
+
+//BLOCK RANGED
+IF
+	Global("Player4_Equip","MYAREA",3)
+	Global("Player4_SlotRanged","MYAREA",0)
+	HasItem("BOW01",Player4)
+	CheckStatLT(Player4,18,STR)
+THEN
+	RESPONSE #100
+		ActionOverride(Player4,DestroyItem("BOW01"))
+		GiveItemCreate("BOW03",Player4,0,0,0)
+		XEquipItem("BOW03",Player4,SLOT_WEAPON1,EQUIP)
+END
+
+IF
+	Global("Player4_Equip","MYAREA",3)
+	Global("Player4_SlotRanged","MYAREA",0)
+	HasItem("XBOW01",Player4)
+	CheckStatLT(Player4,12,STR)
+THEN
+	RESPONSE #100
+		ActionOverride(Player4,DestroyItem("XBOW01"))
+		GiveItemCreate("XBOW04",Player4,0,0,0)
+		XEquipItem("XBOW04",Player4,SLOT_WEAPON1,EQUIP)
+END
+
+IF
+	Global("Player4_Equip","MYAREA",3)
+	Global("Player4_SlotRanged","MYAREA",0)
+	HasItem("XBOW04",Player4)
+	CheckStatLT(Player4,12,STR)
+THEN
+	RESPONSE #100
+		ActionOverride(Player4,DestroyItem("XBOW04"))
+		ActionOverride(Player4,DestroyItem("BOLT01"))
+		GiveItemCreate("BOW05",Player4,0,0,0)
+		GiveItemCreate("AROW01",Player4,20,0,0)
+		XEquipItem("BOW05",Player4,SLOT_WEAPON1,EQUIP)
+		XEquipItem("AROW01",Player4,SLOT_AMMO0,EQUIP)
+END
+
+IF
+	Global("Player4_Equip","MYAREA",3)
+	Global("Player4_SlotRanged","MYAREA",0)
+	HasItem("BOW03",Player4)
+	CheckStatLT(Player4,6,STR)
+THEN
+	RESPONSE #100
+		ActionOverride(Player4,DestroyItem("BOW03"))
+		GiveItemCreate("BOW05",Player4,0,0,0)
+		XEquipItem("BOW05",Player4,SLOT_WEAPON1,EQUIP)
+END
+
+IF
+	Global("Player4_Equip","MYAREA",3)
+	Global("Player4_SlotRanged","MYAREA",0)
+	HasItem("AX1H04",Player4)
+	CheckStatLT(Player4,4,STR)
+THEN
+	RESPONSE #100
+		ActionOverride(Player4,DestroyItem("AX1H04"))
+		GiveItemCreate("DAGG05",Player4,20,0,0)
+		XEquipItem("DAGG05",Player4,SLOT_WEAPON1,EQUIP)
+END
+
+IF
+	Global("Player4_Equip","MYAREA",3)
+	Global("Player4_SlotRanged","MYAREA",0)
+	OR(3)
+		HasItem("SLNG01",Player4)
+		HasItem("DAGG05",Player4)
+		HasItem("BOW05",Player4)
+	!Class(Player4,CLERIC_ALL)
+	!Kit(Player4,KENSAI)
+	!Kit(Player4,CAVALIER)
+	CheckStatLT(Player4,3,STR)
+THEN
+	RESPONSE #100
+		ActionOverride(Player4,DestroyItem("SLNG01"))
+		ActionOverride(Player4,DestroyItem("DAGG05"))
+		ActionOverride(Player4,DestroyItem("BOW05"))
+		GiveItemCreate("DART01",Player4,20,0,0)
+		XEquipItem("DART01",Player4,SLOT_WEAPON1,EQUIP)
+		SetGlobal("Player4_SlotRanged","MYAREA",1)
+END
+
+IF
+	Global("Player4_Equip","MYAREA",3)
+	Global("Player4_SlotRanged","MYAREA",0)
+	HasItem("SLNG01",Player4)
+	Class(Player4,CLERIC_ALL)
+	CheckStatLT(Player4,3,STR)
+THEN
+	RESPONSE #100
+		ActionOverride(Player4,DestroyItem("SLNG01"))
+		GiveItemCreate("SLNG01",Player4,0,0,0)
+		SetGlobal("Player4_SlotRanged","MYAREA",1)
+END
+
+IF
+	Global("Player4_Equip","MYAREA",3)
+	Global("Player4_SlotRanged","MYAREA",0)
+	HasItem("DAGG05",Player4)
+	OR(2)
+		Kit(Player4,KENSAI)
+		Kit(Player4,CAVALIER)
+	CheckStatLT(Player4,3,STR)
+THEN
+	RESPONSE #100
+		ActionOverride(Player4,DestroyItem("DAGG05"))
+		GiveItemCreate("DAGG05",Player4,20,0,0)
+		SetGlobal("Player4_SlotRanged","MYAREA",1)
+END
+//BLOCKEND
+
+IF
+	Global("Player4_Equip","MYAREA",3)
+THEN
+	RESPONSE #100
+		SetGlobal("Player4_Equip","MYAREA",4)
+END
+//BLOCKEND
+
+IF
+	GlobalLT("Player4_Equip","MYAREA",5)
+THEN
+	RESPONSE #100
+		ActionOverride(Player4,SelectWeaponAbility(SLOT_WEAPON0,0))
+		SetGlobal("Player4_Equip","MYAREA",5)
+END
+
+/*IF
+	GlobalLT("Player4_Equip","MYAREA",4)
+THEN
+	RESPONSE #100
+		ActionOverride(Player4,SelectWeaponAbility(SLOT_WEAPON0,0))
+		SetGlobal("Player4_Equip","MYAREA",4)
+END*/
+
+IF
+	True()
+THEN
+	RESPONSE #100
+		IncrementGlobal("All_Installed","MYAREA",1)
+		DestroySelf()
+END

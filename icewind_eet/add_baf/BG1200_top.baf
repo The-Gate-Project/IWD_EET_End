@@ -1,0 +1,38 @@
+IF
+	OnCreation()
+	Global("HelpEltan","GLOBAL",1)
+	GlobalLT("VELETA_RELESIN","GLOBAL",30)
+THEN
+	RESPONSE #100
+		CreateCreature("fcrelesi",[520.765],NNW)
+		SetGlobal("VELETA_RELESIN","GLOBAL",30)
+		Continue()
+END
+
+IF
+	Global("VELETA_RELESIN","GLOBAL",30)
+	OR(6)
+		NearLocation(Player1,450,840,30)
+		NearLocation(Player2,450,840,30)
+		NearLocation(Player3,450,840,30)
+		NearLocation(Player4,450,840,30)
+		NearLocation(Player5,450,840,30)
+		NearLocation(Player6,450,840,30)
+THEN
+	RESPONSE #100
+		ClearAllActions()
+		StartCutSceneMode()
+		StartCutScene("FCSHCUT5")
+END
+
+
+
+
+
+
+
+
+
+
+
+

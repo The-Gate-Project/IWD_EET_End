@@ -1,0 +1,74 @@
+IF
+	True()
+THEN
+	RESPONSE #100
+		CutSceneId(Player1)
+		FadeToColor([0.0],0)
+		Wait(1)
+		ActionOverride(Player2,LeaveAreaLUA("BG1001","",[403.465],4))
+		ActionOverride(Player3,LeaveAreaLUA("BG1001","",[394.514],6))
+		ActionOverride(Player4,LeaveAreaLUA("BG1001","",[335.554],8))
+		ActionOverride(Player5,LeaveAreaLUA("BG1001","",[254.588],9))
+		ActionOverride(Player6,LeaveAreaLUA("BG1001","",[193.545],11))
+		LeaveAreaLUAPanic("BG1001","",[355.438],2)
+		LeaveAreaLUA("BG1001","",[355.438],2)
+		SetGlobal("PARTY_IN_ICEWIND_DALE","GLOBAL",0)
+		Wait(1)
+		//SetSequence(SEQ_SLEEP)
+		//ActionOverride(Player2,SetSequence(SEQ_SLEEP))
+		//ActionOverride(Player3,SetSequence(SEQ_SLEEP))
+		//ActionOverride(Player4,SetSequence(SEQ_SLEEP))
+		//ActionOverride(Player5,SetSequence(SEQ_SLEEP))
+		//ActionOverride(Player6,SetSequence(SEQ_SLEEP))
+		SmallWait(5)
+		Rest()
+		ActionOverride(Player2,Rest())
+		ActionOverride(Player3,Rest())
+		ActionOverride(Player4,Rest())
+		ActionOverride(Player5,Rest())
+		ActionOverride(Player6,Rest())
+		Wait(1)
+		FadeFromColor([15.0],0)
+		CreateVisualEffectObject("PORTALH",Player1)
+		CreateVisualEffectObject("PORTALH",Player2)
+		CreateVisualEffectObject("PORTALH",Player3)
+		CreateVisualEffectObject("PORTALH",Player4)
+		CreateVisualEffectObject("PORTALH",Player5)
+		CreateVisualEffectObject("PORTALH",Player6)
+		Wait(3)
+		//SetSequence(SEQ_AWAKE)
+		//ActionOverride(Player2,SetSequence(SEQ_AWAKE))
+		//ActionOverride(Player3,SetSequence(SEQ_AWAKE))
+		//ActionOverride(Player4,SetSequence(SEQ_AWAKE))
+		//ActionOverride(Player5,SetSequence(SEQ_AWAKE))
+		//ActionOverride(Player6,SetSequence(SEQ_AWAKE))
+		//Wait(1)
+		SetGlobal("MOVING_TO_IWD","GLOBAL",3)
+		SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",5)
+		EndCutSceneMode()
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

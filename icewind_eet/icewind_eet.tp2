@@ -1,0 +1,107 @@
+BACKUP ~icewind_eet/backup~
+AUTHOR ~Ya~
+
+ALWAYS
+	OUTER_SPRINT newline ~%WNL%%LNL%%MNL%%TAB% ~
+	OUTER_SPRINT slash ~/~
+	OUTER_SPRINT quote ~"~
+	OUTER_SPRINT tilde "~"
+	OUTER_SPRINT percent ~%~
+	
+	OUTER_SPRINT ~mod_lib~        ~%MOD_FOLDER%/lib~
+	MKDIR        ~%mod_lib%/temp~
+	OUTER_SPRINT ~temp_dir~       ~%mod_lib%/temp~
+	MKDIR        ~%temp_dir%/baf~
+	OUTER_SPRINT ~temp_baf~       ~%mod_lib%/baf~
+	OUTER_SPRINT ~iwdnpc~         ~%MOD_FOLDER%/iwd_npc~
+	OUTER_SPRINT ~add_baf~        ~%MOD_FOLDER%/add_baf~
+	OUTER_SPRINT ~npc_dial_iwd~   ~%iwdnpc%/dlg~
+	OUTER_SPRINT ~npc_baf_iwd~    ~%iwdnpc%/baf~
+	OUTER_SPRINT ~f_dialog~       ~%MOD_FOLDER%/dlg~
+	OUTER_SPRINT ~f_baf~          ~%MOD_FOLDER%/baf~
+	OUTER_SPRINT ~mod~            ~%MOD_FOLDER%/mod~
+END
+
+LANGUAGE ~Russian~
+	     ~ru_RU~
+	     ~icewind_eet/lang/ru_RU/mod.tra~
+	     ~icewind_eet/lang/ru_RU/chapters.tra~
+LANGUAGE ~English~
+	     ~en_US~
+	     ~icewind_eet/lang/en_US/mod.tra~
+	     ~icewind_eet/lang/en_US/chapters.tra~
+
+BEGIN ~IceWind_End~
+
+
+INCLUDE ~%mod_lib%/functions.tph~
+
+OUTER_SET ar_type = IDS_OF_SYMBOL (~AREATYPE~ ~IWDAREA~)
+LAF ADD_SPLPROT_ENTRY STR_VAR label="IWDAREA" definition=EVAL "0x106  %ar_type%  8" RET IWDAREA_index = index END
+
+
+OUTER_SET ~ins_type~ = 1
+
+APPEND ~BITS.IDS~ ~0x00000001	BITS_BG1~               UNLESS ~BITS_BG1~
+APPEND ~BITS.IDS~ ~0x00000002	BITS_IWD1~              UNLESS ~BITS_IWD1~
+APPEND ~BITS.IDS~ ~0x00000004	BITS_SOD~               UNLESS ~BITS_SOD~
+APPEND ~BITS.IDS~ ~0x00000008	BITS_SOA~               UNLESS ~BITS_SOA~
+APPEND ~BITS.IDS~ ~0x00000010	BITS_IWD2~              UNLESS ~BITS_IWD2~
+APPEND ~BITS.IDS~ ~0x00000020	BITS_ROI~               UNLESS ~BITS_ROI~
+APPEND ~BITS.IDS~ ~0x00000040	BITS_HOW~               UNLESS ~BITS_HOW~
+APPEND ~BITS.IDS~ ~0x00000080	BITS_TOTL~              UNLESS ~BITS_TOTL~
+APPEND ~BITS.IDS~ ~0x00000003	BITS_BGIWD~             UNLESS ~BITS_BGIWD~
+APPEND ~BITS.IDS~ ~0x00000007	BITS_BGIWDSOD~          UNLESS ~BITS_BGIWDSOD~
+APPEND ~BITS.IDS~ ~0x0000000F	BITS_BGIWDSODSOA~       UNLESS ~BITS_BGIWDSODSOA~
+APPEND ~BITS.IDS~ ~0x0000001F	BITS_BGIWDSODSOAIWD~    UNLESS ~BITS_BGIWDSODSOAIWD~
+APPEND ~BITS.IDS~ ~0x0000003F	BITS_BGIWDSODSOAIWDROI~ UNLESS ~BITS_BGIWDSODSOAIWDROI~
+
+APPEND ~BITS.IDS~ ~0x00000042	BITS_IWD1HOW~           UNLESS ~BITS_IWD1HOW~
+
+APPEND ~ea.ids~ ~127 AREA_OBJECT~ UNLESS ~^127 AREA_OBJECT~
+
+INCLUDE ~%mod_lib%/goblins.tph~
+
+CLEAR_IDS_MAP
+INCLUDE ~%mod_lib%/_new_npc_iwd.tph~
+
+INCLUDE ~%mod_lib%/_mod.tph~
+
+CLEAR_IDS_MAP
+
+INCLUDE ~%mod_lib%/_script_compile.tph~
+
+COPY ~icewind_eet/iwdcrti1.2da~ ~override~
+     ~icewind_eet/iwdcrti2.2da~ ~override~
+
+COPY_EXISTING ~iw0000.bcs~ ~override~
+              ~id0000.bcs~ ~override~
+    DECOMPILE_AND_PATCH BEGIN
+		REPLACE_TEXTUALLY ~SetGlobal("TP_PLAYERS_RESTORE","MYAREA",1)~ ~SetGlobal("TP_PLAYERS_RESTORE","MYAREA",1) TakeItemListParty("iwdcrti1") TakeItemListParty("iwdcrti2")~
+	END
+
+COPY_EXISTING ~abisred1.cre~ ~override~
+              ~demabi01.cre~ ~override~
+	WRITE_LONG 0x28 32602
+	IF_EXISTS
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

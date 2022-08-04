@@ -1,0 +1,13 @@
+IF
+	Dead("Mulahey")
+	GlobalLT("VELETA_RELESIN","GLOBAL",20)
+THEN
+	RESPONSE #100
+		CreateCreature("fcveleta",[3709.1908],0)
+		CreateCreature("fcrelesi",[3721.1873],0)
+		CreateCreature("fcporis",[3675.1879],0)
+		ActionOverride("fcveleta",FaceObject("fcporis"))
+		ActionOverride("fcrelesi",FaceObject("fcporis"))
+		ActionOverride("fcporis",FaceObject("fcveleta"))
+		SetGlobal("VELETA_RELESIN","GLOBAL",20)
+END

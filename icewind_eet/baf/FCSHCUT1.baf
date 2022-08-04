@@ -1,0 +1,196 @@
+IF
+	True()
+THEN
+	RESPONSE #100
+		CutSceneId(Player1)
+		ApplySpellRES("clearcld",Myself)  // No such index
+		Wait(1)
+		ApplySpellRES("clearcld",Myself)  // No such index
+		Wait(4)
+		FadeToColor([15.0],0)
+		Wait(1)
+		StartMovie("ENDMOVIE")
+		FadeFromColor([1.0],0)
+		Wait(3)
+		//CreateCreatureDoor("fcsherri",[737.773],7)
+		CreateVisualEffect("spdimndr",[737.773])
+		SmallWait(12)
+		MoveGlobal("BG0125","fcsherri",[737.773])
+		ActionOverride("fcsherri",Face(7))
+		Wait(3)
+		DisplayStringHead("fcsherri",~Нет! Не заставляйте меня этого делать! Нет!~)
+		Wait(3)
+		DisplayStringHead("fcsherri",~Прости, <CHARNAME>. Эти демоны, они заставляют меня сделать это.~)
+		Wait(3)
+		DisplayStringHead("fcsherri",~Они говорят, что ты должен сам обо всем узнать...~)
+		Wait(3)
+		DisplayStringHead("fcsherri",~Все! Я должна это сделать...~)
+		Wait(2)
+		ForceSpellRES("FCSPL01",Myself)
+		Wait(1)
+		CreateVisualEffectObject("SPCLOUD1",Player1) //WHIRLWX
+		CreateVisualEffectObject("SPCLOUD1",Player2)
+		CreateVisualEffectObject("SPCLOUD1",Player3)
+		CreateVisualEffectObject("SPCLOUD1",Player4)
+		CreateVisualEffectObject("SPCLOUD1",Player5)
+		CreateVisualEffectObject("SPCLOUD1",Player6)
+		SmallWait(7)
+		MultiPlayerSync()
+		ActionOverride(Player2,PlayDead(70))
+		ActionOverride(Player3,PlayDead(70))
+		ActionOverride(Player4,PlayDead(70))
+		ActionOverride(Player5,PlayDead(70))
+		ActionOverride(Player6,PlayDead(70))
+		SmallWait(6)
+		PlayDead(70)
+		MultiPlayerSync()
+		FadeToColor([30.0],0)
+		Wait(1)
+		CopyGroundPilesTo("FC0125",[845.660])
+		Wait(1)
+		TextScreen("FCTOIWD1")
+		Wait(1)
+		ActionOverride("fcsherri",DestroySelf())
+		ActionOverride("IdImportContainer",TakeCreatureItems(Player1,ALL))
+		ActionOverride("IdImportContainer",TakeCreatureItems(Player2,ALL))
+		ActionOverride("IdImportContainer",TakeCreatureItems(Player3,ALL))
+		ActionOverride("IdImportContainer",TakeCreatureItems(Player4,ALL))
+		ActionOverride("IdImportContainer",TakeCreatureItems(Player5,ALL))
+		ActionOverride("IdImportContainer",TakeCreatureItems(Player6,ALL))
+		ApplySpellRES("bdresurr",Player2)
+		ApplySpellRES("bdresurr",Player3)
+		ApplySpellRES("bdresurr",Player4)
+		ApplySpellRES("bdresurr",Player5)
+		ApplySpellRES("bdresurr",Player6)
+		ApplySpellRES("bddispel",Player1)
+		ApplySpellRES("bddispel",Player2)
+		ApplySpellRES("bddispel",Player3)
+		ApplySpellRES("bddispel",Player4)
+		ApplySpellRES("bddispel",Player5)
+		ApplySpellRES("bddispel",Player6)
+		//SetGlobal("BG1_COMPLETE","GLOBAL",1)
+		BitSet("IWDEET_COMPLETE","GLOBAL",BITS_BG1)
+		SetGlobal("ENDOFBG1","GLOBAL",1)
+		//SetGlobal("PARTY_IN_ICEWIND_DALE","GLOBAL",1)
+		SetGlobal("SHERRY_PLOT","GLOBAL",80)
+		SetGlobal("IWD_PARTY_GOLD","GLOBAL",0)
+		DayNight(DAWN_END)
+		ApplySpellRES("bdrejuve",Player1)
+		ApplySpellRES("bdrejuve",Player2)
+		ApplySpellRES("bdrejuve",Player3)
+		ApplySpellRES("bdrejuve",Player4)
+		ApplySpellRES("bdrejuve",Player5)
+		ApplySpellRES("bdrejuve",Player6)
+		ApplySpellRES("IWRM516",Player1)
+		ApplySpellRES("IWRM516",Player2)
+		ApplySpellRES("IWRM516",Player3)
+		ApplySpellRES("IWRM516",Player4)
+		ApplySpellRES("IWRM516",Player5)
+		ApplySpellRES("IWRM516",Player6)
+		ApplySpell(Player1,RESTORE_FULL_HEALTH)
+		ApplySpell(Player2,RESTORE_FULL_HEALTH)
+		ApplySpell(Player3,RESTORE_FULL_HEALTH)
+		ApplySpell(Player4,RESTORE_FULL_HEALTH)
+		ApplySpell(Player5,RESTORE_FULL_HEALTH)
+		ApplySpell(Player6,RESTORE_FULL_HEALTH)
+		Wait(1)
+		MoveToCampaign("ID1")
+		MultiPlayerSync()
+		//SetCutSceneLite(TRUE)
+		EndCutSceneMode()
+		//SetCutSceneLite(TRUE)
+END
+
+IF
+  True()
+THEN
+  RESPONSE #100
+    CutSceneId(Player1)
+    Wait(10)
+    WaitRandom(0,1)
+    FaceObject("fcsherri")
+END
+
+IF
+  True()
+THEN
+  RESPONSE #100
+    CutSceneId(Player2)
+    Wait(10)
+    WaitRandom(0,1)
+    FaceObject("fcsherri")
+END
+
+IF
+  True()
+THEN
+  RESPONSE #100
+    CutSceneId(Player3)
+    Wait(10)
+    WaitRandom(0,1)
+    FaceObject("fcsherri")
+END
+
+IF
+  True()
+THEN
+  RESPONSE #100
+    CutSceneId(Player4)
+    Wait(10)
+    WaitRandom(0,1)
+    FaceObject("fcsherri")
+END
+
+IF
+  True()
+THEN
+  RESPONSE #100
+    CutSceneId(Player5)
+    Wait(10)
+    WaitRandom(0,1)
+    FaceObject("fcsherri")
+END
+
+IF
+  True()
+THEN
+  RESPONSE #100
+    CutSceneId(Player6)
+    Wait(10)
+    WaitRandom(0,1)
+    FaceObject("fcsherri")
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,953 @@
+INCLUDE ~%MOD_FOLDER%/lib/ps_tileset_lib.tpa~
+INCLUDE ~%MOD_FOLDER%/lib/ps_misc_func.tpa~
+
+DEFINE_ACTION_FUNCTION select_current_pvrz
+	STR_VAR
+		are = ""
+	RET
+		page
+		pgz
+BEGIN
+	OUTER_SET page = 0
+	OUTER_SPRINT pgz ~00~
+	OUTER_FOR ( i = 0 ; i < 100 ; ++i ) BEGIN
+		OUTER_SET page = i
+		ACTION_IF ( i < 10 ) BEGIN OUTER_SPRINT pgz ~0%i%~ END ELSE BEGIN OUTER_SPRINT pgz ~%i%~ END
+		ACTION_IF ( NOT FILE_EXISTS_IN_GAME ~%are%%pgz%.pvrz~ ) BEGIN OUTER_SET i = 100 END
+	END
+	//PRINT ~%page%  -  %pgz%~
+END
+
+//BLOCK AR0700
+ACTION_IF ( GAME_IS ~bg2ee eet~ ) BEGIN
+	LAF select_current_pvrz STR_VAR are = "A0700" RET page pgz END
+	COPY_EXISTING ~AR0700.tis~ ~override~
+		LPF ps_tileset_add_tiles
+			INT_VAR
+				PVRz_Page = page
+				MaxCount = 51
+				PvrzStepY = 6
+			STR_VAR
+				TileDir = EVAL ~%MOD_FOLDER%/patch_araea/AR0700~
+				TileRegExp = ~A070000.pvrz~
+				NewTile = EVAL ~override/A0700%pgz%.pvrz~
+			RET
+				Count
+				LastTile
+		END
+END ELSE BEGIN
+	COPY_EXISTING ~AR0700.tis~ ~override~
+		LPF ps_tileset_add_tiles
+			INT_VAR
+				PVRz_Page = "-2"
+				MaxCount = 51
+			STR_VAR
+				TileDir = EVAL ~%MOD_FOLDER%/patch_araea/AR0700~
+				TileRegExp = ~^AR0700_00[0-5][0-9].bmp$~
+			RET
+				Count
+				LastTile
+		END
+END
+
+PRINT ~Count = %Count%,  LastTile = %LastTile%~
+
+COPY_EXISTING ~AR0700.wed~ ~override~
+//BLOCK ADD DOOR
+	READ_LONG 0x10 ovrl_off
+	READ_LONG ovrl_off + 0x10 offset
+	SET num = 0
+	PATCH_FOR_EACH tile IN 1894 1895 1896 1897 1974 1975 1976 1977 1978 2053 2054 2055 2056 2057 2058 2059 2133 2134 2135 2136 2137 2178 2139 2140 2212 2213 2214 2215 2216 2217 2218 2219 2292 2293 2294 2295 2296 2297 2298 2299 2373 2374 2375 2376 2377 2378 2454 2455 2456 2457 2458 BEGIN
+		SET cnt = LastTile + num
+		WRITE_SHORT offset + tile * 0x0a + 0x04 cnt
+		SET num = num + 1
+	END
+	READ_LONG 0x0c doors
+	READ_LONG 0x18 doors_off
+	READ_LONG 0x1c door_tmap_lkp_off
+	SPRINT ~NewDoorLookup~ ~~
+	SET LookupNum = 51 /* 1 */
+	SET LookupSize = LookupNum * 0x02
+	INNER_ACTION BEGIN
+		OUTER_INNER_PATCH_SAVE ~NewDoorLookup~ ~%NewDoorLookup%~ BEGIN
+			INSERT_BYTES 0 LookupSize
+			SET num = 0
+			PATCH_FOR_EACH tile IN 1894 1895 1896 1897 1974 1975 1976 1977 1978 2053 2054 2055 2056 2057 2058 2059 2133 2134 2135 2136 2137 2178 2139 2140 2212 2213 2214 2215 2216 2217 2218 2219 2292 2293 2294 2295 2296 2297 2298 2299 2373 2374 2375 2376 2377 2378 2454 2455 2456 2457 2458 BEGIN
+				WRITE_SHORT num * 0x02 tile
+				SET num = num + 1
+			END
+		END
+	END
+	SET doornum = doors - 1
+	SET offset = doors_off + doornum * 0x1a
+	READ_SHORT offset + 0x0a tmap_idx
+	READ_SHORT offset + 0x0c tmap_num
+	SET tmap_first = tmap_idx + tmap_num
+	READ_SHORT offset + 0x0e poly_open
+	READ_SHORT offset + 0x10 poly_close
+	READ_LONG  offset + 0x12 poly_open_off
+	READ_LONG  offset + 0x16 poly_close_off
+	//SET plyopn = poly_open_off + poly_open * 0x24
+	//SET plycls = poly_close_off + poly_close * 0x24
+	SET plyopn = poly_open_off + poly_open * 0x24
+	SET plycls = plyopn /* !!!!!!! Night wed */
+	SPRINT ~NewDoor~ ~~
+	SET DoorsCnt = 1
+	SET DoorsSize = 0x1a
+	INNER_ACTION BEGIN
+		OUTER_INNER_PATCH_SAVE ~NewDoor~ ~%NewDoor%~ BEGIN
+			INSERT_BYTES 0 DoorsSize
+			WRITE_ASCII 0x00 ~OSWALDD~ (8)
+			WRITE_SHORT 0x08 1
+			WRITE_SHORT 0x0a tmap_first
+			WRITE_SHORT 0x0c LookupNum
+			WRITE_LONG  0x12 plyopn
+			WRITE_LONG  0x16 plycls
+		END
+	END
+	SET insert_door = doors_off + doors * DoorsSize
+	
+	INSERT_BYTES insert_door DoorsSize
+	WRITE_EVALUATED_ASCII insert_door ~%NewDoor%~ (DoorsSize)
+	READ_LONG 0x08 overlays
+	READ_LONG 0x0c doors
+	READ_LONG 0x10 ovrl_off
+	READ_LONG 0x14 sec_head_off
+	READ_LONG 0x18 doors_off
+	READ_LONG 0x1c door_tmap_lkp_off
+	READ_LONG sec_head_off + 0x04 wall_poly_off
+	READ_LONG sec_head_off + 0x08 vertex_off
+	READ_LONG sec_head_off + 0x0c wall_group_off
+	READ_LONG sec_head_off + 0x10 wall_poly_lkup_off
+	PATCH_IF ( door_tmap_lkp_off >= doors_off ) BEGIN WRITE_LONG 0x1c door_tmap_lkp_off + DoorsSize END
+	FOR ( i = 0 ; i < overlays ; ++i ) BEGIN
+		SET offset = ovrl_off + i * 0x18
+		READ_LONG offset + 0x10 offpatch
+		PATCH_IF ( offpatch >= doors_off ) BEGIN WRITE_LONG offset + 0x10 offpatch + DoorsSize END
+		READ_LONG offset + 0x14 offpatch
+		PATCH_IF ( offpatch >= doors_off ) BEGIN WRITE_LONG offset + 0x14 offpatch + DoorsSize END
+	END
+	FOR ( i = 0 ; i < doors ; ++i ) BEGIN
+		SET offset = doors_off + i * DoorsSize
+		READ_LONG offset + 0x12 offpatch
+		PATCH_IF ( offpatch >= doors_off ) BEGIN WRITE_LONG offset + 0x12 offpatch + DoorsSize END
+		READ_LONG offset + 0x16 offpatch
+		PATCH_IF ( offpatch >= doors_off ) BEGIN WRITE_LONG offset + 0x16 offpatch + DoorsSize END
+	END
+	PATCH_IF ( wall_poly_off >= doors_off )      BEGIN WRITE_LONG sec_head_off + 0x04 wall_poly_off      + DoorsSize END
+	PATCH_IF ( vertex_off >= doors_off )         BEGIN WRITE_LONG sec_head_off + 0x08 vertex_off         + DoorsSize END
+	PATCH_IF ( wall_group_off >= doors_off )     BEGIN WRITE_LONG sec_head_off + 0x0c wall_group_off     + DoorsSize END
+	PATCH_IF ( wall_poly_lkup_off >= doors_off ) BEGIN WRITE_LONG sec_head_off + 0x10 wall_poly_lkup_off + DoorsSize END
+	WRITE_LONG 0x0c doors + 1
+	
+	READ_LONG 0x1c door_tmap_lkp_off
+	SET insert_lookup = door_tmap_lkp_off + tmap_first * 0x02
+	INSERT_BYTES insert_lookup LookupSize
+	WRITE_EVALUATED_ASCII insert_lookup ~%NewDoorLookup%~ (LookupSize)
+	READ_LONG 0x08 overlays
+	READ_LONG 0x0c doors
+	READ_LONG 0x10 ovrl_off
+	READ_LONG 0x14 sec_head_off
+	READ_LONG 0x18 doors_off
+	READ_LONG sec_head_off + 0x04 wall_poly_off
+	READ_LONG sec_head_off + 0x08 vertex_off
+	READ_LONG sec_head_off + 0x0c wall_group_off
+	READ_LONG sec_head_off + 0x10 wall_poly_lkup_off
+	FOR ( i = 0 ; i < overlays ; ++i ) BEGIN
+		SET offset = ovrl_off + i * 0x18
+		READ_LONG offset + 0x10 offpatch
+		PATCH_IF ( offpatch >= door_tmap_lkp_off ) BEGIN WRITE_LONG offset + 0x10 offpatch + LookupSize END
+		READ_LONG offset + 0x14 offpatch
+		PATCH_IF ( offpatch >= door_tmap_lkp_off ) BEGIN WRITE_LONG offset + 0x14 offpatch + LookupSize END
+	END
+	FOR ( i = 0 ; i < doors ; ++i ) BEGIN
+		SET offset = doors_off + i * DoorsSize
+		READ_LONG offset + 0x12 offpatch
+		PATCH_IF ( offpatch >= door_tmap_lkp_off ) BEGIN WRITE_LONG offset + 0x12 offpatch + LookupSize END
+		READ_LONG offset + 0x16 offpatch
+		PATCH_IF ( offpatch >= door_tmap_lkp_off ) BEGIN WRITE_LONG offset + 0x16 offpatch + LookupSize END
+	END
+	PATCH_IF ( wall_poly_off >= door_tmap_lkp_off )      BEGIN WRITE_LONG sec_head_off + 0x04 wall_poly_off      + LookupSize END
+	PATCH_IF ( vertex_off >= door_tmap_lkp_off )         BEGIN WRITE_LONG sec_head_off + 0x08 vertex_off         + LookupSize END
+	PATCH_IF ( wall_group_off >= door_tmap_lkp_off )     BEGIN WRITE_LONG sec_head_off + 0x0c wall_group_off     + LookupSize END
+	PATCH_IF ( wall_poly_lkup_off >= door_tmap_lkp_off ) BEGIN WRITE_LONG sec_head_off + 0x10 wall_poly_lkup_off + LookupSize END
+//BLOCKEND
+//BLOCK REMOVE WALLS AND GENERATE DOOR POLYGON
+	READ_LONG 0x14 sec_head_off
+	READ_LONG sec_head_off + 0x00 wall_polygons
+	READ_LONG sec_head_off + 0x04 wall_poly_off
+	READ_LONG sec_head_off + 0x08 vertex_off
+	READ_LONG sec_head_off + 0x0c wall_group_off
+	READ_LONG sec_head_off + 0x10 wall_poly_lkup_off
+	//SET AllVertexSize = 
+	
+	SET offset = wall_poly_off + 285 * 0x12
+	READ_LONG offset + 0x00 vert_idx
+	READ_LONG offset + 0x04 vert_num
+	SET ver_corn = vert_num / 2 - 2
+	SET Vertex285Size = vert_num * 0x04
+	SET poly285vertxnum = vert_num
+	READ_ASCII offset + 0x0a poly285box (8)
+	READ_ASCII vertex_off + vert_idx * 0x04 poly285vertex (Vertex285Size)
+	SET first_x = 300
+	SET first_y = 2
+	FOR ( i = 0 ; i < vert_num ; ++i ) BEGIN
+		WRITE_SHORT vertex_off + ( vert_idx + i ) + 0x00 first_x
+		WRITE_SHORT vertex_off + ( vert_idx + i ) + 0x02 first_y
+		PATCH_IF ( i = ver_corn ) BEGIN SET first_y = first_y + 1 END
+		ELSE BEGIN
+			PATCH_IF ( i < ver_corn ) BEGIN SET first_x = first_x + 1 END
+			ELSE BEGIN first_x = first_x - 1 END
+		END
+	END
+	
+	SET offset = wall_poly_off + 286 * 0x12
+	READ_LONG offset + 0x00 vert_idx
+	READ_LONG offset + 0x04 vert_num
+	SET ver_corn = vert_num / 2 - 2
+	SET Vertex286Size = vert_num * 0x04
+	SET poly286vertxnum = vert_num
+	READ_ASCII offset + 0x0a poly286box (8)
+	READ_ASCII vertex_off + vert_idx * 0x04 poly286vertex (Vertex286Size)
+	SET first_x = 300
+	SET first_y = 4
+	FOR ( i = 0 ; i < vert_num ; ++i ) BEGIN
+		WRITE_SHORT vertex_off + ( vert_idx + i ) + 0x00 first_x
+		WRITE_SHORT vertex_off + ( vert_idx + i ) + 0x02 first_y
+		PATCH_IF ( i = ver_corn ) BEGIN SET first_y = first_y + 1 END
+		ELSE BEGIN
+			PATCH_IF ( i < ver_corn ) BEGIN SET first_x = first_x + 1 END
+			ELSE BEGIN first_x = first_x - 1 END
+		END
+	END
+	
+	SET offset = wall_poly_off + 287 * 0x12
+	READ_LONG offset + 0x00 vert_idx
+	READ_LONG offset + 0x04 vert_num
+	SET ver_corn = vert_num / 2 - 2
+	SET Vertex287Size = vert_num * 0x04
+	SET poly287vertxnum = vert_num
+	READ_ASCII offset + 0x0a poly287box (8)
+	READ_ASCII vertex_off + vert_idx * 0x04 poly287vertex (Vertex287Size)
+	SET first_x = 300
+	SET first_y = 6
+	FOR ( i = 0 ; i < vert_num ; ++i ) BEGIN
+		WRITE_SHORT vertex_off + ( vert_idx + i ) + 0x00 first_x
+		WRITE_SHORT vertex_off + ( vert_idx + i ) + 0x02 first_y
+		PATCH_IF ( i = ver_corn ) BEGIN SET first_y = first_y + 1 END
+		ELSE BEGIN
+			PATCH_IF ( i < ver_corn ) BEGIN SET first_x = first_x + 1 END
+			ELSE BEGIN first_x = first_x - 1 END
+		END
+	END
+	
+	SPRINT ~PolyVertex~ ~%poly285vertex%%poly286vertex%%poly287vertex%~
+	SET AllVertexSize = Vertex285Size + Vertex286Size + Vertex287Size
+//BLOCKEND
+//BLOCKEND
+
+//BLOCK AR0700
+ACTION_IF ( GAME_IS ~bg2ee eet~ ) BEGIN
+	LAF select_current_pvrz STR_VAR are = "A0700N" RET page pgz END
+	COPY_EXISTING ~AR0700N.tis~ ~override~
+		LPF ps_tileset_add_tiles
+			INT_VAR
+				PVRz_Page = page
+				MaxCount = 51
+				PvrzStepY = 6
+			STR_VAR
+				TileDir = EVAL ~%MOD_FOLDER%/patch_araea/AR0700N~
+				TileRegExp = ~A0700N00.pvrz~
+				NewTile = EVAL ~override/A0700N%pgz%.pvrz~
+			RET
+				Count
+				LastTile
+		END
+END ELSE BEGIN
+	COPY_EXISTING ~AR0700N.tis~ ~override~
+		LPF ps_tileset_add_tiles
+			INT_VAR
+				PVRz_Page = "-2"
+				MaxCount = 51
+			STR_VAR
+				TileDir = EVAL ~%MOD_FOLDER%/patch_araea/AR0700N~
+				TileRegExp = ~^AR0700N_00[0-5][0-9].bmp$~
+			RET
+				Count
+				LastTile
+		END
+END
+
+PRINT ~Count = %Count%,  LastTile = %LastTile%~
+
+COPY_EXISTING ~AR0700N.wed~ ~override~
+//BLOCK ADD DOOR
+	READ_LONG 0x10 ovrl_off
+	READ_LONG ovrl_off + 0x10 offset
+	SET num = 0
+	PATCH_FOR_EACH tile IN 1894 1895 1896 1897 1974 1975 1976 1977 1978 2053 2054 2055 2056 2057 2058 2059 2133 2134 2135 2136 2137 2178 2139 2140 2212 2213 2214 2215 2216 2217 2218 2219 2292 2293 2294 2295 2296 2297 2298 2299 2373 2374 2375 2376 2377 2378 2454 2455 2456 2457 2458 BEGIN
+		SET cnt = LastTile + num
+		WRITE_SHORT offset + tile * 0x0a + 0x04 cnt
+		SET num = num + 1
+	END
+	READ_LONG 0x0c doors
+	READ_LONG 0x18 doors_off
+	READ_LONG 0x1c door_tmap_lkp_off
+	SPRINT ~NewDoorLookup~ ~~
+	SET LookupNum = 51 /* 1 */
+	SET LookupSize = LookupNum * 0x02
+	INNER_ACTION BEGIN
+		OUTER_INNER_PATCH_SAVE ~NewDoorLookup~ ~%NewDoorLookup%~ BEGIN
+			INSERT_BYTES 0 LookupSize
+			SET num = 0
+			PATCH_FOR_EACH tile IN 1894 1895 1896 1897 1974 1975 1976 1977 1978 2053 2054 2055 2056 2057 2058 2059 2133 2134 2135 2136 2137 2178 2139 2140 2212 2213 2214 2215 2216 2217 2218 2219 2292 2293 2294 2295 2296 2297 2298 2299 2373 2374 2375 2376 2377 2378 2454 2455 2456 2457 2458 BEGIN
+				WRITE_SHORT num * 0x02 tile
+				SET num = num + 1
+			END
+		END
+	END
+	SET doornum = doors - 1
+	SET offset = doors_off + doornum * 0x1a
+	READ_SHORT offset + 0x0a tmap_idx
+	READ_SHORT offset + 0x0c tmap_num
+	SET tmap_first = tmap_idx + tmap_num
+	READ_SHORT offset + 0x0e poly_open
+	READ_SHORT offset + 0x10 poly_close
+	READ_LONG  offset + 0x12 poly_open_off
+	READ_LONG  offset + 0x16 poly_close_off
+	SET plyopn = poly_open_off + poly_open * 0x24
+	SET plycls = poly_close_off + poly_close * 0x24
+	SPRINT ~NewDoor~ ~~
+	SET DoorsCnt = 1
+	SET DoorsSize = 0x1a
+	INNER_ACTION BEGIN
+		OUTER_INNER_PATCH_SAVE ~NewDoor~ ~%NewDoor%~ BEGIN
+			INSERT_BYTES 0 DoorsSize
+			WRITE_ASCII 0x00 ~OSWALDD~ (8)
+			WRITE_SHORT 0x08 1
+			WRITE_SHORT 0x0a tmap_first
+			WRITE_SHORT 0x0c LookupNum
+			WRITE_LONG  0x12 plyopn
+			WRITE_LONG  0x16 plycls
+		END
+	END
+	SET insert_door = doors_off + doors * DoorsSize
+	
+	INSERT_BYTES insert_door DoorsSize
+	WRITE_EVALUATED_ASCII insert_door ~%NewDoor%~ (DoorsSize)
+	READ_LONG 0x08 overlays
+	READ_LONG 0x0c doors
+	READ_LONG 0x10 ovrl_off
+	READ_LONG 0x14 sec_head_off
+	READ_LONG 0x18 doors_off
+	READ_LONG 0x1c door_tmap_lkp_off
+	READ_LONG sec_head_off + 0x04 wall_poly_off
+	READ_LONG sec_head_off + 0x08 vertex_off
+	READ_LONG sec_head_off + 0x0c wall_group_off
+	READ_LONG sec_head_off + 0x10 wall_poly_lkup_off
+	PATCH_IF ( door_tmap_lkp_off >= doors_off ) BEGIN WRITE_LONG 0x1c door_tmap_lkp_off + DoorsSize END
+	FOR ( i = 0 ; i < overlays ; ++i ) BEGIN
+		SET offset = ovrl_off + i * 0x18
+		READ_LONG offset + 0x10 offpatch
+		PATCH_IF ( offpatch >= doors_off ) BEGIN WRITE_LONG offset + 0x10 offpatch + DoorsSize END
+		READ_LONG offset + 0x14 offpatch
+		PATCH_IF ( offpatch >= doors_off ) BEGIN WRITE_LONG offset + 0x14 offpatch + DoorsSize END
+	END
+	FOR ( i = 0 ; i < doors ; ++i ) BEGIN
+		SET offset = doors_off + i * DoorsSize
+		READ_LONG offset + 0x12 offpatch
+		PATCH_IF ( offpatch >= doors_off ) BEGIN WRITE_LONG offset + 0x12 offpatch + DoorsSize END
+		READ_LONG offset + 0x16 offpatch
+		PATCH_IF ( offpatch >= doors_off ) BEGIN WRITE_LONG offset + 0x16 offpatch + DoorsSize END
+	END
+	PATCH_IF ( wall_poly_off >= doors_off )      BEGIN WRITE_LONG sec_head_off + 0x04 wall_poly_off      + DoorsSize END
+	PATCH_IF ( vertex_off >= doors_off )         BEGIN WRITE_LONG sec_head_off + 0x08 vertex_off         + DoorsSize END
+	PATCH_IF ( wall_group_off >= doors_off )     BEGIN WRITE_LONG sec_head_off + 0x0c wall_group_off     + DoorsSize END
+	PATCH_IF ( wall_poly_lkup_off >= doors_off ) BEGIN WRITE_LONG sec_head_off + 0x10 wall_poly_lkup_off + DoorsSize END
+	WRITE_LONG 0x0c doors + 1
+	
+	READ_LONG 0x1c door_tmap_lkp_off
+	SET insert_lookup = door_tmap_lkp_off + tmap_first * 0x02
+	INSERT_BYTES insert_lookup LookupSize
+	WRITE_EVALUATED_ASCII insert_lookup ~%NewDoorLookup%~ (LookupSize)
+	READ_LONG 0x08 overlays
+	READ_LONG 0x0c doors
+	READ_LONG 0x10 ovrl_off
+	READ_LONG 0x14 sec_head_off
+	READ_LONG 0x18 doors_off
+	READ_LONG sec_head_off + 0x04 wall_poly_off
+	READ_LONG sec_head_off + 0x08 vertex_off
+	READ_LONG sec_head_off + 0x0c wall_group_off
+	READ_LONG sec_head_off + 0x10 wall_poly_lkup_off
+	FOR ( i = 0 ; i < overlays ; ++i ) BEGIN
+		SET offset = ovrl_off + i * 0x18
+		READ_LONG offset + 0x10 offpatch
+		PATCH_IF ( offpatch >= door_tmap_lkp_off ) BEGIN WRITE_LONG offset + 0x10 offpatch + LookupSize END
+		READ_LONG offset + 0x14 offpatch
+		PATCH_IF ( offpatch >= door_tmap_lkp_off ) BEGIN WRITE_LONG offset + 0x14 offpatch + LookupSize END
+	END
+	FOR ( i = 0 ; i < doors ; ++i ) BEGIN
+		SET offset = doors_off + i * DoorsSize
+		READ_LONG offset + 0x12 offpatch
+		PATCH_IF ( offpatch >= door_tmap_lkp_off ) BEGIN WRITE_LONG offset + 0x12 offpatch + LookupSize END
+		READ_LONG offset + 0x16 offpatch
+		PATCH_IF ( offpatch >= door_tmap_lkp_off ) BEGIN WRITE_LONG offset + 0x16 offpatch + LookupSize END
+	END
+	PATCH_IF ( wall_poly_off >= door_tmap_lkp_off )      BEGIN WRITE_LONG sec_head_off + 0x04 wall_poly_off      + LookupSize END
+	PATCH_IF ( vertex_off >= door_tmap_lkp_off )         BEGIN WRITE_LONG sec_head_off + 0x08 vertex_off         + LookupSize END
+	PATCH_IF ( wall_group_off >= door_tmap_lkp_off )     BEGIN WRITE_LONG sec_head_off + 0x0c wall_group_off     + LookupSize END
+	PATCH_IF ( wall_poly_lkup_off >= door_tmap_lkp_off ) BEGIN WRITE_LONG sec_head_off + 0x10 wall_poly_lkup_off + LookupSize END
+//BLOCKEND
+//BLOCKEND
+
+COPY_EXISTING ~AR0700.are~ ~override~
+	LPF fj_are_structure
+		INT_VAR
+			fj_flags              = 96
+			fj_open_box_left      = 5000
+			fj_open_box_top       = 3780
+			fj_open_box_right     = 5001
+			fj_open_box_bottom    = 3781
+			fj_closed_box_left    = 5005
+			fj_closed_box_top     = 3785
+			fj_closed_box_right   = 5006
+			fj_closed_box_bottom  = 3786
+//BLOCK IMPEDED OPEN
+fj_cell_open_vert_0 = 213 + ( 142 << 16 )
+fj_cell_open_vert_1 = 213 + ( 143 << 16 )
+fj_cell_open_vert_2 = 229 + ( 143 << 16 )
+fj_cell_open_vert_3 = 230 + ( 143 << 16 )
+fj_cell_open_vert_4 = 231 + ( 143 << 16 )
+fj_cell_open_vert_5 = 232 + ( 143 << 16 )
+fj_cell_open_vert_6 = 233 + ( 143 << 16 )
+fj_cell_open_vert_7 = 213 + ( 144 << 16 )
+fj_cell_open_vert_8 = 214 + ( 144 << 16 )
+fj_cell_open_vert_9 = 215 + ( 144 << 16 )
+fj_cell_open_vert_10 = 216 + ( 144 << 16 )
+fj_cell_open_vert_11 = 217 + ( 144 << 16 )
+fj_cell_open_vert_12 = 218 + ( 144 << 16 )
+fj_cell_open_vert_13 = 224 + ( 144 << 16 )
+fj_cell_open_vert_14 = 225 + ( 144 << 16 )
+fj_cell_open_vert_15 = 226 + ( 144 << 16 )
+fj_cell_open_vert_16 = 227 + ( 144 << 16 )
+fj_cell_open_vert_17 = 228 + ( 144 << 16 )
+fj_cell_open_vert_18 = 229 + ( 144 << 16 )
+fj_cell_open_vert_19 = 230 + ( 144 << 16 )
+fj_cell_open_vert_20 = 231 + ( 144 << 16 )
+fj_cell_open_vert_21 = 232 + ( 144 << 16 )
+fj_cell_open_vert_22 = 233 + ( 144 << 16 )
+fj_cell_open_vert_23 = 234 + ( 144 << 16 )
+fj_cell_open_vert_24 = 219 + ( 145 << 16 )
+fj_cell_open_vert_25 = 220 + ( 145 << 16 )
+fj_cell_open_vert_26 = 221 + ( 145 << 16 )
+fj_cell_open_vert_27 = 222 + ( 145 << 16 )
+fj_cell_open_vert_28 = 223 + ( 145 << 16 )
+fj_cell_open_vert_29 = 224 + ( 145 << 16 )
+fj_cell_open_vert_30 = 225 + ( 145 << 16 )
+fj_cell_open_vert_31 = 226 + ( 145 << 16 )
+fj_cell_open_vert_32 = 227 + ( 145 << 16 )
+fj_cell_open_vert_33 = 228 + ( 145 << 16 )
+fj_cell_open_vert_34 = 229 + ( 145 << 16 )
+fj_cell_open_vert_35 = 230 + ( 145 << 16 )
+fj_cell_open_vert_36 = 231 + ( 145 << 16 )
+fj_cell_open_vert_37 = 232 + ( 145 << 16 )
+fj_cell_open_vert_38 = 233 + ( 145 << 16 )
+fj_cell_open_vert_39 = 234 + ( 145 << 16 )
+fj_cell_open_vert_40 = 235 + ( 145 << 16 )
+fj_cell_open_vert_41 = 236 + ( 145 << 16 )
+fj_cell_open_vert_42 = 215 + ( 146 << 16 )
+fj_cell_open_vert_43 = 216 + ( 146 << 16 )
+fj_cell_open_vert_44 = 217 + ( 146 << 16 )
+fj_cell_open_vert_45 = 218 + ( 146 << 16 )
+fj_cell_open_vert_46 = 219 + ( 146 << 16 )
+fj_cell_open_vert_47 = 220 + ( 146 << 16 )
+fj_cell_open_vert_48 = 221 + ( 146 << 16 )
+fj_cell_open_vert_49 = 222 + ( 146 << 16 )
+fj_cell_open_vert_50 = 223 + ( 146 << 16 )
+fj_cell_open_vert_51 = 224 + ( 146 << 16 )
+fj_cell_open_vert_52 = 225 + ( 146 << 16 )
+fj_cell_open_vert_53 = 226 + ( 146 << 16 )
+fj_cell_open_vert_54 = 227 + ( 146 << 16 )
+fj_cell_open_vert_55 = 228 + ( 146 << 16 )
+fj_cell_open_vert_56 = 229 + ( 146 << 16 )
+fj_cell_open_vert_57 = 230 + ( 146 << 16 )
+fj_cell_open_vert_58 = 231 + ( 146 << 16 )
+fj_cell_open_vert_59 = 232 + ( 146 << 16 )
+fj_cell_open_vert_60 = 233 + ( 146 << 16 )
+fj_cell_open_vert_61 = 234 + ( 146 << 16 )
+fj_cell_open_vert_62 = 235 + ( 146 << 16 )
+fj_cell_open_vert_63 = 236 + ( 146 << 16 )
+fj_cell_open_vert_64 = 213 + ( 147 << 16 )
+fj_cell_open_vert_65 = 214 + ( 147 << 16 )
+fj_cell_open_vert_66 = 215 + ( 147 << 16 )
+fj_cell_open_vert_67 = 216 + ( 147 << 16 )
+fj_cell_open_vert_68 = 217 + ( 147 << 16 )
+fj_cell_open_vert_69 = 218 + ( 147 << 16 )
+fj_cell_open_vert_70 = 219 + ( 147 << 16 )
+fj_cell_open_vert_71 = 220 + ( 147 << 16 )
+fj_cell_open_vert_72 = 221 + ( 147 << 16 )
+fj_cell_open_vert_73 = 222 + ( 147 << 16 )
+fj_cell_open_vert_74 = 223 + ( 147 << 16 )
+fj_cell_open_vert_75 = 224 + ( 147 << 16 )
+fj_cell_open_vert_76 = 225 + ( 147 << 16 )
+fj_cell_open_vert_77 = 226 + ( 147 << 16 )
+fj_cell_open_vert_78 = 227 + ( 147 << 16 )
+fj_cell_open_vert_79 = 228 + ( 147 << 16 )
+fj_cell_open_vert_80 = 229 + ( 147 << 16 )
+fj_cell_open_vert_81 = 230 + ( 147 << 16 )
+fj_cell_open_vert_82 = 231 + ( 147 << 16 )
+fj_cell_open_vert_83 = 232 + ( 147 << 16 )
+fj_cell_open_vert_84 = 233 + ( 147 << 16 )
+fj_cell_open_vert_85 = 234 + ( 147 << 16 )
+fj_cell_open_vert_86 = 235 + ( 147 << 16 )
+fj_cell_open_vert_87 = 236 + ( 147 << 16 )
+fj_cell_open_vert_88 = 211 + ( 148 << 16 )
+fj_cell_open_vert_89 = 212 + ( 148 << 16 )
+fj_cell_open_vert_90 = 213 + ( 148 << 16 )
+fj_cell_open_vert_91 = 214 + ( 148 << 16 )
+fj_cell_open_vert_92 = 215 + ( 148 << 16 )
+fj_cell_open_vert_93 = 216 + ( 148 << 16 )
+fj_cell_open_vert_94 = 217 + ( 148 << 16 )
+fj_cell_open_vert_95 = 218 + ( 148 << 16 )
+fj_cell_open_vert_96 = 219 + ( 148 << 16 )
+fj_cell_open_vert_97 = 220 + ( 148 << 16 )
+fj_cell_open_vert_98 = 221 + ( 148 << 16 )
+fj_cell_open_vert_99 = 222 + ( 148 << 16 )
+fj_cell_open_vert_100 = 223 + ( 148 << 16 )
+fj_cell_open_vert_101 = 224 + ( 148 << 16 )
+fj_cell_open_vert_102 = 225 + ( 148 << 16 )
+fj_cell_open_vert_103 = 226 + ( 148 << 16 )
+fj_cell_open_vert_104 = 227 + ( 148 << 16 )
+fj_cell_open_vert_105 = 228 + ( 148 << 16 )
+fj_cell_open_vert_106 = 229 + ( 148 << 16 )
+fj_cell_open_vert_107 = 230 + ( 148 << 16 )
+fj_cell_open_vert_108 = 231 + ( 148 << 16 )
+fj_cell_open_vert_109 = 232 + ( 148 << 16 )
+fj_cell_open_vert_110 = 233 + ( 148 << 16 )
+fj_cell_open_vert_111 = 234 + ( 148 << 16 )
+fj_cell_open_vert_112 = 235 + ( 148 << 16 )
+fj_cell_open_vert_113 = 236 + ( 148 << 16 )
+fj_cell_open_vert_114 = 211 + ( 149 << 16 )
+fj_cell_open_vert_115 = 212 + ( 149 << 16 )
+fj_cell_open_vert_116 = 213 + ( 149 << 16 )
+fj_cell_open_vert_117 = 214 + ( 149 << 16 )
+fj_cell_open_vert_118 = 215 + ( 149 << 16 )
+fj_cell_open_vert_119 = 216 + ( 149 << 16 )
+fj_cell_open_vert_120 = 217 + ( 149 << 16 )
+fj_cell_open_vert_121 = 218 + ( 149 << 16 )
+fj_cell_open_vert_122 = 219 + ( 149 << 16 )
+fj_cell_open_vert_123 = 220 + ( 149 << 16 )
+fj_cell_open_vert_124 = 221 + ( 149 << 16 )
+fj_cell_open_vert_125 = 222 + ( 149 << 16 )
+fj_cell_open_vert_126 = 223 + ( 149 << 16 )
+fj_cell_open_vert_127 = 224 + ( 149 << 16 )
+fj_cell_open_vert_128 = 225 + ( 149 << 16 )
+fj_cell_open_vert_129 = 226 + ( 149 << 16 )
+fj_cell_open_vert_130 = 227 + ( 149 << 16 )
+fj_cell_open_vert_131 = 228 + ( 149 << 16 )
+fj_cell_open_vert_132 = 229 + ( 149 << 16 )
+fj_cell_open_vert_133 = 230 + ( 149 << 16 )
+fj_cell_open_vert_134 = 231 + ( 149 << 16 )
+fj_cell_open_vert_135 = 232 + ( 149 << 16 )
+fj_cell_open_vert_136 = 233 + ( 149 << 16 )
+fj_cell_open_vert_137 = 234 + ( 149 << 16 )
+fj_cell_open_vert_138 = 235 + ( 149 << 16 )
+fj_cell_open_vert_139 = 236 + ( 149 << 16 )
+fj_cell_open_vert_140 = 211 + ( 150 << 16 )
+fj_cell_open_vert_141 = 212 + ( 150 << 16 )
+fj_cell_open_vert_142 = 213 + ( 150 << 16 )
+fj_cell_open_vert_143 = 214 + ( 150 << 16 )
+fj_cell_open_vert_144 = 215 + ( 150 << 16 )
+fj_cell_open_vert_145 = 216 + ( 150 << 16 )
+fj_cell_open_vert_146 = 217 + ( 150 << 16 )
+fj_cell_open_vert_147 = 218 + ( 150 << 16 )
+fj_cell_open_vert_148 = 219 + ( 150 << 16 )
+fj_cell_open_vert_149 = 220 + ( 150 << 16 )
+fj_cell_open_vert_150 = 221 + ( 150 << 16 )
+fj_cell_open_vert_151 = 222 + ( 150 << 16 )
+fj_cell_open_vert_152 = 223 + ( 150 << 16 )
+fj_cell_open_vert_153 = 224 + ( 150 << 16 )
+fj_cell_open_vert_154 = 225 + ( 150 << 16 )
+fj_cell_open_vert_155 = 226 + ( 150 << 16 )
+fj_cell_open_vert_156 = 227 + ( 150 << 16 )
+fj_cell_open_vert_157 = 228 + ( 150 << 16 )
+fj_cell_open_vert_158 = 229 + ( 150 << 16 )
+fj_cell_open_vert_159 = 230 + ( 150 << 16 )
+fj_cell_open_vert_160 = 231 + ( 150 << 16 )
+fj_cell_open_vert_161 = 232 + ( 150 << 16 )
+fj_cell_open_vert_162 = 233 + ( 150 << 16 )
+fj_cell_open_vert_163 = 234 + ( 150 << 16 )
+fj_cell_open_vert_164 = 235 + ( 150 << 16 )
+fj_cell_open_vert_165 = 211 + ( 151 << 16 )
+fj_cell_open_vert_166 = 212 + ( 151 << 16 )
+fj_cell_open_vert_167 = 213 + ( 151 << 16 )
+fj_cell_open_vert_168 = 214 + ( 151 << 16 )
+fj_cell_open_vert_169 = 215 + ( 151 << 16 )
+fj_cell_open_vert_170 = 216 + ( 151 << 16 )
+fj_cell_open_vert_171 = 217 + ( 151 << 16 )
+fj_cell_open_vert_172 = 218 + ( 151 << 16 )
+fj_cell_open_vert_173 = 219 + ( 151 << 16 )
+fj_cell_open_vert_174 = 220 + ( 151 << 16 )
+fj_cell_open_vert_175 = 221 + ( 151 << 16 )
+fj_cell_open_vert_176 = 222 + ( 151 << 16 )
+fj_cell_open_vert_177 = 223 + ( 151 << 16 )
+fj_cell_open_vert_178 = 224 + ( 151 << 16 )
+fj_cell_open_vert_179 = 225 + ( 151 << 16 )
+fj_cell_open_vert_180 = 226 + ( 151 << 16 )
+fj_cell_open_vert_181 = 227 + ( 151 << 16 )
+fj_cell_open_vert_182 = 228 + ( 151 << 16 )
+fj_cell_open_vert_183 = 229 + ( 151 << 16 )
+fj_cell_open_vert_184 = 230 + ( 151 << 16 )
+fj_cell_open_vert_185 = 231 + ( 151 << 16 )
+fj_cell_open_vert_186 = 232 + ( 151 << 16 )
+fj_cell_open_vert_187 = 233 + ( 151 << 16 )
+fj_cell_open_vert_188 = 212 + ( 152 << 16 )
+fj_cell_open_vert_189 = 213 + ( 152 << 16 )
+fj_cell_open_vert_190 = 214 + ( 152 << 16 )
+fj_cell_open_vert_191 = 215 + ( 152 << 16 )
+fj_cell_open_vert_192 = 216 + ( 152 << 16 )
+fj_cell_open_vert_193 = 217 + ( 152 << 16 )
+fj_cell_open_vert_194 = 218 + ( 152 << 16 )
+fj_cell_open_vert_195 = 219 + ( 152 << 16 )
+fj_cell_open_vert_196 = 220 + ( 152 << 16 )
+fj_cell_open_vert_197 = 221 + ( 152 << 16 )
+fj_cell_open_vert_198 = 222 + ( 152 << 16 )
+fj_cell_open_vert_199 = 223 + ( 152 << 16 )
+fj_cell_open_vert_200 = 224 + ( 152 << 16 )
+fj_cell_open_vert_201 = 225 + ( 152 << 16 )
+fj_cell_open_vert_202 = 226 + ( 152 << 16 )
+fj_cell_open_vert_203 = 227 + ( 152 << 16 )
+fj_cell_open_vert_204 = 228 + ( 152 << 16 )
+fj_cell_open_vert_205 = 229 + ( 152 << 16 )
+fj_cell_open_vert_206 = 230 + ( 152 << 16 )
+fj_cell_open_vert_207 = 231 + ( 152 << 16 )
+fj_cell_open_vert_208 = 213 + ( 153 << 16 )
+fj_cell_open_vert_209 = 214 + ( 153 << 16 )
+fj_cell_open_vert_210 = 215 + ( 153 << 16 )
+fj_cell_open_vert_211 = 216 + ( 153 << 16 )
+fj_cell_open_vert_212 = 217 + ( 153 << 16 )
+fj_cell_open_vert_213 = 218 + ( 153 << 16 )
+fj_cell_open_vert_214 = 219 + ( 153 << 16 )
+fj_cell_open_vert_215 = 220 + ( 153 << 16 )
+fj_cell_open_vert_216 = 221 + ( 153 << 16 )
+fj_cell_open_vert_217 = 222 + ( 153 << 16 )
+fj_cell_open_vert_218 = 223 + ( 153 << 16 )
+fj_cell_open_vert_219 = 224 + ( 153 << 16 )
+fj_cell_open_vert_220 = 225 + ( 153 << 16 )
+fj_cell_open_vert_221 = 226 + ( 153 << 16 )
+fj_cell_open_vert_222 = 227 + ( 153 << 16 )
+fj_cell_open_vert_223 = 230 + ( 153 << 16 )
+fj_cell_open_vert_224 = 231 + ( 153 << 16 )
+fj_cell_open_vert_225 = 214 + ( 154 << 16 )
+fj_cell_open_vert_226 = 215 + ( 154 << 16 )
+fj_cell_open_vert_227 = 216 + ( 154 << 16 )
+fj_cell_open_vert_228 = 217 + ( 154 << 16 )
+fj_cell_open_vert_229 = 218 + ( 154 << 16 )
+fj_cell_open_vert_230 = 219 + ( 154 << 16 )
+fj_cell_open_vert_231 = 220 + ( 154 << 16 )
+fj_cell_open_vert_232 = 221 + ( 154 << 16 )
+fj_cell_open_vert_233 = 222 + ( 154 << 16 )
+fj_cell_open_vert_234 = 230 + ( 154 << 16 )
+fj_cell_open_vert_235 = 231 + ( 154 << 16 )
+fj_cell_open_vert_236 = 214 + ( 155 << 16 )
+fj_cell_open_vert_237 = 215 + ( 155 << 16 )
+fj_cell_open_vert_238 = 218 + ( 155 << 16 )
+fj_cell_open_vert_239 = 219 + ( 155 << 16 )
+fj_cell_open_vert_240 = 221 + ( 155 << 16 )
+fj_cell_open_vert_241 = 222 + ( 155 << 16 )
+fj_cell_open_vert_242 = 231 + ( 155 << 16 )
+fj_cell_open_vert_243 = 214 + ( 156 << 16 )
+fj_cell_open_vert_244 = 215 + ( 156 << 16 )
+fj_cell_open_vert_245 = 218 + ( 156 << 16 )
+fj_cell_open_vert_246 = 219 + ( 156 << 16 )
+fj_cell_open_vert_247 = 221 + ( 156 << 16 )
+fj_cell_open_vert_248 = 222 + ( 156 << 16 )
+fj_cell_open_vert_249 = 231 + ( 156 << 16 )
+fj_cell_open_vert_250 = 232 + ( 156 << 16 )
+fj_cell_open_vert_251 = 219 + ( 157 << 16 )
+fj_cell_open_vert_252 = 232 + ( 157 << 16 )
+fj_cell_open_vert_253 = 219 + ( 158 << 16 )
+fj_cell_open_vert_254 = 232 + ( 158 << 16 )
+fj_cell_open_vert_255 = 219 + ( 159 << 16 )
+fj_cell_open_vert_256 = 232 + ( 159 << 16 )
+fj_cell_open_vert_257 = 219 + ( 160 << 16 )
+fj_cell_open_vert_258 = 220 + ( 160 << 16 )
+fj_cell_open_vert_259 = 232 + ( 160 << 16 )
+fj_cell_open_vert_260 = 233 + ( 160 << 16 )
+fj_cell_open_vert_261 = 219 + ( 161 << 16 )
+fj_cell_open_vert_262 = 220 + ( 161 << 16 )
+fj_cell_open_vert_263 = 233 + ( 161 << 16 )
+fj_cell_open_vert_264 = 219 + ( 162 << 16 )
+fj_cell_open_vert_265 = 220 + ( 162 << 16 )
+fj_cell_open_vert_266 = 219 + ( 163 << 16 )
+fj_cell_open_vert_267 = 220 + ( 163 << 16 )
+fj_cell_open_vert_268 = 219 + ( 164 << 16 )
+fj_cell_open_vert_269 = 220 + ( 164 << 16 )
+//BLOCKEND
+//BLOCK IMPEDED CLOSED
+fj_cell_closed_vert_0 = 229 + ( 142 << 16 )
+fj_cell_closed_vert_1 = 230 + ( 142 << 16 )
+fj_cell_closed_vert_2 = 231 + ( 142 << 16 )
+fj_cell_closed_vert_3 = 227 + ( 143 << 16 )
+fj_cell_closed_vert_4 = 228 + ( 143 << 16 )
+fj_cell_closed_vert_5 = 229 + ( 143 << 16 )
+fj_cell_closed_vert_6 = 230 + ( 143 << 16 )
+fj_cell_closed_vert_7 = 231 + ( 143 << 16 )
+fj_cell_closed_vert_8 = 232 + ( 143 << 16 )
+fj_cell_closed_vert_9 = 233 + ( 143 << 16 )
+fj_cell_closed_vert_10 = 234 + ( 143 << 16 )
+fj_cell_closed_vert_11 = 224 + ( 144 << 16 )
+fj_cell_closed_vert_12 = 225 + ( 144 << 16 )
+fj_cell_closed_vert_13 = 226 + ( 144 << 16 )
+fj_cell_closed_vert_14 = 227 + ( 144 << 16 )
+fj_cell_closed_vert_15 = 228 + ( 144 << 16 )
+fj_cell_closed_vert_16 = 229 + ( 144 << 16 )
+fj_cell_closed_vert_17 = 230 + ( 144 << 16 )
+fj_cell_closed_vert_18 = 231 + ( 144 << 16 )
+fj_cell_closed_vert_19 = 232 + ( 144 << 16 )
+fj_cell_closed_vert_20 = 233 + ( 144 << 16 )
+fj_cell_closed_vert_21 = 234 + ( 144 << 16 )
+fj_cell_closed_vert_22 = 235 + ( 144 << 16 )
+fj_cell_closed_vert_23 = 236 + ( 144 << 16 )
+fj_cell_closed_vert_24 = 221 + ( 145 << 16 )
+fj_cell_closed_vert_25 = 222 + ( 145 << 16 )
+fj_cell_closed_vert_26 = 223 + ( 145 << 16 )
+fj_cell_closed_vert_27 = 224 + ( 145 << 16 )
+fj_cell_closed_vert_28 = 225 + ( 145 << 16 )
+fj_cell_closed_vert_29 = 226 + ( 145 << 16 )
+fj_cell_closed_vert_30 = 227 + ( 145 << 16 )
+fj_cell_closed_vert_31 = 228 + ( 145 << 16 )
+fj_cell_closed_vert_32 = 229 + ( 145 << 16 )
+fj_cell_closed_vert_33 = 230 + ( 145 << 16 )
+fj_cell_closed_vert_34 = 231 + ( 145 << 16 )
+fj_cell_closed_vert_35 = 232 + ( 145 << 16 )
+fj_cell_closed_vert_36 = 233 + ( 145 << 16 )
+fj_cell_closed_vert_37 = 234 + ( 145 << 16 )
+fj_cell_closed_vert_38 = 235 + ( 145 << 16 )
+fj_cell_closed_vert_39 = 236 + ( 145 << 16 )
+fj_cell_closed_vert_40 = 219 + ( 146 << 16 )
+fj_cell_closed_vert_41 = 220 + ( 146 << 16 )
+fj_cell_closed_vert_42 = 221 + ( 146 << 16 )
+fj_cell_closed_vert_43 = 222 + ( 146 << 16 )
+fj_cell_closed_vert_44 = 223 + ( 146 << 16 )
+fj_cell_closed_vert_45 = 224 + ( 146 << 16 )
+fj_cell_closed_vert_46 = 225 + ( 146 << 16 )
+fj_cell_closed_vert_47 = 226 + ( 146 << 16 )
+fj_cell_closed_vert_48 = 227 + ( 146 << 16 )
+fj_cell_closed_vert_49 = 228 + ( 146 << 16 )
+fj_cell_closed_vert_50 = 229 + ( 146 << 16 )
+fj_cell_closed_vert_51 = 230 + ( 146 << 16 )
+fj_cell_closed_vert_52 = 231 + ( 146 << 16 )
+fj_cell_closed_vert_53 = 232 + ( 146 << 16 )
+fj_cell_closed_vert_54 = 233 + ( 146 << 16 )
+fj_cell_closed_vert_55 = 234 + ( 146 << 16 )
+fj_cell_closed_vert_56 = 235 + ( 146 << 16 )
+fj_cell_closed_vert_57 = 236 + ( 146 << 16 )
+fj_cell_closed_vert_58 = 216 + ( 147 << 16 )
+fj_cell_closed_vert_59 = 217 + ( 147 << 16 )
+fj_cell_closed_vert_60 = 218 + ( 147 << 16 )
+fj_cell_closed_vert_61 = 219 + ( 147 << 16 )
+fj_cell_closed_vert_62 = 220 + ( 147 << 16 )
+fj_cell_closed_vert_63 = 221 + ( 147 << 16 )
+fj_cell_closed_vert_64 = 222 + ( 147 << 16 )
+fj_cell_closed_vert_65 = 223 + ( 147 << 16 )
+fj_cell_closed_vert_66 = 224 + ( 147 << 16 )
+fj_cell_closed_vert_67 = 225 + ( 147 << 16 )
+fj_cell_closed_vert_68 = 226 + ( 147 << 16 )
+fj_cell_closed_vert_69 = 227 + ( 147 << 16 )
+fj_cell_closed_vert_70 = 228 + ( 147 << 16 )
+fj_cell_closed_vert_71 = 229 + ( 147 << 16 )
+fj_cell_closed_vert_72 = 230 + ( 147 << 16 )
+fj_cell_closed_vert_73 = 231 + ( 147 << 16 )
+fj_cell_closed_vert_74 = 232 + ( 147 << 16 )
+fj_cell_closed_vert_75 = 233 + ( 147 << 16 )
+fj_cell_closed_vert_76 = 234 + ( 147 << 16 )
+fj_cell_closed_vert_77 = 235 + ( 147 << 16 )
+fj_cell_closed_vert_78 = 236 + ( 147 << 16 )
+fj_cell_closed_vert_79 = 212 + ( 148 << 16 )
+fj_cell_closed_vert_80 = 213 + ( 148 << 16 )
+fj_cell_closed_vert_81 = 214 + ( 148 << 16 )
+fj_cell_closed_vert_82 = 215 + ( 148 << 16 )
+fj_cell_closed_vert_83 = 216 + ( 148 << 16 )
+fj_cell_closed_vert_84 = 217 + ( 148 << 16 )
+fj_cell_closed_vert_85 = 218 + ( 148 << 16 )
+fj_cell_closed_vert_86 = 219 + ( 148 << 16 )
+fj_cell_closed_vert_87 = 220 + ( 148 << 16 )
+fj_cell_closed_vert_88 = 221 + ( 148 << 16 )
+fj_cell_closed_vert_89 = 222 + ( 148 << 16 )
+fj_cell_closed_vert_90 = 223 + ( 148 << 16 )
+fj_cell_closed_vert_91 = 224 + ( 148 << 16 )
+fj_cell_closed_vert_92 = 225 + ( 148 << 16 )
+fj_cell_closed_vert_93 = 226 + ( 148 << 16 )
+fj_cell_closed_vert_94 = 227 + ( 148 << 16 )
+fj_cell_closed_vert_95 = 228 + ( 148 << 16 )
+fj_cell_closed_vert_96 = 229 + ( 148 << 16 )
+fj_cell_closed_vert_97 = 230 + ( 148 << 16 )
+fj_cell_closed_vert_98 = 231 + ( 148 << 16 )
+fj_cell_closed_vert_99 = 232 + ( 148 << 16 )
+fj_cell_closed_vert_100 = 233 + ( 148 << 16 )
+fj_cell_closed_vert_101 = 234 + ( 148 << 16 )
+fj_cell_closed_vert_102 = 235 + ( 148 << 16 )
+fj_cell_closed_vert_103 = 211 + ( 149 << 16 )
+fj_cell_closed_vert_104 = 212 + ( 149 << 16 )
+fj_cell_closed_vert_105 = 213 + ( 149 << 16 )
+fj_cell_closed_vert_106 = 214 + ( 149 << 16 )
+fj_cell_closed_vert_107 = 215 + ( 149 << 16 )
+fj_cell_closed_vert_108 = 216 + ( 149 << 16 )
+fj_cell_closed_vert_109 = 217 + ( 149 << 16 )
+fj_cell_closed_vert_110 = 218 + ( 149 << 16 )
+fj_cell_closed_vert_111 = 219 + ( 149 << 16 )
+fj_cell_closed_vert_112 = 220 + ( 149 << 16 )
+fj_cell_closed_vert_113 = 221 + ( 149 << 16 )
+fj_cell_closed_vert_114 = 222 + ( 149 << 16 )
+fj_cell_closed_vert_115 = 223 + ( 149 << 16 )
+fj_cell_closed_vert_116 = 224 + ( 149 << 16 )
+fj_cell_closed_vert_117 = 225 + ( 149 << 16 )
+fj_cell_closed_vert_118 = 226 + ( 149 << 16 )
+fj_cell_closed_vert_119 = 227 + ( 149 << 16 )
+fj_cell_closed_vert_120 = 228 + ( 149 << 16 )
+fj_cell_closed_vert_121 = 229 + ( 149 << 16 )
+fj_cell_closed_vert_122 = 230 + ( 149 << 16 )
+fj_cell_closed_vert_123 = 231 + ( 149 << 16 )
+fj_cell_closed_vert_124 = 232 + ( 149 << 16 )
+fj_cell_closed_vert_125 = 233 + ( 149 << 16 )
+fj_cell_closed_vert_126 = 234 + ( 149 << 16 )
+fj_cell_closed_vert_127 = 235 + ( 149 << 16 )
+fj_cell_closed_vert_128 = 211 + ( 150 << 16 )
+fj_cell_closed_vert_129 = 212 + ( 150 << 16 )
+fj_cell_closed_vert_130 = 213 + ( 150 << 16 )
+fj_cell_closed_vert_131 = 214 + ( 150 << 16 )
+fj_cell_closed_vert_132 = 215 + ( 150 << 16 )
+fj_cell_closed_vert_133 = 216 + ( 150 << 16 )
+fj_cell_closed_vert_134 = 217 + ( 150 << 16 )
+fj_cell_closed_vert_135 = 218 + ( 150 << 16 )
+fj_cell_closed_vert_136 = 219 + ( 150 << 16 )
+fj_cell_closed_vert_137 = 220 + ( 150 << 16 )
+fj_cell_closed_vert_138 = 221 + ( 150 << 16 )
+fj_cell_closed_vert_139 = 222 + ( 150 << 16 )
+fj_cell_closed_vert_140 = 223 + ( 150 << 16 )
+fj_cell_closed_vert_141 = 224 + ( 150 << 16 )
+fj_cell_closed_vert_142 = 225 + ( 150 << 16 )
+fj_cell_closed_vert_143 = 226 + ( 150 << 16 )
+fj_cell_closed_vert_144 = 227 + ( 150 << 16 )
+fj_cell_closed_vert_145 = 228 + ( 150 << 16 )
+fj_cell_closed_vert_146 = 229 + ( 150 << 16 )
+fj_cell_closed_vert_147 = 230 + ( 150 << 16 )
+fj_cell_closed_vert_148 = 231 + ( 150 << 16 )
+fj_cell_closed_vert_149 = 232 + ( 150 << 16 )
+fj_cell_closed_vert_150 = 233 + ( 150 << 16 )
+fj_cell_closed_vert_151 = 234 + ( 150 << 16 )
+fj_cell_closed_vert_152 = 212 + ( 151 << 16 )
+fj_cell_closed_vert_153 = 213 + ( 151 << 16 )
+fj_cell_closed_vert_154 = 214 + ( 151 << 16 )
+fj_cell_closed_vert_155 = 215 + ( 151 << 16 )
+fj_cell_closed_vert_156 = 216 + ( 151 << 16 )
+fj_cell_closed_vert_157 = 217 + ( 151 << 16 )
+fj_cell_closed_vert_158 = 218 + ( 151 << 16 )
+fj_cell_closed_vert_159 = 219 + ( 151 << 16 )
+fj_cell_closed_vert_160 = 220 + ( 151 << 16 )
+fj_cell_closed_vert_161 = 221 + ( 151 << 16 )
+fj_cell_closed_vert_162 = 222 + ( 151 << 16 )
+fj_cell_closed_vert_163 = 223 + ( 151 << 16 )
+fj_cell_closed_vert_164 = 224 + ( 151 << 16 )
+fj_cell_closed_vert_165 = 225 + ( 151 << 16 )
+fj_cell_closed_vert_166 = 226 + ( 151 << 16 )
+fj_cell_closed_vert_167 = 227 + ( 151 << 16 )
+fj_cell_closed_vert_168 = 228 + ( 151 << 16 )
+fj_cell_closed_vert_169 = 229 + ( 151 << 16 )
+fj_cell_closed_vert_170 = 230 + ( 151 << 16 )
+fj_cell_closed_vert_171 = 231 + ( 151 << 16 )
+fj_cell_closed_vert_172 = 232 + ( 151 << 16 )
+fj_cell_closed_vert_173 = 212 + ( 152 << 16 )
+fj_cell_closed_vert_174 = 213 + ( 152 << 16 )
+fj_cell_closed_vert_175 = 214 + ( 152 << 16 )
+fj_cell_closed_vert_176 = 215 + ( 152 << 16 )
+fj_cell_closed_vert_177 = 216 + ( 152 << 16 )
+fj_cell_closed_vert_178 = 217 + ( 152 << 16 )
+fj_cell_closed_vert_179 = 218 + ( 152 << 16 )
+fj_cell_closed_vert_180 = 219 + ( 152 << 16 )
+fj_cell_closed_vert_181 = 220 + ( 152 << 16 )
+fj_cell_closed_vert_182 = 221 + ( 152 << 16 )
+fj_cell_closed_vert_183 = 222 + ( 152 << 16 )
+fj_cell_closed_vert_184 = 223 + ( 152 << 16 )
+fj_cell_closed_vert_185 = 224 + ( 152 << 16 )
+fj_cell_closed_vert_186 = 225 + ( 152 << 16 )
+fj_cell_closed_vert_187 = 226 + ( 152 << 16 )
+fj_cell_closed_vert_188 = 227 + ( 152 << 16 )
+fj_cell_closed_vert_189 = 228 + ( 152 << 16 )
+fj_cell_closed_vert_190 = 229 + ( 152 << 16 )
+fj_cell_closed_vert_191 = 230 + ( 152 << 16 )
+fj_cell_closed_vert_192 = 213 + ( 153 << 16 )
+fj_cell_closed_vert_193 = 214 + ( 153 << 16 )
+fj_cell_closed_vert_194 = 222 + ( 153 << 16 )
+fj_cell_closed_vert_195 = 223 + ( 153 << 16 )
+fj_cell_closed_vert_196 = 224 + ( 153 << 16 )
+fj_cell_closed_vert_197 = 225 + ( 153 << 16 )
+fj_cell_closed_vert_198 = 226 + ( 153 << 16 )
+fj_cell_closed_vert_199 = 227 + ( 153 << 16 )
+fj_cell_closed_vert_200 = 228 + ( 153 << 16 )
+fj_cell_closed_vert_201 = 229 + ( 153 << 16 )
+fj_cell_closed_vert_202 = 224 + ( 154 << 16 )
+fj_cell_closed_vert_203 = 225 + ( 154 << 16 )
+fj_cell_closed_vert_204 = 226 + ( 154 << 16 )
+fj_cell_closed_vert_205 = 227 + ( 154 << 16 )
+//BLOCKEND
+			fj_door_open_vert_0   = 5000 + ( 3780 << 16 )
+			fj_door_open_vert_1   = 5001 + ( 3780 << 16 )
+			fj_door_open_vert_2   = 5000 + ( 3781 << 16 )
+			fj_door_closed_vert_0 = 5005 + ( 3785 << 16 )
+			fj_door_closed_vert_1 = 5006 + ( 3785 << 16 )
+			fj_door_closed_vert_2 = 5005 + ( 3786 << 16 )
+			fj_cursor_idx         = 30
+			fj_trap_loc_x         = 3635
+			fj_trap_loc_y         = 1685
+			fj_open_loc_x         = 3545
+			fj_open_loc_y         = 1770
+			fj_closed_loc_x       = 3610
+			fj_closed_loc_y       = 1810
+		STR_VAR
+			fj_structure_type     = door
+			fj_name               = OswaldBoat
+			fj_door_wed_id        = OSWALDD
+			fj_door_open_wav      = SILENTDH
+			fj_door_close_wav     = SILENTDH
+	END
+/* SearchMap */
+/* remove/add region */
+
+
+
+
+
+
+
+
+
+
+
+
+/* копировать SILENTDH.WAV */
+
+/* катсцены
+В Трущобах они с Освальдом идут в сторону выхода оттуда(не до конца)
+Переносятся на променад к кораблю.
+Потом все садятся на корабль (использовать мои заклинания невидимомти)
+Переносятся в нужную локу и там выходят с корабля (по очереди снимается невидимость)
+Освальд тоже выходит
+Когда все выйдут, корабль улетает */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
