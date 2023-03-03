@@ -30,6 +30,10 @@ LANGUAGE ~English~
 	     ~en_US~
 	     ~icewind_eet/lang/en_US/mod.tra~
 	     ~icewind_eet/lang/en_US/chapters.tra~
+LANGUAGE ~German~
+	     ~de_DE~
+	     ~icewind_eet/lang/de_DE/mod.tra~
+	     ~icewind_eet/lang/de_DE/chapters.tra~
 
 BEGIN ~IceWind_End~
 
