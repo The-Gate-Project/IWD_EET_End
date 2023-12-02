@@ -40,6 +40,10 @@ LANGUAGE ~German~
 	     ~de_DE~
 	     ~icewind_eet/lang/de_DE/mod.tra~
 	     ~icewind_eet/lang/de_DE/chapters.tra~
+LANGUAGE ~Simplified Chinese~
+	     ~zh_CN~
+	     ~icewind_eet/lang/zh_CN/mod.tra~
+	     ~icewind_eet/lang/zh_CN/chapters.tra~
 
 BEGIN ~IceWind_End~
 
