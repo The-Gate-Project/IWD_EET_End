@@ -112,7 +112,7 @@ ACTION_PHP_EACH FC_NPC_PDIALOG AS PDIALOG_IWD1 => ~~ BEGIN
 			FOR ( i = 0 ; i < states ; ++i ) BEGIN
 				READ_LONG states_off + i * 0x10 + 0x0c trig_idx
 				PATCH_IF ( trig_idx >= 0 ) BEGIN
-					SPRINT ~state_trigger_add~ ~%state_trigger_add%%LNL%ADD_STATE_TRIGGER %PDIALOG_IWD1% %i% %tilde%!Global("PARTY_IN_ICEWIND_DALE","GLOBAL",1)%tilde%~
+					SPRINT ~state_trigger_add~ ~%state_trigger_add%%LNL%ADD_STATE_TRIGGER %tilde%%PDIALOG_IWD1%%tilde% %i% %tilde%!Global("PARTY_IN_ICEWIND_DALE","GLOBAL",1)%tilde%~
 				END
 			END
 		END
@@ -129,7 +129,7 @@ ACTION_PHP_EACH FC_NPC_JDIALOG AS JDIALOG_IWD1 => ~~ BEGIN
 			FOR ( i = 0 ; i < states ; ++i ) BEGIN
 				READ_LONG states_off + i * 0x10 + 0x0c trig_idx
 				PATCH_IF ( trig_idx >= 0 ) BEGIN
-					SPRINT ~state_trigger_add~ ~%state_trigger_add%%LNL%ADD_STATE_TRIGGER %JDIALOG_IWD1% %i% %tilde%!Global("PARTY_IN_ICEWIND_DALE","GLOBAL",1)%tilde%~
+					SPRINT ~state_trigger_add~ ~%state_trigger_add%%LNL%ADD_STATE_TRIGGER %tilde%%JDIALOG_IWD1%%tilde% %i% %tilde%!Global("PARTY_IN_ICEWIND_DALE","GLOBAL",1)%tilde%~
 				END
 			END
 		END

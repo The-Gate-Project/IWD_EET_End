@@ -1,6 +1,6 @@
 %state_trigger_add%
 
-APPEND %PDIALOG_IWD1%
+APPEND ~%PDIALOG_IWD1%~
 
 IF WEIGHT #0 ~Global("PARTY_IN_ICEWIND_DALE","GLOBAL",1) Global("IdKickedOut","LOCALS",0)
     Gender(Myself,FEMALE)
