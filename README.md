@@ -1,4 +1,4 @@
-# Icewind_EET
+# IWD_EET_End
 
 **Autor** : [Tipun](https://github.com/tipun81?tab=repositories)
 
@@ -14,10 +14,10 @@
 
 - OTHER MODS
 
-- **[Icewind_EET](https://github.com/The-Gate-Project/Icewind_EET)** 
+- **[IWD_EET_End](https://github.com/The-Gate-Project/IWD_EET_End)** 
 
 - EET_End
 
 
-#### [Worldmap_IWD_EET] Not needed any more, as it is part of IWD1 and IWD2. 
+#### (Worldmap_IWD_EET is not needed any more, as it is part of IWD1 and IWD2.)
 
