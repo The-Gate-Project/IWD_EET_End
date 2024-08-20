@@ -1,4 +1,4 @@
-BACKUP ~icewind_eet/backup~
+BACKUP ~iwd_eet_end/backup~
 AUTHOR ~Ya~
 
 ALWAYS
@@ -24,26 +24,26 @@ END
 
 LANGUAGE ~Russian~
 	     ~ru_RU~
-	     ~icewind_eet/lang/ru_RU/mod.tra~
-	     ~icewind_eet/lang/ru_RU/chapters.tra~
+	     ~iwd_eet_end/lang/ru_RU/mod.tra~
+	     ~iwd_eet_end/lang/ru_RU/chapters.tra~
 LANGUAGE ~English~
 	     ~en_US~
-	     ~icewind_eet/lang/en_US/mod.tra~
-	     ~icewind_eet/lang/en_US/chapters.tra~
+	     ~iwd_eet_end/lang/en_US/mod.tra~
+	     ~iwd_eet_end/lang/en_US/chapters.tra~
 LANGUAGE ~French~
 	     ~fr_FR~
-	     ~icewind_eet/lang/en_US/mod.tra~
-	     ~icewind_eet/lang/en_US/chapters.tra~
-	     ~icewind_eet/lang/fr_FR/mod.tra~
-	     ~icewind_eet/lang/fr_FR/chapters.tra~
+	     ~iwd_eet_end/lang/en_US/mod.tra~
+	     ~iwd_eet_end/lang/en_US/chapters.tra~
+	     ~iwd_eet_end/lang/fr_FR/mod.tra~
+	     ~iwd_eet_end/lang/fr_FR/chapters.tra~
 LANGUAGE ~German~
 	     ~de_DE~
-	     ~icewind_eet/lang/de_DE/mod.tra~
-	     ~icewind_eet/lang/de_DE/chapters.tra~
+	     ~iwd_eet_end/lang/de_DE/mod.tra~
+	     ~iwd_eet_end/lang/de_DE/chapters.tra~
 LANGUAGE ~Simplified Chinese~
 	     ~zh_CN~
-	     ~icewind_eet/lang/zh_CN/mod.tra~
-	     ~icewind_eet/lang/zh_CN/chapters.tra~
+	     ~iwd_eet_end/lang/zh_CN/mod.tra~
+	     ~iwd_eet_end/lang/zh_CN/chapters.tra~
 
 BEGIN ~IceWind_End~
 
@@ -56,7 +56,7 @@ LAF ADD_SPLPROT_ENTRY STR_VAR label="IWDAREA" definition=EVAL "0x106  %ar_type% 
 
 OUTER_SET ~ins_type~ = 1
 
-APPEND ~BITS.IDS~ ~0x00000001	BITS_BG1~               UNLESS ~BITS_BG1~
+/*APPEND ~BITS.IDS~ ~0x00000001	BITS_BG1~               UNLESS ~BITS_BG1~
 APPEND ~BITS.IDS~ ~0x00000002	BITS_IWD1~              UNLESS ~BITS_IWD1~
 APPEND ~BITS.IDS~ ~0x00000004	BITS_SOD~               UNLESS ~BITS_SOD~
 APPEND ~BITS.IDS~ ~0x00000008	BITS_SOA~               UNLESS ~BITS_SOA~
@@ -70,7 +70,7 @@ APPEND ~BITS.IDS~ ~0x0000000F	BITS_BGIWDSODSOA~       UNLESS ~BITS_BGIWDSODSOA~
 APPEND ~BITS.IDS~ ~0x0000001F	BITS_BGIWDSODSOAIWD~    UNLESS ~BITS_BGIWDSODSOAIWD~
 APPEND ~BITS.IDS~ ~0x0000003F	BITS_BGIWDSODSOAIWDROI~ UNLESS ~BITS_BGIWDSODSOAIWDROI~
 
-APPEND ~BITS.IDS~ ~0x00000042	BITS_IWD1HOW~           UNLESS ~BITS_IWD1HOW~
+APPEND ~BITS.IDS~ ~0x00000042	BITS_IWD1HOW~           UNLESS ~BITS_IWD1HOW~*/
 
 APPEND ~ea.ids~ ~127 AREA_OBJECT~ UNLESS ~^127 AREA_OBJECT~
 
@@ -85,8 +85,8 @@ CLEAR_IDS_MAP
 
 INCLUDE ~%mod_lib%/_script_compile.tph~
 
-COPY ~icewind_eet/iwdcrti1.2da~ ~override~
-     ~icewind_eet/iwdcrti2.2da~ ~override~
+COPY ~iwd_eet_end/iwdcrti1.2da~ ~override~
+     ~iwd_eet_end/iwdcrti2.2da~ ~override~
 
 COPY_EXISTING ~iw0000.bcs~ ~override~
               ~id0000.bcs~ ~override~

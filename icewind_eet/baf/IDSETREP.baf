@@ -1,7 +1,9 @@
 //BLOCK REPUTATION
 IF
 	//Global("BG1_COMPLETE","GLOBAL",0)
-	!BitCheck("IWDEET_COMPLETE","GLOBAL",BITS_BG1)
+	//!BitCheck("IWDEET_COMPLETE","GLOBAL",BITS_BG1)
+	!Global("IWDEET_BG1_COMPLETE","GLOBAL",1)
+	!Global("IWDEET_SOA_COMPLETE","GLOBAL",1)
 	Global("SetSpecialAbility","MYAREA",0)
 	ReputationGT(Player1,9)
 THEN
@@ -17,7 +19,9 @@ END
 
 IF
 	//Global("BG1_COMPLETE","GLOBAL",0)
-	!BitCheck("IWDEET_COMPLETE","GLOBAL",BITS_BG1)
+	//!BitCheck("IWDEET_COMPLETE","GLOBAL",BITS_BG1)
+	!Global("IWDEET_BG1_COMPLETE","GLOBAL",1)
+	!Global("IWDEET_SOA_COMPLETE","GLOBAL",1)
 	Global("SetSpecialAbility","MYAREA",0)
 	ReputationLT(Player1,10)
 THEN
