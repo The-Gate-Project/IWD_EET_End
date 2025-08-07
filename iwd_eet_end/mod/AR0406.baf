@@ -8,6 +8,14 @@ THEN
 END
 
 IF
+	!Global("JO_GLOBAL_IWD_BG2","GLOBAL",1)
+THEN
+	RESPONSE #100
+		SetGlobal("JO_GLOBAL_IWD_BG2","GLOBAL",1)
+		Continue()
+END
+
+IF
 	//Global("FC_GLOBAL_IWD_VARIABLE","GLOBAL",0)
 	Global("FCIWDELM_SPAWN","MYAREA",0)
 	GlobalGT("Chapter","GLOBAL",17)
@@ -16,4 +24,5 @@ THEN
 		//SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",1)
 		SetGlobal("FCIWDELM_SPAWN","MYAREA",1)
 		CreateCreature("FCIWDELM",[1027.1355],2)
+		Continue()
 END

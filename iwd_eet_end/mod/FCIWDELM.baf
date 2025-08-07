@@ -1,4 +1,33 @@
 IF
+	AreaCheck("BG1001")
+	Global("JO_GLOBAL_IWD_BG2","GLOBAL",1)
+THEN
+	RESPONSE #100
+		DisplayStringHead(Myself,@1057)
+		Wait(7)
+		CreateVisualEffectObject("PORTALH",Myself)
+		Wait(1)
+		DestroySelf()
+		Continue()
+END
+
+IF
+    Global("JO_GLOBAL_IN_IWD1","GLOBAL",1)
+    Global("JO_GLOBAL_IN_IWD2","GLOBAL",1)
+	OR(2)
+		Global("FC_GLOBAL_IWD_VARIABLE","GLOBAL",12)
+		Global("FC_GLOBAL_IWD_VARIABLE","GLOBAL",6)
+THEN
+	RESPONSE #100
+		DisplayStringHead(Myself,@1057)
+		Wait(7)
+		CreateVisualEffectObject("PORTALH",Myself)
+		Wait(1)
+		DestroySelf()
+		Continue()
+END
+
+IF
 	AttackedBy([GOODCUTOFF],DEFAULT)
 THEN
 	RESPONSE #100

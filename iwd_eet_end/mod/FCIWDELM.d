@@ -13,7 +13,9 @@ END
 CHAIN
 IF ~NumTimesTalkedTo(0)
     AreaCheck("AR0406")
-    Global("FC_HAS_BG1","GLOBAL",0)~ THEN FCIWDELM bg2_1_1
+    Global("FC_HAS_BG1","GLOBAL",0)
+	Global("JO_GLOBAL_IN_IWD1","GLOBAL",1)
+	!Global("JO_GLOBAL_IN_IWD2","GLOBAL",1)~ THEN FCIWDELM bg2_1_1
   @1058
 END
 	IF ~~ THEN REPLY @1059 DO ~SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",7)~ EXTERN FCIWDELM bg2_1_4
@@ -23,7 +25,9 @@ END
 CHAIN
 IF ~NumTimesTalkedTo(0)
     AreaCheck("AR0406")
-    Global("FC_HAS_BG1","GLOBAL",1)~ THEN FCIWDELM bg2_1_2
+    Global("FC_HAS_BG1","GLOBAL",1)
+	Global("JO_GLOBAL_IN_IWD1","GLOBAL",1)
+	!Global("JO_GLOBAL_IN_IWD2","GLOBAL",1)~ THEN FCIWDELM bg2_1_2
   @1062
 END
 	IF ~~ THEN REPLY @1063 DO ~SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",8)~ EXTERN FCIWDELM bg2_1_3
@@ -55,7 +59,7 @@ IF ~~ THEN FCIWDELM bg1_1_5
   @1035
 EXIT
 
-CHAIN
+CHAIN  /////////  IWD1
 IF ~~ THEN FCIWDELM bg1_1_6
   @1036
 = @1037
@@ -76,11 +80,13 @@ IF ~~ THEN FCIWDELM bg1_1_7
 END
 	IF ~~ THEN REPLY @1048 EXTERN FCIWDELM bg1_1_8
 	IF ~~ THEN REPLY @1049 DO ~SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",3)~ EXTERN FCIWDELM bg1_1_5
+	IF ~!Global("JO_GLOBAL_IN_IWD2","GLOBAL",1)~ THEN REPLY ~I don't feel concerned enough, have you a quest worthy of my temper so versatile ?~ DO ~SetGlobal("FC_PREFER_IWD2","LOCALS",1) SetGlobal("FC_PREFER_IWD1","LOCALS",0)~ EXTERN FCIWDELM JObg2_1_3 /////////  PREFER IWD2
 
 CHAIN
 IF ~~ THEN FCIWDELM bg1_1_8
   @1050
   DO ~SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",4)
+      SetGlobal("JO_GLOBAL_IN_IWD1","GLOBAL",1)
       StartCutSceneMode()
       SmallWait(10)
       SetSequence(SEQ_CAST)
@@ -109,7 +115,7 @@ END
 	IF ~~ THEN REPLY @1033 EXTERN FCIWDELM bg1_1_6
 	IF ~~ THEN REPLY @1034 EXTERN FCIWDELM bg1_1_5
 
-CHAIN
+CHAIN  /////////  IWD1
 IF ~Global("FC_GLOBAL_IWD_VARIABLE","GLOBAL",1)~ THEN FCIWDELM bg1_4_1
   @1053
 END
@@ -117,7 +123,7 @@ END
 	IF ~~ THEN REPLY @1041 DO ~SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",2)~ EXTERN FCIWDELM bg1_1_5
 	IF ~~ THEN REPLY @1042 DO ~SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",1)~ EXTERN FCIWDELM bg1_1_5
 
-CHAIN
+CHAIN  /////////  IWD1
 IF ~Global("FC_GLOBAL_IWD_VARIABLE","GLOBAL",2)~ THEN FCIWDELM bg1_5_1
   @1054
 END
@@ -131,19 +137,15 @@ IF ~Global("FC_GLOBAL_IWD_VARIABLE","GLOBAL",3)~ THEN FCIWDELM bg1_6_1
 END
 	IF ~~ THEN REPLY @1048 EXTERN FCIWDELM bg1_1_8
 	IF ~~ THEN REPLY @1049 EXTERN FCIWDELM bg1_1_5
+	IF ~!Global("JO_GLOBAL_IN_IWD2","GLOBAL",1)~ THEN REPLY ~I don't feel concerned enough, have you a quest worthy of my temper so versatile ?~ DO ~SetGlobal("FC_PREFER_IWD2","LOCALS",1) SetGlobal("FC_PREFER_IWD1","LOCALS",0)~ EXTERN FCIWDELM JObg2_1_3 /////////  PREFER IWD2
 
 CHAIN
 IF ~Global("FC_GLOBAL_IWD_VARIABLE","GLOBAL",5)~ THEN FCIWDELM bg1_7_1
   @1056
-= @1057
   DO ~SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",6)
       GiveItemCreate("BLOOD",LastTalkedToBy(Myself),0,0,0)
       AddexperienceParty(24000)
-      GiveGoldForce(10000)
-      SmallWait(7)
-      CreateVisualEffectObject("PORTALH",Myself)
-      Wait(1)
-      DestroySelf()~
+      GiveGoldForce(10000)~
 EXIT
 
 CHAIN
@@ -155,7 +157,8 @@ END
 	IF ~~ THEN REPLY @1070 EXTERN FCIWDELM bg1_1_5
 
 CHAIN
-IF ~OR(2)
+IF ~AreaCheck("AR0406")
+	OR(2)
 		Global("FC_GLOBAL_IWD_VARIABLE","GLOBAL",6)
 		Global("FC_GLOBAL_IWD_VARIABLE","GLOBAL",7)~ THEN FCIWDELM bg2_2_1
   @1071
@@ -173,6 +176,7 @@ END
 	IF ~Global("FC_HAS_BG1","GLOBAL",0)~ THEN REPLY @1078 DO ~SetGlobal("FC_HAS_BG1","GLOBAL",1)~ EXTERN FCIWDELM bg2_1_5
 	IF ~Global("FC_HAS_BG1","GLOBAL",1)~ THEN REPLY @1078 EXTERN FCIWDELM bg2_1_6
 	IF ~~ THEN REPLY @1079 EXTERN FCIWDELM bg1_1_5
+	IF ~!Global("JO_GLOBAL_IN_IWD1","GLOBAL",1)~ THEN REPLY ~I don't feel concerned enough, have you a quest worthy of my temper so versatile ?~ EXTERN FCIWDELM JObg1_1_6 /////////  PREFER IWD1
 
 CHAIN
 IF ~~ THEN FCIWDELM bg2_1_5
@@ -193,6 +197,7 @@ IF ~~ THEN FCIWDELM bg2_1_7
 END
 	IF ~~ THEN REPLY @1048 EXTERN FCIWDELM bg2_1_8
 	IF ~~ THEN REPLY @1049 DO ~SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",9)~ EXTERN FCIWDELM bg1_1_5
+	IF ~!Global("JO_GLOBAL_IN_IWD1","GLOBAL",1)~ THEN REPLY ~I don't feel concerned enough, have you a quest worthy of my temper so versatile ?~ DO ~SetGlobal("FC_PREFER_IWD1","LOCALS",1) SetGlobal("FC_PREFER_IWD2","LOCALS",0)~ EXTERN FCIWDELM JObg1_1_6 /////////  PREFER IWD1
 
 CHAIN
 IF ~Global("FC_GLOBAL_IWD_VARIABLE","GLOBAL",9)~ THEN FCIWDELM bg2_1_9
@@ -205,6 +210,7 @@ CHAIN
 IF ~~ THEN FCIWDELM bg2_1_8
   @1050
   DO ~SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",10)
+      SetGlobal("JO_GLOBAL_IN_IWD2","GLOBAL",1)
       StartCutSceneMode()
       SmallWait(10)
       SetSequence(SEQ_CAST)
@@ -219,18 +225,43 @@ EXIT
 CHAIN
 IF ~Global("FC_GLOBAL_IWD_VARIABLE","GLOBAL",11)~ THEN FCIWDELM bg2_7_1
   @1082
-= @1057
   DO ~SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",12)
       GiveItemCreate("Z6SWDCSS",LastTalkedToBy(Myself),0,0,0)
       AddexperienceParty(120000)
-      GiveGoldForce(10000)
-      SmallWait(7)
-      CreateVisualEffectObject("PORTALH",Myself)
-      Wait(1)
-      DestroySelf()~
+      GiveGoldForce(10000)~
 EXIT
 
+CHAIN
+IF ~NumTimesTalkedTo(0)
+    AreaCheck("AR0406")
+    Global("FC_HAS_BG1","GLOBAL",1)
+	!Global("JO_GLOBAL_IN_IWD1","GLOBAL",1)~ THEN FCIWDELM bg2_1_2
+  @1024
+END
+	IF ~~ THEN REPLY @1026 EXTERN FCIWDELM bg1_1_2
+	IF ~~ THEN REPLY @1027 EXTERN FCIWDELM bg1_1_3
+	IF ~~ THEN REPLY @1028 EXTERN FCIWDELM bg1_1_5
+	
+CHAIN  /////////  IWD1 Global("FC_PREFER_IWD1","LOCALS",1)
+IF ~~ THEN FCIWDELM JObg1_1_6
+  @1037
+= @1038
+= @1039
+END
+	IF ~~ THEN REPLY @1040 EXTERN FCIWDELM bg1_1_7
+	IF ~~ THEN REPLY @1041 DO ~SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",2)~ EXTERN FCIWDELM bg1_1_5
+	IF ~~ THEN REPLY @1042 DO ~SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",1)~ EXTERN FCIWDELM bg1_1_5
+	IF ~!Global("JO_GLOBAL_IN_IWD2","GLOBAL",1)~ THEN REPLY ~I don't feel concerned enough, have you a quest worthy of my temper so versatile ?~ DO ~SetGlobal("FC_PREFER_IWD2","LOCALS",1) SetGlobal("FC_PREFER_IWD1","LOCALS",0)~ EXTERN FCIWDELM JObg2_1_3 /////////  PREFER IWD2
 
+CHAIN  /////////  IWD2 Global("FC_PREFER_IWD2","LOCALS",1)
+IF ~~ THEN FCIWDELM JObg2_1_3
+@1076
+= @1077
+END
+	IF ~Global("FC_HAS_BG1","GLOBAL",0)~ THEN REPLY @1078 DO ~SetGlobal("FC_HAS_BG1","GLOBAL",1)~ EXTERN FCIWDELM bg2_1_5
+	IF ~Global("FC_HAS_BG1","GLOBAL",1)~ THEN REPLY @1078 EXTERN FCIWDELM bg2_1_6
+	IF ~~ THEN REPLY @1079 EXTERN FCIWDELM bg1_1_5
+	IF ~!Global("JO_GLOBAL_IN_IWD1","GLOBAL",1)~ THEN REPLY ~I don't feel concerned enough, have you a quest worthy of my temper so versatile ?~ DO ~SetGlobal("FC_PREFER_IWD1","LOCALS",1) SetGlobal("FC_PREFER_IWD2","LOCALS",0)~ EXTERN FCIWDELM JObg1_1_6 /////////  PREFER IWD1
 
 
 

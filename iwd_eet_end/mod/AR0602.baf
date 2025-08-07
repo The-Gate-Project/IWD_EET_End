@@ -6,3 +6,11 @@ THEN
 		SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",6)
 		Continue()
 END
+
+IF
+	!Global("JO_GLOBAL_IWD_BG2","GLOBAL",1)
+THEN
+	RESPONSE #100
+		SetGlobal("JO_GLOBAL_IWD_BG2","GLOBAL",1)
+		Continue()
+END
