@@ -65,12 +65,3 @@ THEN
 	RESPONSE #100
 		MoveToSavedLocation("SavedLoc","LOCALS")
 END
-
-
-
-
-
-
-
-
-

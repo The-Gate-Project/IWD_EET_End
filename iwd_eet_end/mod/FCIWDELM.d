@@ -6,16 +6,15 @@ IF ~NumTimesTalkedTo(0)
   @1024
 = @1025
 END
-	IF ~~ THEN REPLY @1026 EXTERN FCIWDELM bg1_1_2
-	IF ~~ THEN REPLY @1027 EXTERN FCIWDELM bg1_1_3
-	IF ~~ THEN REPLY @1028 EXTERN FCIWDELM bg1_1_5
+	IF ~~ THEN REPLY @1026 DO ~SetGlobal("JO_GLOBAL_TALK_BG1","GLOBAL",1)~ EXTERN FCIWDELM bg1_1_2
+	IF ~~ THEN REPLY @1027 DO ~SetGlobal("JO_GLOBAL_TALK_BG1","GLOBAL",1)~ EXTERN FCIWDELM bg1_1_3
+	IF ~~ THEN REPLY @1028 DO ~SetGlobal("JO_GLOBAL_TALK_BG1","GLOBAL",1)~ EXTERN FCIWDELM bg1_1_5
 
+// Block BG2 only // Global("FC_HAS_BG1","GLOBAL",0) // new game BG2 without playing BG1
 CHAIN
 IF ~NumTimesTalkedTo(0)
     AreaCheck("AR0406")
-    Global("FC_HAS_BG1","GLOBAL",0)
-	Global("JO_GLOBAL_IN_IWD1","GLOBAL",1)
-	!Global("JO_GLOBAL_IN_IWD2","GLOBAL",1)~ THEN FCIWDELM bg2_1_1
+    Global("FC_HAS_BG1","GLOBAL",0)~ THEN FCIWDELM bg2_1_1
   @1058
 END
 	IF ~~ THEN REPLY @1059 DO ~SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",7)~ EXTERN FCIWDELM bg2_1_4
@@ -25,14 +24,15 @@ END
 CHAIN
 IF ~NumTimesTalkedTo(0)
     AreaCheck("AR0406")
-    Global("FC_HAS_BG1","GLOBAL",1)
-	Global("JO_GLOBAL_IN_IWD1","GLOBAL",1)
-	!Global("JO_GLOBAL_IN_IWD2","GLOBAL",1)~ THEN FCIWDELM bg2_1_2
+    Global("FC_HAS_BG1","GLOBAL",1)~ THEN FCIWDELM bg2_1_2
   @1062
 END
-	IF ~~ THEN REPLY @1063 DO ~SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",8)~ EXTERN FCIWDELM bg2_1_3
-	IF ~~ THEN REPLY @1064 DO ~SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",8)~ EXTERN FCIWDELM bg2_1_3
-	IF ~~ THEN REPLY @1065 DO ~SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",8)~ EXTERN FCIWDELM bg2_1_3
+	IF ~Global("JO_GLOBAL_IN_IWD1","GLOBAL",1)~ THEN REPLY @1063 DO ~SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",8)~ EXTERN FCIWDELM bg2_1_3
+	IF ~Global("JO_GLOBAL_IN_IWD1","GLOBAL",1)~ THEN REPLY @1064 DO ~SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",8)~ EXTERN FCIWDELM bg2_1_3
+	IF ~Global("JO_GLOBAL_IN_IWD1","GLOBAL",1)~ THEN REPLY @1065 DO ~SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",8)~ EXTERN FCIWDELM bg2_1_3
+	IF ~!Global("JO_GLOBAL_IN_IWD1","GLOBAL",1)~ THEN REPLY @1063 DO ~SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",8)~ EXTERN FCIWDELM JObg2_1_3
+	IF ~!Global("JO_GLOBAL_IN_IWD1","GLOBAL",1)~ THEN REPLY @1064 DO ~SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",8)~ EXTERN FCIWDELM JObg2_1_3
+	IF ~!Global("JO_GLOBAL_IN_IWD1","GLOBAL",1)~ THEN REPLY @1065 DO ~SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",8)~ EXTERN FCIWDELM JObg2_1_3
 	IF ~~ THEN REPLY @1066 EXTERN FCIWDELM bg1_1_5
 
 CHAIN
@@ -57,7 +57,8 @@ END
 CHAIN
 IF ~~ THEN FCIWDELM bg1_1_5
   @1035
-EXIT
+IF ~AreaCheck("AR0406")~ THEN EXIT
+IF ~AreaCheck("BG1001")~ THEN EXIT
 
 CHAIN  /////////  IWD1
 IF ~~ THEN FCIWDELM bg1_1_6
@@ -80,7 +81,7 @@ IF ~~ THEN FCIWDELM bg1_1_7
 END
 	IF ~~ THEN REPLY @1048 EXTERN FCIWDELM bg1_1_8
 	IF ~~ THEN REPLY @1049 DO ~SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",3)~ EXTERN FCIWDELM bg1_1_5
-	IF ~!Global("JO_GLOBAL_IN_IWD2","GLOBAL",1)~ THEN REPLY ~I don't feel concerned enough, have you a quest worthy of my temper so versatile ?~ DO ~SetGlobal("FC_PREFER_IWD2","LOCALS",1) SetGlobal("FC_PREFER_IWD1","LOCALS",0)~ EXTERN FCIWDELM JObg2_1_3 /////////  PREFER IWD2
+	IF ~!Global("JO_GLOBAL_IN_IWD2","GLOBAL",1)~ THEN REPLY ~I don't feel concerned enough, have you a quest worthy of my temper so versatile ?~ DO ~SetGlobal("FC_PREFER_IWD2","MYAREA",1) SetGlobal("FC_PREFER_IWD1","MYAREA",0)~ EXTERN FCIWDELM JObg2_1_3 /////////  PREFER IWD2
 
 CHAIN
 IF ~~ THEN FCIWDELM bg1_1_8
@@ -137,7 +138,7 @@ IF ~Global("FC_GLOBAL_IWD_VARIABLE","GLOBAL",3)~ THEN FCIWDELM bg1_6_1
 END
 	IF ~~ THEN REPLY @1048 EXTERN FCIWDELM bg1_1_8
 	IF ~~ THEN REPLY @1049 EXTERN FCIWDELM bg1_1_5
-	IF ~!Global("JO_GLOBAL_IN_IWD2","GLOBAL",1)~ THEN REPLY ~I don't feel concerned enough, have you a quest worthy of my temper so versatile ?~ DO ~SetGlobal("FC_PREFER_IWD2","LOCALS",1) SetGlobal("FC_PREFER_IWD1","LOCALS",0)~ EXTERN FCIWDELM JObg2_1_3 /////////  PREFER IWD2
+	IF ~!Global("JO_GLOBAL_IN_IWD2","GLOBAL",1)~ THEN REPLY ~I don't feel concerned enough, have you a quest worthy of my temper so versatile ?~ DO ~SetGlobal("FC_PREFER_IWD2","MYAREA",1) SetGlobal("FC_PREFER_IWD1","MYAREA",0)~ EXTERN FCIWDELM JObg2_1_3 /////////  PREFER IWD2
 
 CHAIN
 IF ~Global("FC_GLOBAL_IWD_VARIABLE","GLOBAL",5)~ THEN FCIWDELM bg1_7_1
@@ -168,7 +169,8 @@ END
 	IF ~~ THEN REPLY @1074 EXTERN FCIWDELM bg1_1_5
 
 CHAIN
-IF ~Global("FC_GLOBAL_IWD_VARIABLE","GLOBAL",8)~ THEN FCIWDELM bg2_1_3
+IF ~Global("FC_GLOBAL_IWD_VARIABLE","GLOBAL",8)
+	Global("JO_GLOBAL_IN_IWD1","GLOBAL",1)~ THEN FCIWDELM bg2_1_3
   @1075
 = @1076
 = @1077
@@ -197,7 +199,7 @@ IF ~~ THEN FCIWDELM bg2_1_7
 END
 	IF ~~ THEN REPLY @1048 EXTERN FCIWDELM bg2_1_8
 	IF ~~ THEN REPLY @1049 DO ~SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",9)~ EXTERN FCIWDELM bg1_1_5
-	IF ~!Global("JO_GLOBAL_IN_IWD1","GLOBAL",1)~ THEN REPLY ~I don't feel concerned enough, have you a quest worthy of my temper so versatile ?~ DO ~SetGlobal("FC_PREFER_IWD1","LOCALS",1) SetGlobal("FC_PREFER_IWD2","LOCALS",0)~ EXTERN FCIWDELM JObg1_1_6 /////////  PREFER IWD1
+	IF ~!Global("JO_GLOBAL_IN_IWD1","GLOBAL",1)~ THEN REPLY ~I don't feel concerned enough, have you a quest worthy of my temper so versatile ?~ DO ~SetGlobal("FC_PREFER_IWD1","MYAREA",1) SetGlobal("FC_PREFER_IWD2","MYAREA",0)~ EXTERN FCIWDELM JObg1_1_6 /////////  PREFER IWD1
 
 CHAIN
 IF ~Global("FC_GLOBAL_IWD_VARIABLE","GLOBAL",9)~ THEN FCIWDELM bg2_1_9
@@ -205,6 +207,7 @@ IF ~Global("FC_GLOBAL_IWD_VARIABLE","GLOBAL",9)~ THEN FCIWDELM bg2_1_9
 END
 	IF ~~ THEN REPLY @1048 EXTERN FCIWDELM bg2_1_8
 	IF ~~ THEN REPLY @1049 EXTERN FCIWDELM bg1_1_5
+	IF ~!Global("JO_GLOBAL_IN_IWD1","GLOBAL",1)~ THEN REPLY ~I don't feel concerned enough, have you a quest worthy of my temper so versatile ?~ DO ~SetGlobal("FC_PREFER_IWD1","MYAREA",1) SetGlobal("FC_PREFER_IWD2","MYAREA",0)~ EXTERN FCIWDELM JObg1_1_6 /////////  PREFER IWD1
 
 CHAIN
 IF ~~ THEN FCIWDELM bg2_1_8
@@ -231,18 +234,20 @@ IF ~Global("FC_GLOBAL_IWD_VARIABLE","GLOBAL",11)~ THEN FCIWDELM bg2_7_1
       GiveGoldForce(10000)~
 EXIT
 
+// Global("JO_GLOBAL_TALK_BG1","GLOBAL",0) // Never talked to in BG1
+// Global("FC_HAS_BG1","GLOBAL",1) // Played BG1
 CHAIN
 IF ~NumTimesTalkedTo(0)
     AreaCheck("AR0406")
-    Global("FC_HAS_BG1","GLOBAL",1)
-	!Global("JO_GLOBAL_IN_IWD1","GLOBAL",1)~ THEN FCIWDELM bg2_1_2
+	Global("JO_GLOBAL_TALK_BG1","GLOBAL",0)
+    Global("FC_HAS_BG1","GLOBAL",1)~ THEN FCIWDELM bg2_1_2
   @1024
 END
 	IF ~~ THEN REPLY @1026 EXTERN FCIWDELM bg1_1_2
 	IF ~~ THEN REPLY @1027 EXTERN FCIWDELM bg1_1_3
 	IF ~~ THEN REPLY @1028 EXTERN FCIWDELM bg1_1_5
 	
-CHAIN  /////////  IWD1 Global("FC_PREFER_IWD1","LOCALS",1)
+CHAIN  /////////  IWD1 Global("FC_PREFER_IWD1","MYAREA",1)
 IF ~~ THEN FCIWDELM JObg1_1_6
   @1037
 = @1038
@@ -251,23 +256,15 @@ END
 	IF ~~ THEN REPLY @1040 EXTERN FCIWDELM bg1_1_7
 	IF ~~ THEN REPLY @1041 DO ~SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",2)~ EXTERN FCIWDELM bg1_1_5
 	IF ~~ THEN REPLY @1042 DO ~SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",1)~ EXTERN FCIWDELM bg1_1_5
-	IF ~!Global("JO_GLOBAL_IN_IWD2","GLOBAL",1)~ THEN REPLY ~I don't feel concerned enough, have you a quest worthy of my temper so versatile ?~ DO ~SetGlobal("FC_PREFER_IWD2","LOCALS",1) SetGlobal("FC_PREFER_IWD1","LOCALS",0)~ EXTERN FCIWDELM JObg2_1_3 /////////  PREFER IWD2
+	IF ~!Global("JO_GLOBAL_IN_IWD2","GLOBAL",1)~ THEN REPLY ~I don't feel concerned enough, have you a quest worthy of my temper so versatile ?~ DO ~SetGlobal("FC_PREFER_IWD2","MYAREA",1) SetGlobal("FC_PREFER_IWD1","MYAREA",0)~ EXTERN FCIWDELM JObg2_1_3 /////////  PREFER IWD2
 
-CHAIN  /////////  IWD2 Global("FC_PREFER_IWD2","LOCALS",1)
-IF ~~ THEN FCIWDELM JObg2_1_3
+CHAIN  /////////  IWD2 Global("FC_PREFER_IWD2","MYAREA",1)
+IF ~Global("FC_GLOBAL_IWD_VARIABLE","GLOBAL",8)
+	AreaCheck("AR0406")~ THEN FCIWDELM JObg2_1_3
 @1076
-= @1077
+= ~It takes me all my courage to ask: Will you help us?~ // "Remove once more"
 END
 	IF ~Global("FC_HAS_BG1","GLOBAL",0)~ THEN REPLY @1078 DO ~SetGlobal("FC_HAS_BG1","GLOBAL",1)~ EXTERN FCIWDELM bg2_1_5
 	IF ~Global("FC_HAS_BG1","GLOBAL",1)~ THEN REPLY @1078 EXTERN FCIWDELM bg2_1_6
 	IF ~~ THEN REPLY @1079 EXTERN FCIWDELM bg1_1_5
-	IF ~!Global("JO_GLOBAL_IN_IWD1","GLOBAL",1)~ THEN REPLY ~I don't feel concerned enough, have you a quest worthy of my temper so versatile ?~ DO ~SetGlobal("FC_PREFER_IWD1","LOCALS",1) SetGlobal("FC_PREFER_IWD2","LOCALS",0)~ EXTERN FCIWDELM JObg1_1_6 /////////  PREFER IWD1
-
-
-
-
-
-
-
-
-
+	IF ~!Global("JO_GLOBAL_IN_IWD1","GLOBAL",1)~ THEN REPLY ~I don't feel concerned enough, have you a quest worthy of my temper so versatile ?~ DO ~SetGlobal("FC_PREFER_IWD1","MYAREA",1) SetGlobal("FC_PREFER_IWD2","MYAREA",0)~ EXTERN FCIWDELM JObg1_1_6 /////////  PREFER IWD1

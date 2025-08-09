@@ -2,7 +2,6 @@ IF
 	Global("FC_HAS_BG1","GLOBAL",0)
 THEN
 	RESPONSE #100
-		SetGlobal("FC_HAS_BG1","GLOBAL",1)
+		SetGlobal("FC_HAS_BG1","GLOBAL",1) // Played BG1
 		Continue()
 END
-
