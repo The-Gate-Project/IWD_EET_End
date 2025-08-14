@@ -101,6 +101,45 @@ COPY_EXISTING ~abisred1.cre~ ~override~
 	WRITE_LONG 0x28 32602
 	IF_EXISTS
 
+BEGIN ~Enable IWD1 in BG2 and IWD2 in BG1 (Allow player to do both IWD campaigns in both BG campaigns)
+
+Will be extremely unbalanced
+~
+
+// Replace original FCIWDELM.d
+
+COMPILE ~iwd_eet_end/mod/JO_FCIWDELM.d~
+
+// Add new check to scripts
+
+EXTEND_TOP ~FCIWDELM.bcs~ ~iwd_eet_end/mod/JO_FCIWDELM.baf~
+
+EXTEND_TOP ~BG1001.bcs~ ~iwd_eet_end/mod/JO_BG1001.baf~
+
+COPY_EXISTING ~AR0602.bcs~ ~override~
+    DECOMPILE_AND_PATCH BEGIN
+		REPLACE_TEXTUALLY ~Global("FC_HAS_BG1","GLOBAL",0)~ ~OR(2)
+		Global("FC_HAS_BG1","GLOBAL",0)
+		!Global("JO_GLOBAL_IN_IWD1","GLOBAL",1)~
+	END
+
+EXTEND_TOP ~AR0602.bcs~ ~iwd_eet_end/mod/JO_AR0602.baf~
+
+COPY_EXISTING ~AR0406.bcs~ ~override~
+    DECOMPILE_AND_PATCH BEGIN
+		REPLACE_TEXTUALLY ~Global("FC_HAS_BG1","GLOBAL",0)~ ~OR(2)
+		Global("FC_HAS_BG1","GLOBAL",0)
+		!Global("JO_GLOBAL_IN_IWD1","GLOBAL",1)~
+	END
+
+EXTEND_TOP ~AR0406.bcs~ ~iwd_eet_end/mod/JO_AR0406.baf~
+
+// Replace original IDTOEET1.baf and IWTOEET1.baf
+
+COMPILE ~iwd_eet_end/mod/JO_IDTOEET1.baf~
+
+COMPILE ~iwd_eet_end/mod/JO_IWTOEET1.baf~
+
 
 
 

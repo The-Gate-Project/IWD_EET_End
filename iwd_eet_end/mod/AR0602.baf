@@ -1,18 +1,8 @@
 IF
-	OR(2)
-		Global("FC_HAS_BG1","GLOBAL",0)
-		!Global("JO_GLOBAL_IN_IWD1","GLOBAL",1)
+	Global("FC_HAS_BG1","GLOBAL",0)
 	GlobalLT("FC_GLOBAL_IWD_VARIABLE","GLOBAL",6)
 THEN
 	RESPONSE #100
 		SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",6)
-		Continue()
-END
-
-IF
-	!Global("JO_GLOBAL_IWD_BG2","GLOBAL",1)
-THEN
-	RESPONSE #100
-		SetGlobal("JO_GLOBAL_IWD_BG2","GLOBAL",1)
 		Continue()
 END
