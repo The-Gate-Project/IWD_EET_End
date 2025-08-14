@@ -103,8 +103,7 @@ COPY_EXISTING ~abisred1.cre~ ~override~
 
 BEGIN ~Enable IWD1 in BG2 and IWD2 in BG1 (Allow player to do both IWD campaigns in both BG campaigns)
 
-Will be extremely unbalanced
-~
+WILL BE EXTREMELY UNBALANCED !!!~
 
 // Replace original FCIWDELM.d
 
@@ -136,27 +135,6 @@ EXTEND_TOP ~AR0406.bcs~ ~iwd_eet_end/mod/JO_AR0406.baf~
 
 // Replace original IDTOEET1.baf and IWTOEET1.baf
 
-COMPILE ~iwd_eet_end/mod/JO_IDTOEET1.baf~
+COMPILE ~iwd_eet_end/baf/test_mode/JO_/IDTOEET1.baf~
 
-COMPILE ~iwd_eet_end/mod/JO_IWTOEET1.baf~
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+COMPILE ~iwd_eet_end/baf/test_mode/JO_/IWTOEET1.baf~
