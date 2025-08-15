@@ -101,9 +101,9 @@ COPY_EXISTING ~abisred1.cre~ ~override~
 	WRITE_LONG 0x28 32602
 	IF_EXISTS
 
-BEGIN ~Enable IWD1 in BG2 and IWD2 in BG1 (Allow player to do both IWD campaigns in both BG campaigns)
+BEGIN ~Enable IWD1 in BG2 and IWD2 in BG1 (Allow player to choose IWD campaigns in both BG campaigns)
 
-WILL BE EXTREMELY UNBALANCED !!!~
+:: Following the normal course of event is still possible :: If not it !!! WILL BE EXTREMELY UNBALANCED !!!~
 
 // Replace original FCIWDELM.d
 
@@ -138,3 +138,17 @@ EXTEND_TOP ~AR0406.bcs~ ~iwd_eet_end/mod/JO_AR0406.baf~
 COMPILE ~iwd_eet_end/baf/test_mode/JO_/IDTOEET1.baf~
 
 COMPILE ~iwd_eet_end/baf/test_mode/JO_/IWTOEET1.baf~
+
+COMPILE ~iwd_eet_end/baf/test_mode/JO_/JOTOEET1.baf~
+
+COMPILE ~iwd_eet_end/baf/test_mode/JO_/JOTOEET2.baf~
+
+COPY_EXISTING ~ID0000.bcs~ ~override~
+    DECOMPILE_AND_PATCH BEGIN
+		REPLACE_TEXTUALLY ~IDTOEET1~ ~JOTOEET1~
+	END
+
+COPY_EXISTING ~IW0000.bcs~ ~override~
+    DECOMPILE_AND_PATCH BEGIN
+		REPLACE_TEXTUALLY ~IWTOEET1~ ~JOTOEET2~
+	END

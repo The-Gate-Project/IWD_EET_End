@@ -1,0 +1,21 @@
+IF
+	Global("JO_GLOBAL_IWD_BG2","GLOBAL",0)
+	!Global("JO_GLOBAL_IWD_BG2","GLOBAL",1)
+THEN
+	RESPONSE #100
+		CutSceneId(Player1)
+		ClearAllActions()
+		SmallWait(5)
+		StartCutScene("IWTOEET1")
+END
+
+IF
+	Global("JO_GLOBAL_IWD_BG2","GLOBAL",1)
+	!Global("JO_GLOBAL_IWD_BG2","GLOBAL",0)
+THEN
+	RESPONSE #100
+		CutSceneId(Player1)
+		ClearAllActions()
+		SmallWait(5)
+		StartCutScene("IWTOEET2")
+END
