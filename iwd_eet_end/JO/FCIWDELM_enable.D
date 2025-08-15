@@ -28,10 +28,10 @@ Global("FC_HAS_BG1","GLOBAL",0)
   IF ~~ THEN REPLY #299415 /* ~Wait, don't. I have absolutely no interest in you.~ */ GOTO 8
 END
 
-IF ~  NumTimesTalkedTo(0)
+IF ~NumTimesTalkedTo(0)
 AreaCheck("AR0406")
 Global("FC_HAS_BG1","GLOBAL",1)
-~ THEN BEGIN 3 // from:
+Global("JO_GLOBAL_TALK_BG1","GLOBAL",1~ THEN BEGIN 3 // from:
   SAY #299416 /* ~Greetings, <CHARNAME>. Happy to see you again.~ */
   IF ~  Global("JO_GLOBAL_IN_IWD1","GLOBAL",1)
 ~ THEN REPLY #299417 /* ~And I happy to see you, Maladernoth. What brings you to Athkatla?~ */ DO ~SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",8)
@@ -42,16 +42,16 @@ Global("FC_HAS_BG1","GLOBAL",1)
   IF ~  Global("JO_GLOBAL_IN_IWD1","GLOBAL",1)
 ~ THEN REPLY #299419 /* ~It's you again, old man. What do you want now?~ */ DO ~SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",8)
 ~ GOTO 29
+  IF ~~ THEN REPLY #299420 /* ~Well, I'm leaving. Farewell.~ */ GOTO 8
   IF ~  !Global("JO_GLOBAL_IN_IWD1","GLOBAL",1)
 ~ THEN REPLY #299417 /* ~And I happy to see you, Maladernoth. What brings you to Athkatla?~ */ DO ~SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",8)
-~ GOTO 47
+~ GOTO 53
   IF ~  !Global("JO_GLOBAL_IN_IWD1","GLOBAL",1)
 ~ THEN REPLY #299418 /* ~Maladernoth! What are you doing here?~ */ DO ~SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",8)
-~ GOTO 47
+~ GOTO 53
   IF ~  !Global("JO_GLOBAL_IN_IWD1","GLOBAL",1)
 ~ THEN REPLY #299419 /* ~It's you again, old man. What do you want now?~ */ DO ~SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",8)
-~ GOTO 47
-  IF ~~ THEN REPLY #299420 /* ~Well, I'm leaving. Farewell.~ */ GOTO 8
+~ GOTO 53
 END
 
 IF ~~ THEN BEGIN 4 // from: 1.0 19.0 42.0
@@ -76,12 +76,14 @@ IF ~~ THEN BEGIN 7 // from: 6.0
   IF ~~ THEN REPLY #299426 /* ~Sorry. Not interested.~ */ GOTO 8
 END
 
-IF ~~ THEN BEGIN 8 // from: 1.2 2.2 3.6 7.1 12.2 12.3 17.1 19.2 20.1 21.2 21.3 22.2 22.3 23.1 27.1 28.4 31.4 37.1 38.1 42.2 46.2 46.3 49.4 54.1
+IF ~~ THEN BEGIN 8 // from: 1.2 2.2 3.3 7.1 12.1 12.2 17.1 19.2 20.1 21.1 21.2 22.1 22.2 23.1 27.1 28.2 31.2 37.1 38.1 42.2 46.2 46.3 51.1 55.4
   SAY #299427 /* ~If you say so. I will stay here for a while.~ */
   IF ~  AreaCheck("AR0406")
-~ THEN EXIT
+~ THEN DO ~SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",8)
+~ EXIT
   IF ~  AreaCheck("BG1001")
-~ THEN EXIT
+~ THEN DO ~SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",2)
+~ EXIT
 END
 
 IF ~~ THEN BEGIN 9 // from: 7.0 20.0
@@ -103,12 +105,12 @@ IF ~~ THEN BEGIN 12 // from: 11.0
   SAY #299431 /* ~And I am asking you. Will you help us?~ */
   IF ~  AreaCheck("BG1001")
 ~ THEN REPLY #299432 /* ~All right, I'm in. When will we set off?~ */ GOTO 13
-  IF ~  AreaCheck("AR0406")
-~ THEN REPLY #299432 /* ~All right, I'm in. When will we set off?~ */ GOTO 50
   IF ~~ THEN REPLY #299433 /* ~I'll think about it, Maladernoth.~ */ DO ~SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",2)
 ~ GOTO 8
   IF ~~ THEN REPLY #299434 /* ~I'm not interested, old man.~ */ DO ~SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",1)
 ~ GOTO 8
+  IF ~  AreaCheck("AR0406")
+~ THEN REPLY #299432 /* ~All right, I'm in. When will we set off?~ */ GOTO 47
 END
 
 IF ~~ THEN BEGIN 13 // from: 12.0 21.0 22.0 46.0
@@ -145,12 +147,13 @@ Lock("IWD_Container")
 SetGlobal("FC_PREFER_IWD1","MYAREA",0)
 ContainerEnable("IWD_Container",TRUE)
 Lock("IWD_Container")
-~ GOTO 47
+~ GOTO 53
 END
 
-IF ~~ THEN BEGIN 18 // from: 17.0 23.0 54.0
+IF ~~ THEN BEGIN 18 // from: 17.0 23.0 51.0
   SAY #299442 /* ~Great. Off we go.~ */
-  IF ~~ THEN DO ~SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",4)
+  IF ~~ THEN DO ~SetGlobal("FC_PREFER_IWD2","MYAREA",0)
+SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",4)
 SetGlobal("JO_GLOBAL_IN_IWD1","GLOBAL",1)
 StartCutSceneMode()
 SmallWait(10)
@@ -186,12 +189,12 @@ IF ~  Global("FC_GLOBAL_IWD_VARIABLE","GLOBAL",1)
   SAY #299445 /* ~You listened to my story, <CHARNAME>. Will you help me?~ */
   IF ~  AreaCheck("BG1001")
 ~ THEN REPLY #299432 /* ~All right, I'm in. When will we set off?~ */ GOTO 13
-  IF ~  AreaCheck("AR0406")
-~ THEN REPLY #299432 /* ~All right, I'm in. When will we set off?~ */ GOTO 50
   IF ~~ THEN REPLY #299433 /* ~I'll think about it, Maladernoth.~ */ DO ~SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",2)
 ~ GOTO 8
   IF ~~ THEN REPLY #299434 /* ~I'm not interested, old man.~ */ DO ~SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",1)
 ~ GOTO 8
+  IF ~  AreaCheck("AR0406")
+~ THEN REPLY #299432 /* ~All right, I'm in. When will we set off?~ */ GOTO 47
 END
 
 IF ~  Global("FC_GLOBAL_IWD_VARIABLE","GLOBAL",2)
@@ -199,12 +202,12 @@ IF ~  Global("FC_GLOBAL_IWD_VARIABLE","GLOBAL",2)
   SAY #299446 /* ~Have you reconsidered, <CHARNAME>? Are you willing to help me?~ */
   IF ~  AreaCheck("BG1001")
 ~ THEN REPLY #299432 /* ~All right, I'm in. When will we set off?~ */ GOTO 13
-  IF ~  AreaCheck("AR0406")
-~ THEN REPLY #299432 /* ~All right, I'm in. When will we set off?~ */ GOTO 50
   IF ~~ THEN REPLY #299433 /* ~I'll think about it, Maladernoth.~ */ DO ~SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",2)
 ~ GOTO 8
   IF ~~ THEN REPLY #299434 /* ~I'm not interested, old man.~ */ DO ~SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",1)
 ~ GOTO 8
+  IF ~  AreaCheck("AR0406")
+~ THEN REPLY #299432 /* ~All right, I'm in. When will we set off?~ */ GOTO 47
 END
 
 IF ~  Global("FC_GLOBAL_IWD_VARIABLE","GLOBAL",3)
@@ -215,31 +218,27 @@ IF ~  Global("FC_GLOBAL_IWD_VARIABLE","GLOBAL",3)
   IF ~  !Global("JO_GLOBAL_IN_IWD2","GLOBAL",1)
 ~ THEN REPLY #299465 /* ~I don't feel concerned enough, have you a quest worthy of my temper so versatile ?~ */ DO ~SetGlobal("FC_PREFER_IWD2","MYAREA",1)
 SetGlobal("FC_PREFER_IWD1","MYAREA",0)
-~ GOTO 47
+~ GOTO 53
 END
 
 IF ~  Global("FC_GLOBAL_IWD_VARIABLE","GLOBAL",5)
 Global("JO_GLOBAL_IN_IWD2","GLOBAL",1)
 ~ THEN BEGIN 24 // from:
   SAY #299448 /* ~Ah, <CHARNAME>... You returned victorious. Know that everyone in Easthaven, Kuldahar and in the whole Icewind Dale is grateful to you. You saved us all. Saved us from the evil demon's plans. He was slain and we can return to our lives. Thank you.~ */
-  IF ~~ THEN DO ~SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",6)
-GiveItemCreate("BLOOD",LastTalkedToBy(Myself),0,0,0)
-AddexperienceParty(24000)
-GiveGoldForce(10000)
-Unlock("IWD_Container")
-~ EXIT
+  IF ~~ THEN GOTO 25
 END
 
-IF ~  Global("FC_GLOBAL_IWD_VARIABLE","GLOBAL",5)
-!Global("JO_GLOBAL_IN_IWD2","GLOBAL",1)
-~ THEN BEGIN 25 // from:
-  SAY #299448 /* ~Ah, <CHARNAME>... You returned victorious. Know that everyone in Easthaven, Kuldahar and in the whole Icewind Dale is grateful to you. You saved us all. Saved us from the evil demon's plans. He was slain and we can return to our lives. Thank you.~ */
+IF ~~ THEN BEGIN 25 // from: 24.0
+  SAY #299406 /* ~But now I must return home. It was a pleasure to know you. I wish you luck in your journeys.~ */
   IF ~~ THEN DO ~SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",6)
 GiveItemCreate("BLOOD",LastTalkedToBy(Myself),0,0,0)
 AddexperienceParty(24000)
 GiveGoldForce(10000)
-Unlock("IWD_Container")
-~ GOTO 47
+SmallWait(7)
+CreateVisualEffectObject("PORTALH",Myself)
+Wait(1)
+DestroySelf()
+~ EXIT
 END
 
 IF ~~ THEN BEGIN 26 // from: 2.0
@@ -266,13 +265,13 @@ Global("JO_GLOBAL_IN_IWD1","GLOBAL",1)
   IF ~  Global("FC_GLOBAL_IWD_VARIABLE","GLOBAL",7)
 Global("JO_GLOBAL_IN_IWD1","GLOBAL",1)
 ~ THEN REPLY #299455 /* ~You have told a truly staggering story. And I wonder, how am I connected to all this?~ */ GOTO 29
+  IF ~~ THEN REPLY #299456 /* ~Wonderful. Goodbye.~ */ GOTO 8
   IF ~  Global("FC_GLOBAL_IWD_VARIABLE","GLOBAL",6)
 !Global("JO_GLOBAL_IN_IWD1","GLOBAL",1)
-~ THEN REPLY #299454 /* ~Yes. I want to know what brings you to Athkatla.~ */ GOTO 47
+~ THEN REPLY #299454 /* ~Yes. I want to know what brings you to Athkatla.~ */ GOTO 53
   IF ~  Global("FC_GLOBAL_IWD_VARIABLE","GLOBAL",7)
 !Global("JO_GLOBAL_IN_IWD1","GLOBAL",1)
-~ THEN REPLY #299455 /* ~You have told a truly staggering story. And I wonder, how am I connected to all this?~ */ GOTO 47
-  IF ~~ THEN REPLY #299456 /* ~Wonderful. Goodbye.~ */ GOTO 8
+~ THEN REPLY #299455 /* ~You have told a truly staggering story. And I wonder, how am I connected to all this?~ */ GOTO 53
 END
 
 IF ~  Global("FC_GLOBAL_IWD_VARIABLE","GLOBAL",8)
@@ -293,22 +292,22 @@ IF ~~ THEN BEGIN 31 // from: 30.0
 AreaCheck("AR0406")
 ~ THEN REPLY #299460 /* ~Well, if there is a trouble, it must be solved. When are we going?~ */ DO ~SetGlobal("FC_HAS_BG1","GLOBAL",1)
 ~ GOTO 32
-  IF ~  Global("FC_HAS_BG1","GLOBAL",0)
-AreaCheck("BG1001")
-~ THEN REPLY #299460 /* ~Well, if there is a trouble, it must be solved. When are we going?~ */ DO ~SetGlobal("FC_HAS_BG1","GLOBAL",1)
-~ GOTO 55
   IF ~  Global("FC_HAS_BG1","GLOBAL",1)
 AreaCheck("AR0406")
 ~ THEN REPLY #299460 /* ~Well, if there is a trouble, it must be solved. When are we going?~ */ GOTO 36
+  IF ~~ THEN REPLY #299461 /* ~Sorry, old man, but I had enough of your troubles.~ */ GOTO 8
+  IF ~  Global("FC_HAS_BG1","GLOBAL",0)
+AreaCheck("BG1001")
+~ THEN REPLY #299460 /* ~Well, if there is a trouble, it must be solved. When are we going?~ */ DO ~SetGlobal("FC_HAS_BG1","GLOBAL",1)
+~ GOTO 56
   IF ~  Global("FC_HAS_BG1","GLOBAL",1)
 AreaCheck("BG1001")
-~ THEN REPLY #299460 /* ~Well, if there is a trouble, it must be solved. When are we going?~ */ GOTO 59
-  IF ~~ THEN REPLY #299461 /* ~Sorry, old man, but I had enough of your troubles.~ */ GOTO 8
+~ THEN REPLY #299460 /* ~Well, if there is a trouble, it must be solved. When are we going?~ */ GOTO 60
   IF ~  !Global("JO_GLOBAL_IN_IWD1","GLOBAL",1)
 ~ THEN REPLY #299465 /* ~I don't feel concerned enough, have you a quest worthy of my temper so versatile ?~ */ GOTO 43
 END
 
-IF ~~ THEN BEGIN 32 // from: 31.0 49.0
+IF ~~ THEN BEGIN 32 // from: 31.0 55.0
   SAY #299435 /* ~It's such a relief. It takes a load off my mind. We can go now. But I must warn you.~ */
   IF ~~ THEN GOTO 33
 END
@@ -330,14 +329,14 @@ Lock("IWD_Container")
 ~ GOTO 37
 END
 
-IF ~~ THEN BEGIN 36 // from: 31.2 49.2
+IF ~~ THEN BEGIN 36 // from: 31.1 55.2
   SAY #299463 /* ~I think you remember about the teleportation restrictions. You can store your equipment behind that picture, I'll guard it for you.~ */
   IF ~~ THEN DO ~ContainerEnable("IWD_Container",TRUE)
 Lock("IWD_Container")
 ~ GOTO 37
 END
 
-IF ~~ THEN BEGIN 37 // from: 35.0 36.0 58.0 59.0
+IF ~~ THEN BEGIN 37 // from: 35.0 36.0 59.0 60.0
   SAY #299439 /* ~Well, are you ready?~ */
   IF ~~ THEN REPLY #299440 /* ~Yes, I am ready.~ */ GOTO 39
   IF ~~ THEN REPLY #299441 /* ~Not yet. I have some other business to do yet. But I will return, I promise.~ */ DO ~SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",9)
@@ -361,7 +360,8 @@ END
 
 IF ~~ THEN BEGIN 39 // from: 37.0 38.0
   SAY #299442 /* ~Great. Off we go.~ */
-  IF ~~ THEN DO ~SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",10)
+  IF ~~ THEN DO ~SetGlobal("FC_PREFER_IWD1","MYAREA",0)
+SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",10)
 SetGlobal("JO_GLOBAL_IN_IWD2","GLOBAL",1)
 StartCutSceneMode()
 SmallWait(10)
@@ -379,24 +379,20 @@ IF ~  Global("FC_GLOBAL_IWD_VARIABLE","GLOBAL",11)
 Global("JO_GLOBAL_IN_IWD1","GLOBAL",1)
 ~ THEN BEGIN 40 // from:
   SAY #299464 /* ~Ah, <CHARNAME>... You returned victorious. Know that everyone in Targos and the in whole Icewind Dale are grateful to you. You saved us all. Saved us from the evil demons' plans. Isair and Madae were slain and we can return to our lives. Thank you.~ */
-  IF ~~ THEN DO ~SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",12)
-GiveItemCreate("Z6SWDCSS",LastTalkedToBy(Myself),0,0,0)
-AddexperienceParty(120000)
-GiveGoldForce(10000)
-Unlock("IWD_Container")
-~ EXIT
+  IF ~~ THEN GOTO 41
 END
 
-IF ~  Global("FC_GLOBAL_IWD_VARIABLE","GLOBAL",11)
-!Global("JO_GLOBAL_IN_IWD1","GLOBAL",1)
-~ THEN BEGIN 41 // from:
-  SAY #299464 /* ~Ah, <CHARNAME>... You returned victorious. Know that everyone in Targos and the in whole Icewind Dale are grateful to you. You saved us all. Saved us from the evil demons' plans. Isair and Madae were slain and we can return to our lives. Thank you.~ */
+IF ~~ THEN BEGIN 41 // from: 40.0
+  SAY #299406 /* ~But now I must return home. It was a pleasure to know you. I wish you luck in your journeys.~ */
   IF ~~ THEN DO ~SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",12)
 GiveItemCreate("Z6SWDCSS",LastTalkedToBy(Myself),0,0,0)
 AddexperienceParty(120000)
 GiveGoldForce(10000)
-Unlock("IWD_Container")
-~ GOTO 43
+SmallWait(7)
+CreateVisualEffectObject("PORTALH",Myself)
+Wait(1)
+DestroySelf()
+~ EXIT
 END
 
 IF ~  NumTimesTalkedTo(0)
@@ -410,8 +406,8 @@ Global("FC_HAS_BG1","GLOBAL",1)
   IF ~~ THEN REPLY #299411 /* ~I have nothing to talk with you.~ */ GOTO 8
 END
 
-IF ~~ THEN BEGIN 43 // from: 31.5 37.2 38.2 41.0 49.5
-  SAY #299466 /* ~A Great Oak.~ */
+IF ~~ THEN BEGIN 43 // from: 31.5 37.2 38.2 55.5 61.0
+  SAY #299470 /* ~A Great Oak...~ */
   IF ~~ THEN GOTO 44
 END
 
@@ -430,7 +426,7 @@ IF ~~ THEN BEGIN 46 // from: 45.0
   IF ~  AreaCheck("BG1001")
 ~ THEN REPLY #299432 /* ~All right, I'm in. When will we set off?~ */ GOTO 13
   IF ~  AreaCheck("AR0406")
-~ THEN REPLY #299432 /* ~All right, I'm in. When will we set off?~ */ GOTO 50
+~ THEN REPLY #299432 /* ~All right, I'm in. When will we set off?~ */ GOTO 47
   IF ~~ THEN REPLY #299433 /* ~I'll think about it, Maladernoth.~ */ DO ~SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",2)
 ~ GOTO 8
   IF ~~ THEN REPLY #299434 /* ~I'm not interested, old man.~ */ DO ~SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",1)
@@ -438,65 +434,30 @@ IF ~~ THEN BEGIN 46 // from: 45.0
   IF ~  !Global("JO_GLOBAL_IN_IWD2","GLOBAL",1)
 ~ THEN REPLY #299465 /* ~I don't feel concerned enough, have you a quest worthy of my temper so versatile ?~ */ DO ~SetGlobal("FC_PREFER_IWD2","MYAREA",1)
 SetGlobal("FC_PREFER_IWD1","MYAREA",0)
-~ GOTO 47
+~ GOTO 53
 END
 
-IF ~  Global("FC_GLOBAL_IWD_VARIABLE","GLOBAL",8)
-AreaCheck("AR0406")
-~ THEN BEGIN 47 // from: 3.3 3.4 3.5 17.2 23.2 25.0 28.2 28.3 46.4 54.2
-  SAY #299467 /* ~There is an adventure near Targos one of the ten towns of Icewind Dale.~ */
+IF ~~ THEN BEGIN 47 // from: 12.3 21.3 22.3 46.1
+  SAY #299435 /* ~It's such a relief. It takes a load off my mind. We can go now. But I must warn you.~ */
   IF ~~ THEN GOTO 48
 END
 
 IF ~~ THEN BEGIN 48 // from: 47.0
-  SAY #299458 /* ~Goblin hordes are gathering up and attacking the towns. Not only the goblins, but the orcs and gods know who else... People are desperate. Soldiers alone can't hold monsters off.~ */
+  SAY #299436 /* ~Travelling over such distances is a very powerful magic. And I am not the best wizard in Faerun. So, I can't travel with you. I shall wait for you here and hope that you will return with a victory.~ */
   IF ~~ THEN GOTO 49
 END
 
 IF ~~ THEN BEGIN 49 // from: 48.0
-  SAY #299468 /* ~It takes me all my courage to ask: Will you help us?~ */
-  IF ~  Global("FC_HAS_BG1","GLOBAL",0)
-AreaCheck("AR0406")
-~ THEN REPLY #299460 /* ~Well, if there is a trouble, it must be solved. When are we going?~ */ DO ~SetGlobal("FC_HAS_BG1","GLOBAL",1)
-~ GOTO 32
-  IF ~  Global("FC_HAS_BG1","GLOBAL",0)
-AreaCheck("BG1001")
-~ THEN REPLY #299460 /* ~Well, if there is a trouble, it must be solved. When are we going?~ */ DO ~SetGlobal("FC_HAS_BG1","GLOBAL",1)
-~ GOTO 55
-  IF ~  Global("FC_HAS_BG1","GLOBAL",1)
-AreaCheck("AR0406")
-~ THEN REPLY #299460 /* ~Well, if there is a trouble, it must be solved. When are we going?~ */ GOTO 36
-  IF ~  Global("FC_HAS_BG1","GLOBAL",1)
-AreaCheck("BG1001")
-~ THEN REPLY #299460 /* ~Well, if there is a trouble, it must be solved. When are we going?~ */ GOTO 59
-  IF ~~ THEN REPLY #299461 /* ~Sorry, old man, but I had enough of your troubles.~ */ GOTO 8
-  IF ~  !Global("JO_GLOBAL_IN_IWD1","GLOBAL",1)
-~ THEN REPLY #299465 /* ~I don't feel concerned enough, have you a quest worthy of my temper so versatile ?~ */ DO ~SetGlobal("FC_PREFER_IWD1","MYAREA",1)
-SetGlobal("FC_PREFER_IWD2","MYAREA",0)
-~ GOTO 43
+  SAY #299462 /* ~And I don't have enough power to move you with all your equipment. You must leave it here. You can store your equipment behind that picture, I'll guard it for you.~ */
+  IF ~~ THEN GOTO 50
 END
 
-IF ~~ THEN BEGIN 50 // from: 12.1 21.1 22.1 46.1
-  SAY #299435 /* ~It's such a relief. It takes a load off my mind. We can go now. But I must warn you.~ */
+IF ~~ THEN BEGIN 50 // from: 49.0
+  SAY #299438 /* ~And last: I don't know where exactly in Icewind Dale my spell wil teleport you. But I assure it will be the place where your help will be needed. And this spell shall take you back here, when you end your mission.~ */
   IF ~~ THEN GOTO 51
 END
 
 IF ~~ THEN BEGIN 51 // from: 50.0
-  SAY #299436 /* ~Travelling over such distances is a very powerful magic. And I am not the best wizard in Faerun. So, I can't travel with you. I shall wait for you here and hope that you will return with a victory.~ */
-  IF ~~ THEN GOTO 52
-END
-
-IF ~~ THEN BEGIN 52 // from: 51.0
-  SAY #299462 /* ~And I don't have enough power to move you with all your equipment. You must leave it here. You can store your equipment behind that picture, I'll guard it for you.~ */
-  IF ~~ THEN GOTO 53
-END
-
-IF ~~ THEN BEGIN 53 // from: 52.0
-  SAY #299438 /* ~And last: I don't know where exactly in Icewind Dale my spell wil teleport you. But I assure it will be the place where your help will be needed. And this spell shall take you back here, when you end your mission.~ */
-  IF ~~ THEN GOTO 54
-END
-
-IF ~~ THEN BEGIN 54 // from: 53.0
   SAY #299439 /* ~Well, are you ready?~ */
   IF ~~ THEN REPLY #299440 /* ~Yes, I am ready.~ */ DO ~ContainerEnable("IWD_Container",TRUE)
 Lock("IWD_Container")
@@ -510,33 +471,89 @@ Lock("IWD_Container")
 SetGlobal("FC_PREFER_IWD1","MYAREA",0)
 ContainerEnable("IWD_Container",TRUE)
 Lock("IWD_Container")
-~ GOTO 47
+~ GOTO 53
 END
 
-IF ~~ THEN BEGIN 55 // from: 31.1 49.1
+IF ~  Global("FC_GLOBAL_IWD_VARIABLE","GLOBAL",5)
+~ THEN BEGIN 52 // from:
+  SAY #299448 /* ~Ah, <CHARNAME>... You returned victorious. Know that everyone in Easthaven, Kuldahar and in the whole Icewind Dale is grateful to you. You saved us all. Saved us from the evil demon's plans. He was slain and we can return to our lives. Thank you.~ */
+  IF ~~ THEN DO ~SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",6)
+GiveItemCreate("BLOOD",LastTalkedToBy(Myself),0,0,0)
+AddexperienceParty(24000)
+GiveGoldForce(10000)
+Unlock("IWD_Container")
+~ GOTO 53
+END
+
+IF ~  Global("FC_GLOBAL_IWD_VARIABLE","GLOBAL",8)
+~ THEN BEGIN 53 // from: 3.4 3.5 3.6 17.2 23.2 28.3 28.4 46.4 51.2 52.0
+  SAY #299467 /* ~There is an adventure near Targos one of the ten towns of Icewind Dale.~ */
+  IF ~~ THEN GOTO 54
+END
+
+IF ~~ THEN BEGIN 54 // from: 53.0
+  SAY #299458 /* ~Goblin hordes are gathering up and attacking the towns. Not only the goblins, but the orcs and gods know who else... People are desperate. Soldiers alone can't hold monsters off.~ */
+  IF ~~ THEN GOTO 55
+END
+
+IF ~~ THEN BEGIN 55 // from: 54.0
+  SAY #299468 /* ~It takes me all my courage to ask: Will you help us?~ */
+  IF ~  Global("FC_HAS_BG1","GLOBAL",0)
+AreaCheck("AR0406")
+~ THEN REPLY #299460 /* ~Well, if there is a trouble, it must be solved. When are we going?~ */ DO ~SetGlobal("FC_HAS_BG1","GLOBAL",1)
+~ GOTO 32
+  IF ~  Global("FC_HAS_BG1","GLOBAL",0)
+AreaCheck("BG1001")
+~ THEN REPLY #299460 /* ~Well, if there is a trouble, it must be solved. When are we going?~ */ DO ~SetGlobal("FC_HAS_BG1","GLOBAL",1)
+~ GOTO 56
+  IF ~  Global("FC_HAS_BG1","GLOBAL",1)
+AreaCheck("AR0406")
+~ THEN REPLY #299460 /* ~Well, if there is a trouble, it must be solved. When are we going?~ */ GOTO 36
+  IF ~  Global("FC_HAS_BG1","GLOBAL",1)
+AreaCheck("BG1001")
+~ THEN REPLY #299460 /* ~Well, if there is a trouble, it must be solved. When are we going?~ */ GOTO 60
+  IF ~~ THEN REPLY #299461 /* ~Sorry, old man, but I had enough of your troubles.~ */ GOTO 8
+  IF ~  !Global("JO_GLOBAL_IN_IWD1","GLOBAL",1)
+~ THEN REPLY #299465 /* ~I don't feel concerned enough, have you a quest worthy of my temper so versatile ?~ */ DO ~SetGlobal("FC_PREFER_IWD1","MYAREA",1)
+SetGlobal("FC_PREFER_IWD2","MYAREA",0)
+~ GOTO 43
+END
+
+IF ~~ THEN BEGIN 56 // from: 31.3 55.1
   SAY #299435 /* ~It's such a relief. It takes a load off my mind. We can go now. But I must warn you.~ */
-  IF ~~ THEN GOTO 56
-END
-
-IF ~~ THEN BEGIN 56 // from: 55.0
-  SAY #299436 /* ~Travelling over such distances is a very powerful magic. And I am not the best wizard in Faerun. So, I can't travel with you. I shall wait for you here and hope that you will return with a victory.~ */
   IF ~~ THEN GOTO 57
 END
 
 IF ~~ THEN BEGIN 57 // from: 56.0
-  SAY #299437 /* ~And I don't have enough power to transport you with your equipment. You have to leave it here. Place everything behind the fireplace and I'll make sure no one will touch it.~ */
+  SAY #299436 /* ~Travelling over such distances is a very powerful magic. And I am not the best wizard in Faerun. So, I can't travel with you. I shall wait for you here and hope that you will return with a victory.~ */
   IF ~~ THEN GOTO 58
 END
 
 IF ~~ THEN BEGIN 58 // from: 57.0
+  SAY #299437 /* ~And I don't have enough power to transport you with your equipment. You have to leave it here. Place everything behind the fireplace and I'll make sure no one will touch it.~ */
+  IF ~~ THEN GOTO 59
+END
+
+IF ~~ THEN BEGIN 59 // from: 58.0
   SAY #299438 /* ~And last: I don't know where exactly in Icewind Dale my spell wil teleport you. But I assure it will be the place where your help will be needed. And this spell shall take you back here, when you end your mission.~ */
   IF ~~ THEN DO ~ContainerEnable("IWD_Container",TRUE)
 Lock("IWD_Container")
 ~ GOTO 37
 END
 
-IF ~~ THEN BEGIN 59 // from: 31.3 49.3
+IF ~~ THEN BEGIN 60 // from: 31.4 55.3
   SAY #299469 /* ~I think you remember about the teleportation restrictions. You can store your equipment behind the fireplace, I'll guard it for you.~ */
   IF ~~ THEN DO ~ContainerEnable("IWD_Container",TRUE)
 ~ GOTO 37
+END
+
+IF ~  Global("FC_GLOBAL_IWD_VARIABLE","GLOBAL",11)
+~ THEN BEGIN 61 // from:
+  SAY #299464 /* ~Ah, <CHARNAME>... You returned victorious. Know that everyone in Targos and the in whole Icewind Dale are grateful to you. You saved us all. Saved us from the evil demons' plans. Isair and Madae were slain and we can return to our lives. Thank you.~ */
+  IF ~~ THEN DO ~SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",12)
+GiveItemCreate("Z6SWDCSS",LastTalkedToBy(Myself),0,0,0)
+AddexperienceParty(120000)
+GiveGoldForce(10000)
+Unlock("IWD_Container")
+~ GOTO 43
 END

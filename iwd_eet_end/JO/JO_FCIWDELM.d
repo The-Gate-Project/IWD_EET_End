@@ -21,32 +21,37 @@ END
 	IF ~~ THEN REPLY @1060 EXTERN FCIWDELM bg2_1_3
 	IF ~~ THEN REPLY @1061 EXTERN FCIWDELM bg1_1_5
 
+// I
+
+/*
 // Global("JO_GLOBAL_TALK_BG1","GLOBAL",0) // Never talked to in BG1
 // Global("FC_HAS_BG1","GLOBAL",1) // Played BG1
 CHAIN
 IF ~NumTimesTalkedTo(0)
     AreaCheck("AR0406")
 	Global("JO_GLOBAL_TALK_BG1","GLOBAL",0)
-    Global("FC_HAS_BG1","GLOBAL",1)~ THEN FCIWDELM bg2_1_2
+    Global("FC_HAS_BG1","GLOBAL",1)~ THEN FCIWDELM JObg2_1_2
   @1024
 END
 	IF ~~ THEN REPLY @1026 EXTERN FCIWDELM bg1_1_2
 	IF ~~ THEN REPLY @1027 EXTERN FCIWDELM bg1_1_3
 	IF ~~ THEN REPLY @1028 EXTERN FCIWDELM bg1_1_5
+*/
 
 CHAIN
 IF ~NumTimesTalkedTo(0)
     AreaCheck("AR0406")
-    Global("FC_HAS_BG1","GLOBAL",1)~ THEN FCIWDELM bg2_1_2 // Global("JO_GLOBAL_TALK_BG1","GLOBAL",1)
+    Global("FC_HAS_BG1","GLOBAL",1)
+	Global("JO_GLOBAL_TALK_BG1","GLOBAL",1)~ THEN FCIWDELM bg2_1_2 // Global("JO_GLOBAL_TALK_BG1","GLOBAL",1)
   @1062
 END
 	IF ~Global("JO_GLOBAL_IN_IWD1","GLOBAL",1)~ THEN REPLY @1063 DO ~SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",8)~ EXTERN FCIWDELM bg2_1_3
 	IF ~Global("JO_GLOBAL_IN_IWD1","GLOBAL",1)~ THEN REPLY @1064 DO ~SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",8)~ EXTERN FCIWDELM bg2_1_3
 	IF ~Global("JO_GLOBAL_IN_IWD1","GLOBAL",1)~ THEN REPLY @1065 DO ~SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",8)~ EXTERN FCIWDELM bg2_1_3
+	IF ~~ THEN REPLY @1066 EXTERN FCIWDELM bg1_1_5
 	IF ~!Global("JO_GLOBAL_IN_IWD1","GLOBAL",1)~ THEN REPLY @1063 DO ~SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",8)~ EXTERN FCIWDELM JObg2_1_3
 	IF ~!Global("JO_GLOBAL_IN_IWD1","GLOBAL",1)~ THEN REPLY @1064 DO ~SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",8)~ EXTERN FCIWDELM JObg2_1_3
 	IF ~!Global("JO_GLOBAL_IN_IWD1","GLOBAL",1)~ THEN REPLY @1065 DO ~SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",8)~ EXTERN FCIWDELM JObg2_1_3
-	IF ~~ THEN REPLY @1066 EXTERN FCIWDELM bg1_1_5
 
 CHAIN
 IF ~~ THEN FCIWDELM bg1_1_2
@@ -82,10 +87,13 @@ IF ~~ THEN FCIWDELM bg1_1_6
 = @1039
 END
 	IF ~AreaCheck("BG1001")~ THEN REPLY @1040 EXTERN FCIWDELM bg1_1_7
-	IF ~AreaCheck("AR0406")~ THEN REPLY @1040 EXTERN FCIWDELM JObg1_1_7
 	IF ~~ THEN REPLY @1041 DO ~SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",2)~ EXTERN FCIWDELM bg1_1_5
 	IF ~~ THEN REPLY @1042 DO ~SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",1)~ EXTERN FCIWDELM bg1_1_5
-	
+	IF ~AreaCheck("AR0406")~ THEN REPLY @1040 EXTERN FCIWDELM JObg1_1_7
+
+// II
+
+/*
 CHAIN  /////////  IWD1 Global("FC_PREFER_IWD1","MYAREA",1)
 IF ~~ THEN FCIWDELM JObg1_1_6
 ~A Great Oak...~
@@ -98,6 +106,7 @@ END
 	IF ~~ THEN REPLY @1041 DO ~SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",2)~ EXTERN FCIWDELM bg1_1_5
 	IF ~~ THEN REPLY @1042 DO ~SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",1)~ EXTERN FCIWDELM bg1_1_5
 	IF ~!Global("JO_GLOBAL_IN_IWD2","GLOBAL",1)~ THEN REPLY ~I don't feel concerned enough, have you a quest worthy of my temper so versatile ?~ DO ~SetGlobal("FC_PREFER_IWD2","MYAREA",1) SetGlobal("FC_PREFER_IWD1","MYAREA",0)~ EXTERN FCIWDELM JObg2_1_3 /////////  PREFER IWD2
+*/
 
 CHAIN
 IF ~~ THEN FCIWDELM bg1_1_7
@@ -111,6 +120,9 @@ END
 	IF ~~ THEN REPLY @1049 DO ~SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",3)~ EXTERN FCIWDELM bg1_1_5
 	IF ~!Global("JO_GLOBAL_IN_IWD2","GLOBAL",1)~ THEN REPLY ~I don't feel concerned enough, have you a quest worthy of my temper so versatile ?~ DO ~SetGlobal("FC_PREFER_IWD2","MYAREA",1) SetGlobal("FC_PREFER_IWD1","MYAREA",0)~ EXTERN FCIWDELM JObg2_1_3 /////////  PREFER IWD2
 
+// III
+
+/*
 CHAIN
 IF ~~ THEN FCIWDELM JObg1_1_7
   @1043
@@ -122,9 +134,10 @@ END
 	IF ~~ THEN REPLY @1048 EXTERN FCIWDELM bg1_1_8
 	IF ~~ THEN REPLY @1049 DO ~SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",3)~ EXTERN FCIWDELM bg1_1_5
 	IF ~!Global("JO_GLOBAL_IN_IWD2","GLOBAL",1)~ THEN REPLY ~I don't feel concerned enough, have you a quest worthy of my temper so versatile ?~ DO ~SetGlobal("FC_PREFER_IWD2","MYAREA",1) SetGlobal("FC_PREFER_IWD1","MYAREA",0)~ EXTERN FCIWDELM JObg2_1_3 /////////  PREFER IWD2
+*/
 
-CHAIN
-IF ~~ THEN FCIWDELM bg1_1_8 // SetGlobal("FC_PREFER_IWD2","MYAREA",0) Avoid to reset FC_GLOBAL_IWD_VARIABLE at 2
+CHAIN  // SetGlobal("FC_PREFER_IWD2","MYAREA",0) Avoid to reset FC_GLOBAL_IWD_VARIABLE at 2
+IF ~~ THEN FCIWDELM bg1_1_8
   @1050
   DO ~SetGlobal("FC_PREFER_IWD2","MYAREA",0)
       SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",4)
@@ -162,18 +175,18 @@ IF ~Global("FC_GLOBAL_IWD_VARIABLE","GLOBAL",1)~ THEN FCIWDELM bg1_4_1
   @1053
 END
 	IF ~AreaCheck("BG1001")~ THEN REPLY @1040 EXTERN FCIWDELM bg1_1_7
-	IF ~AreaCheck("AR0406")~ THEN REPLY @1040 EXTERN FCIWDELM JObg1_1_7
 	IF ~~ THEN REPLY @1041 DO ~SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",2)~ EXTERN FCIWDELM bg1_1_5
 	IF ~~ THEN REPLY @1042 DO ~SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",1)~ EXTERN FCIWDELM bg1_1_5
+	IF ~AreaCheck("AR0406")~ THEN REPLY @1040 EXTERN FCIWDELM JObg1_1_7
 
 CHAIN  /////////  IWD1
 IF ~Global("FC_GLOBAL_IWD_VARIABLE","GLOBAL",2)~ THEN FCIWDELM bg1_5_1
   @1054
 END
 	IF ~AreaCheck("BG1001")~ THEN REPLY @1040 EXTERN FCIWDELM bg1_1_7
-	IF ~AreaCheck("AR0406")~ THEN REPLY @1040 EXTERN FCIWDELM JObg1_1_7
 	IF ~~ THEN REPLY @1041 DO ~SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",2)~ EXTERN FCIWDELM bg1_1_5
 	IF ~~ THEN REPLY @1042 DO ~SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",1)~ EXTERN FCIWDELM bg1_1_5
+	IF ~AreaCheck("AR0406")~ THEN REPLY @1040 EXTERN FCIWDELM JObg1_1_7
 
 CHAIN
 IF ~Global("FC_GLOBAL_IWD_VARIABLE","GLOBAL",3)~ THEN FCIWDELM bg1_6_1
@@ -187,13 +200,20 @@ CHAIN
 IF ~Global("FC_GLOBAL_IWD_VARIABLE","GLOBAL",5)
     Global("JO_GLOBAL_IN_IWD2","GLOBAL",1)~ THEN FCIWDELM bg1_7_1
   @1056
+= @1057
   DO ~SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",6)
       GiveItemCreate("BLOOD",LastTalkedToBy(Myself),0,0,0)
       AddexperienceParty(24000)
       GiveGoldForce(10000)
-	  Unlock("IWD_Container")~
+      SmallWait(7)
+      CreateVisualEffectObject("PORTALH",Myself)
+      Wait(1)
+      DestroySelf()~
 EXIT
 
+// IV
+
+/*
 CHAIN
 IF ~Global("FC_GLOBAL_IWD_VARIABLE","GLOBAL",5)~ THEN FCIWDELM JObg1_7_1 // !Global("JO_GLOBAL_IN_IWD2","GLOBAL",1)
   @1056
@@ -202,6 +222,7 @@ IF ~Global("FC_GLOBAL_IWD_VARIABLE","GLOBAL",5)~ THEN FCIWDELM JObg1_7_1 // !Glo
       AddexperienceParty(24000)
       GiveGoldForce(10000)
 	  Unlock("IWD_Container")~  EXTERN FCIWDELM JObg2_1_3
+*/
 
 CHAIN
 IF ~~ THEN FCIWDELM bg2_1_4
@@ -220,9 +241,9 @@ IF ~AreaCheck("AR0406")
 END
 	IF ~Global("FC_GLOBAL_IWD_VARIABLE","GLOBAL",6) Global("JO_GLOBAL_IN_IWD1","GLOBAL",1)~ THEN REPLY @1072 EXTERN FCIWDELM bg2_1_3
 	IF ~Global("FC_GLOBAL_IWD_VARIABLE","GLOBAL",7) Global("JO_GLOBAL_IN_IWD1","GLOBAL",1)~ THEN REPLY @1073 EXTERN FCIWDELM bg2_1_3
+	IF ~~ THEN REPLY @1074 EXTERN FCIWDELM bg1_1_5
 	IF ~Global("FC_GLOBAL_IWD_VARIABLE","GLOBAL",6) !Global("JO_GLOBAL_IN_IWD1","GLOBAL",1)~ THEN REPLY @1072 EXTERN FCIWDELM JObg2_1_3
 	IF ~Global("FC_GLOBAL_IWD_VARIABLE","GLOBAL",7) !Global("JO_GLOBAL_IN_IWD1","GLOBAL",1)~ THEN REPLY @1073 EXTERN FCIWDELM JObg2_1_3
-	IF ~~ THEN REPLY @1074 EXTERN FCIWDELM bg1_1_5
 
 CHAIN
 IF ~Global("FC_GLOBAL_IWD_VARIABLE","GLOBAL",8)
@@ -232,12 +253,15 @@ IF ~Global("FC_GLOBAL_IWD_VARIABLE","GLOBAL",8)
 = @1077
 END
 	IF ~Global("FC_HAS_BG1","GLOBAL",0) AreaCheck("AR0406")~ THEN REPLY @1078 DO ~SetGlobal("FC_HAS_BG1","GLOBAL",1)~ EXTERN FCIWDELM bg2_1_5
-	IF ~Global("FC_HAS_BG1","GLOBAL",0) AreaCheck("BG1001")~ THEN REPLY @1078 DO ~SetGlobal("FC_HAS_BG1","GLOBAL",1)~ EXTERN FCIWDELM JObg2_1_5
 	IF ~Global("FC_HAS_BG1","GLOBAL",1) AreaCheck("AR0406")~ THEN REPLY @1078 EXTERN FCIWDELM bg2_1_6
-	IF ~Global("FC_HAS_BG1","GLOBAL",1) AreaCheck("BG1001")~ THEN REPLY @1078 EXTERN FCIWDELM JObg2_1_6
 	IF ~~ THEN REPLY @1079 EXTERN FCIWDELM bg1_1_5
+	IF ~Global("FC_HAS_BG1","GLOBAL",0) AreaCheck("BG1001")~ THEN REPLY @1078 DO ~SetGlobal("FC_HAS_BG1","GLOBAL",1)~ EXTERN FCIWDELM JObg2_1_5
+	IF ~Global("FC_HAS_BG1","GLOBAL",1) AreaCheck("BG1001")~ THEN REPLY @1078 EXTERN FCIWDELM JObg2_1_6
 	IF ~!Global("JO_GLOBAL_IN_IWD1","GLOBAL",1)~ THEN REPLY ~I don't feel concerned enough, have you a quest worthy of my temper so versatile ?~ EXTERN FCIWDELM JObg1_1_6 /////////  PREFER IWD1
 
+// V
+
+/*
 CHAIN  /////////  IWD2 Global("FC_PREFER_IWD2","MYAREA",1)
 IF ~Global("FC_GLOBAL_IWD_VARIABLE","GLOBAL",8)~ THEN FCIWDELM JObg2_1_3 // !Global("JO_GLOBAL_IN_IWD1","GLOBAL",1)
 ~There is an adventure near Targos one of the ten towns of Icewind Dale.~
@@ -250,6 +274,7 @@ END
 	IF ~Global("FC_HAS_BG1","GLOBAL",1) AreaCheck("BG1001")~ THEN REPLY @1078 EXTERN FCIWDELM JObg2_1_6
 	IF ~~ THEN REPLY @1079 EXTERN FCIWDELM bg1_1_5
 	IF ~!Global("JO_GLOBAL_IN_IWD1","GLOBAL",1)~ THEN REPLY ~I don't feel concerned enough, have you a quest worthy of my temper so versatile ?~ DO ~SetGlobal("FC_PREFER_IWD1","MYAREA",1) SetGlobal("FC_PREFER_IWD2","MYAREA",0)~ EXTERN FCIWDELM JObg1_1_6 /////////  PREFER IWD1
+*/
 
 CHAIN
 IF ~~ THEN FCIWDELM bg2_1_5
@@ -259,6 +284,9 @@ IF ~~ THEN FCIWDELM bg2_1_5
 = @1046 DO ~ContainerEnable("IWD_Container",TRUE) Lock("IWD_Container")~ 
 EXTERN FCIWDELM bg2_1_7
 
+// VI
+
+/*
 CHAIN
 IF ~~ THEN FCIWDELM JObg2_1_5
   @1043
@@ -266,15 +294,20 @@ IF ~~ THEN FCIWDELM JObg2_1_5
 = @1045 //
 = @1046 DO ~ContainerEnable("IWD_Container",TRUE) Lock("IWD_Container")~ 
 EXTERN FCIWDELM bg2_1_7
+*/
 
 CHAIN
 IF ~~ THEN FCIWDELM bg2_1_6
   @1081 DO ~ContainerEnable("IWD_Container",TRUE) Lock("IWD_Container")~ 
 EXTERN FCIWDELM bg2_1_7
 
+// VII
+
+/*
 CHAIN
 IF ~~ THEN FCIWDELM JObg2_1_6
   ~I think you remember about the teleportation restrictions. You can store your equipment behind the fireplace, I'll guard it for you.~ DO ~ContainerEnable("IWD_Container",TRUE)~ EXTERN FCIWDELM bg2_1_7
+*/
 
 CHAIN
 IF ~~ THEN FCIWDELM bg2_1_7
@@ -312,12 +345,117 @@ EXIT
 CHAIN
 IF ~Global("FC_GLOBAL_IWD_VARIABLE","GLOBAL",11) 
     Global("JO_GLOBAL_IN_IWD1","GLOBAL",1)~ THEN FCIWDELM bg2_7_1
+  @1082
+= @1057
+  DO ~SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",12)
+      GiveItemCreate("Z6SWDCSS",LastTalkedToBy(Myself),0,0,0)
+      AddexperienceParty(120000)
+      GiveGoldForce(10000)
+      SmallWait(7)
+      CreateVisualEffectObject("PORTALH",Myself)
+      Wait(1)
+      DestroySelf()~
+EXIT
+
+// VIII
+
+/*
+CHAIN
+IF ~Global("FC_GLOBAL_IWD_VARIABLE","GLOBAL",11)~ THEN FCIWDELM JObg2_7_1 // !Global("JO_GLOBAL_IN_IWD1","GLOBAL",1)
   @1082 DO ~SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",12)
 			GiveItemCreate("Z6SWDCSS",LastTalkedToBy(Myself),0,0,0)
 			AddexperienceParty(120000)
 			GiveGoldForce(10000)
-			Unlock("IWD_Container")~
-EXIT
+			Unlock("IWD_Container")~ EXTERN FCIWDELM JObg1_1_6
+*/
+
+// I
+
+// Global("JO_GLOBAL_TALK_BG1","GLOBAL",0) // Never talked to in BG1
+// Global("FC_HAS_BG1","GLOBAL",1) // Played BG1
+CHAIN
+IF ~NumTimesTalkedTo(0)
+    AreaCheck("AR0406")
+	Global("JO_GLOBAL_TALK_BG1","GLOBAL",0)
+    Global("FC_HAS_BG1","GLOBAL",1)~ THEN FCIWDELM JObg2_1_2
+  @1024
+END
+	IF ~~ THEN REPLY @1026 EXTERN FCIWDELM bg1_1_2
+	IF ~~ THEN REPLY @1027 EXTERN FCIWDELM bg1_1_3
+	IF ~~ THEN REPLY @1028 EXTERN FCIWDELM bg1_1_5
+
+// II
+
+CHAIN  /////////  IWD1 Global("FC_PREFER_IWD1","MYAREA",1)
+IF ~~ THEN FCIWDELM JObg1_1_6
+~A Great Oak...~
+= @1037
+= @1038
+= @1039
+END
+	IF ~AreaCheck("BG1001")~ THEN REPLY @1040 EXTERN FCIWDELM bg1_1_7
+	IF ~AreaCheck("AR0406")~ THEN REPLY @1040 EXTERN FCIWDELM JObg1_1_7
+	IF ~~ THEN REPLY @1041 DO ~SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",2)~ EXTERN FCIWDELM bg1_1_5
+	IF ~~ THEN REPLY @1042 DO ~SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",1)~ EXTERN FCIWDELM bg1_1_5
+	IF ~!Global("JO_GLOBAL_IN_IWD2","GLOBAL",1)~ THEN REPLY ~I don't feel concerned enough, have you a quest worthy of my temper so versatile ?~ DO ~SetGlobal("FC_PREFER_IWD2","MYAREA",1) SetGlobal("FC_PREFER_IWD1","MYAREA",0)~ EXTERN FCIWDELM JObg2_1_3 /////////  PREFER IWD2
+
+// III
+
+CHAIN
+IF ~~ THEN FCIWDELM JObg1_1_7
+  @1043
+= @1044
+= @1080 //
+= @1046
+= @1047 DO ~ContainerEnable("IWD_Container",TRUE) Lock("IWD_Container")~ 
+END
+	IF ~~ THEN REPLY @1048 EXTERN FCIWDELM bg1_1_8
+	IF ~~ THEN REPLY @1049 DO ~SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",3)~ EXTERN FCIWDELM bg1_1_5
+	IF ~!Global("JO_GLOBAL_IN_IWD2","GLOBAL",1)~ THEN REPLY ~I don't feel concerned enough, have you a quest worthy of my temper so versatile ?~ DO ~SetGlobal("FC_PREFER_IWD2","MYAREA",1) SetGlobal("FC_PREFER_IWD1","MYAREA",0)~ EXTERN FCIWDELM JObg2_1_3 /////////  PREFER IWD2
+
+// IV
+
+CHAIN
+IF ~Global("FC_GLOBAL_IWD_VARIABLE","GLOBAL",5)~ THEN FCIWDELM JObg1_7_1 // !Global("JO_GLOBAL_IN_IWD2","GLOBAL",1)
+  @1056
+  DO ~SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",6)
+      GiveItemCreate("BLOOD",LastTalkedToBy(Myself),0,0,0)
+      AddexperienceParty(24000)
+      GiveGoldForce(10000)
+	  Unlock("IWD_Container")~  EXTERN FCIWDELM JObg2_1_3
+
+// V
+
+CHAIN  /////////  IWD2 Global("FC_PREFER_IWD2","MYAREA",1)
+IF ~Global("FC_GLOBAL_IWD_VARIABLE","GLOBAL",8)~ THEN FCIWDELM JObg2_1_3 // !Global("JO_GLOBAL_IN_IWD1","GLOBAL",1)
+~There is an adventure near Targos one of the ten towns of Icewind Dale.~
+= @1076
+= ~It takes me all my courage to ask: Will you help us?~ // "Remove once more"
+END
+	IF ~Global("FC_HAS_BG1","GLOBAL",0) AreaCheck("AR0406")~ THEN REPLY @1078 DO ~SetGlobal("FC_HAS_BG1","GLOBAL",1)~ EXTERN FCIWDELM bg2_1_5
+	IF ~Global("FC_HAS_BG1","GLOBAL",0) AreaCheck("BG1001")~ THEN REPLY @1078 DO ~SetGlobal("FC_HAS_BG1","GLOBAL",1)~ EXTERN FCIWDELM JObg2_1_5
+	IF ~Global("FC_HAS_BG1","GLOBAL",1) AreaCheck("AR0406")~ THEN REPLY @1078 EXTERN FCIWDELM bg2_1_6
+	IF ~Global("FC_HAS_BG1","GLOBAL",1) AreaCheck("BG1001")~ THEN REPLY @1078 EXTERN FCIWDELM JObg2_1_6
+	IF ~~ THEN REPLY @1079 EXTERN FCIWDELM bg1_1_5
+	IF ~!Global("JO_GLOBAL_IN_IWD1","GLOBAL",1)~ THEN REPLY ~I don't feel concerned enough, have you a quest worthy of my temper so versatile ?~ DO ~SetGlobal("FC_PREFER_IWD1","MYAREA",1) SetGlobal("FC_PREFER_IWD2","MYAREA",0)~ EXTERN FCIWDELM JObg1_1_6 /////////  PREFER IWD1
+
+// VI
+
+CHAIN
+IF ~~ THEN FCIWDELM JObg2_1_5
+  @1043
+= @1044
+= @1045 //
+= @1046 DO ~ContainerEnable("IWD_Container",TRUE) Lock("IWD_Container")~ 
+EXTERN FCIWDELM bg2_1_7
+
+// VII
+
+CHAIN
+IF ~~ THEN FCIWDELM JObg2_1_6
+  ~I think you remember about the teleportation restrictions. You can store your equipment behind the fireplace, I'll guard it for you.~ DO ~ContainerEnable("IWD_Container",TRUE)~ EXTERN FCIWDELM bg2_1_7
+
+// VIII
 
 CHAIN
 IF ~Global("FC_GLOBAL_IWD_VARIABLE","GLOBAL",11)~ THEN FCIWDELM JObg2_7_1 // !Global("JO_GLOBAL_IN_IWD1","GLOBAL",1)
@@ -326,3 +464,4 @@ IF ~Global("FC_GLOBAL_IWD_VARIABLE","GLOBAL",11)~ THEN FCIWDELM JObg2_7_1 // !Gl
 			AddexperienceParty(120000)
 			GiveGoldForce(10000)
 			Unlock("IWD_Container")~ EXTERN FCIWDELM JObg1_1_6
+
