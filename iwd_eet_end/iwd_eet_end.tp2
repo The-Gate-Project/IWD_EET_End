@@ -42,6 +42,10 @@ LANGUAGE ~German~
 	     ~de_DE~
 	     ~iwd_eet_end/lang/de_DE/mod.tra~
 	     ~iwd_eet_end/lang/de_DE/chapters.tra~
+LANGUAGE ~Polski~
+	     ~pl_PL~
+	     ~iwd_eet_end/lang/pl_PL/mod.tra~
+	     ~iwd_eet_end/lang/pl_PL/chapters.tra~
 LANGUAGE ~Simplified Chinese~
 	     ~zh_CN~
 	     ~iwd_eet_end/lang/zh_CN/mod.tra~
