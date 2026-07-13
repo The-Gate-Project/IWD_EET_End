@@ -1,23 +1,14 @@
 IF
-	Global("JO_GLOBAL_IWD_BG2","GLOBAL",0)
-	!Global("JO_GLOBAL_IWD_BG2","GLOBAL",1)
+	Switch("JO_GLOBAL_IWD_BG2","GLOBAL")
 THEN
-	RESPONSE #100
+	RESPONSE #0
 		CutSceneId(Player1)
 		ClearAllActions()
 		SmallWait(5)
-		StartCutSceneMode()
 		StartCutScene("IDTOEET1")
-END
-
-IF
-	Global("JO_GLOBAL_IWD_BG2","GLOBAL",1)
-	!Global("JO_GLOBAL_IWD_BG2","GLOBAL",0)
-THEN
-	RESPONSE #100
+	RESPONSE #1
 		CutSceneId(Player1)
 		ClearAllActions()
 		SmallWait(5)
-		StartCutSceneMode()
 		StartCutScene("IDTOEET2")
 END
