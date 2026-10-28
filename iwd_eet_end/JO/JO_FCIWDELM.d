@@ -96,7 +96,7 @@ END
 /*
 CHAIN  /////////  IWD1 Global("FC_PREFER_IWD1","MYAREA",1)
 IF ~~ THEN FCIWDELM JObg1_1_6
-~A Great Oak...~
+~一棵巨橡……~
 = @1037
 = @1038
 = @1039
@@ -105,7 +105,7 @@ END
 	IF ~AreaCheck("AR0406")~ THEN REPLY @1040 EXTERN FCIWDELM JObg1_1_7
 	IF ~~ THEN REPLY @1041 DO ~SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",2)~ EXTERN FCIWDELM bg1_1_5
 	IF ~~ THEN REPLY @1042 DO ~SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",1)~ EXTERN FCIWDELM bg1_1_5
-	IF ~!Global("JO_GLOBAL_IN_IWD2","GLOBAL",1)~ THEN REPLY ~Actually, I'd rather explore Targos. Are there any quests around here?~ DO ~SetGlobal("FC_PREFER_IWD2","MYAREA",1) SetGlobal("FC_PREFER_IWD1","MYAREA",0)~ EXTERN FCIWDELM JObg2_1_3 /////////  PREFER IWD2
+	IF ~!Global("JO_GLOBAL_IN_IWD2","GLOBAL",1)~ THEN REPLY ~其实我更想逛逛塔戈斯。这附近有什么任务吗？~ DO ~SetGlobal("FC_PREFER_IWD2","MYAREA",1) SetGlobal("FC_PREFER_IWD1","MYAREA",0)~ EXTERN FCIWDELM JObg2_1_3 /////////  PREFER IWD2
 */
 
 CHAIN
@@ -118,7 +118,7 @@ IF ~~ THEN FCIWDELM bg1_1_7
 END
 	IF ~!Global("JO_GLOBAL_IN_IWD1","GLOBAL",1)~ THEN REPLY @1048 EXTERN FCIWDELM bg1_1_8
 	IF ~~ THEN REPLY @1049 DO ~SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",3)~ EXTERN FCIWDELM bg1_1_5
-	IF ~!Global("JO_GLOBAL_IN_IWD2","GLOBAL",1)~ THEN REPLY ~Actually, I'd rather explore Targos. Are there any quests around here?~ DO ~SetGlobal("FC_PREFER_IWD2","MYAREA",1) SetGlobal("FC_PREFER_IWD1","MYAREA",0)~ EXTERN FCIWDELM JObg2_1_3 /////////  PREFER IWD2
+	IF ~!Global("JO_GLOBAL_IN_IWD2","GLOBAL",1)~ THEN REPLY ~其实我更想逛逛塔戈斯。这附近有什么任务吗？~ DO ~SetGlobal("FC_PREFER_IWD2","MYAREA",1) SetGlobal("FC_PREFER_IWD1","MYAREA",0)~ EXTERN FCIWDELM JObg2_1_3 /////////  PREFER IWD2
 
 // III
 
@@ -133,7 +133,7 @@ IF ~~ THEN FCIWDELM JObg1_1_7
 END
 	IF ~!Global("JO_GLOBAL_IN_IWD1","GLOBAL",1)~ THEN REPLY @1048 EXTERN FCIWDELM bg1_1_8
 	IF ~~ THEN REPLY @1049 DO ~SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",3)~ EXTERN FCIWDELM bg1_1_5
-	IF ~!Global("JO_GLOBAL_IN_IWD2","GLOBAL",1)~ THEN REPLY ~Actually, I'd rather explore Targos. Are there any quests around here?~ DO ~SetGlobal("FC_PREFER_IWD2","MYAREA",1) SetGlobal("FC_PREFER_IWD1","MYAREA",0)~ EXTERN FCIWDELM JObg2_1_3 /////////  PREFER IWD2
+	IF ~!Global("JO_GLOBAL_IN_IWD2","GLOBAL",1)~ THEN REPLY ~其实我更想逛逛塔戈斯。这附近有什么任务吗？~ DO ~SetGlobal("FC_PREFER_IWD2","MYAREA",1) SetGlobal("FC_PREFER_IWD1","MYAREA",0)~ EXTERN FCIWDELM JObg2_1_3 /////////  PREFER IWD2
 */
 
 CHAIN  // SetGlobal("FC_PREFER_IWD2","MYAREA",0) Avoid to reset FC_GLOBAL_IWD_VARIABLE at 2
@@ -194,7 +194,7 @@ IF ~Global("FC_GLOBAL_IWD_VARIABLE","GLOBAL",3)~ THEN FCIWDELM bg1_6_1
 END
 	IF ~!Global("JO_GLOBAL_IN_IWD1","GLOBAL",1)~ THEN REPLY @1048 EXTERN FCIWDELM bg1_1_8
 	IF ~~ THEN REPLY @1049 EXTERN FCIWDELM bg1_1_5
-	IF ~!Global("JO_GLOBAL_IN_IWD2","GLOBAL",1)~ THEN REPLY ~Actually, I'd rather explore Targos. Are there any quests around here?~ DO ~SetGlobal("FC_PREFER_IWD2","MYAREA",1) SetGlobal("FC_PREFER_IWD1","MYAREA",0)~ EXTERN FCIWDELM JObg2_1_3 /////////  PREFER IWD2
+	IF ~!Global("JO_GLOBAL_IN_IWD2","GLOBAL",1)~ THEN REPLY ~其实我更想逛逛塔戈斯。这附近有什么任务吗？~ DO ~SetGlobal("FC_PREFER_IWD2","MYAREA",1) SetGlobal("FC_PREFER_IWD1","MYAREA",0)~ EXTERN FCIWDELM JObg2_1_3 /////////  PREFER IWD2
 
 CHAIN
 IF ~Global("FC_GLOBAL_IWD_VARIABLE","GLOBAL",5)
@@ -257,23 +257,23 @@ END
 	IF ~~ THEN REPLY @1079 EXTERN FCIWDELM bg1_1_5
 	IF ~Global("FC_HAS_BG1","GLOBAL",0) AreaCheck("BG1001")~ THEN REPLY @1078 DO ~SetGlobal("FC_HAS_BG1","GLOBAL",1)~ EXTERN FCIWDELM JObg2_1_5
 	IF ~Global("FC_HAS_BG1","GLOBAL",1) AreaCheck("BG1001")~ THEN REPLY @1078 EXTERN FCIWDELM JObg2_1_6
-	IF ~!Global("JO_GLOBAL_IN_IWD1","GLOBAL",1)~ THEN REPLY ~Actually, I'd rather explore Kuldahar. Are there any quests around here?~ EXTERN FCIWDELM JObg1_1_6 /////////  PREFER IWD1
+	IF ~!Global("JO_GLOBAL_IN_IWD1","GLOBAL",1)~ THEN REPLY ~其实我更想逛逛库达尔。这附近有什么任务吗？~ EXTERN FCIWDELM JObg1_1_6 /////////  PREFER IWD1
 
 // V
 
 /*
 CHAIN  /////////  IWD2 Global("FC_PREFER_IWD2","MYAREA",1)
 IF ~Global("FC_GLOBAL_IWD_VARIABLE","GLOBAL",8)~ THEN FCIWDELM JObg2_1_3 // !Global("JO_GLOBAL_IN_IWD1","GLOBAL",1)
-~There is an adventure near Targos one of the ten towns of Icewind Dale.~
+~冰风谷十镇之一的塔戈斯附近，有一场冒险。~
 = @1076
-= ~It takes me all my courage to ask: Will you help us?~ // "Remove once more"
+= ~我鼓足了全部勇气才敢问：你愿意帮帮我们吗？~ // "Remove once more"
 END
 	IF ~Global("FC_HAS_BG1","GLOBAL",0) AreaCheck("AR0406")~ THEN REPLY @1078 DO ~SetGlobal("FC_HAS_BG1","GLOBAL",1)~ EXTERN FCIWDELM bg2_1_5
 	IF ~Global("FC_HAS_BG1","GLOBAL",0) AreaCheck("BG1001")~ THEN REPLY @1078 DO ~SetGlobal("FC_HAS_BG1","GLOBAL",1)~ EXTERN FCIWDELM JObg2_1_5
 	IF ~Global("FC_HAS_BG1","GLOBAL",1) AreaCheck("AR0406")~ THEN REPLY @1078 EXTERN FCIWDELM bg2_1_6
 	IF ~Global("FC_HAS_BG1","GLOBAL",1) AreaCheck("BG1001")~ THEN REPLY @1078 EXTERN FCIWDELM JObg2_1_6
 	IF ~~ THEN REPLY @1079 EXTERN FCIWDELM bg1_1_5
-	IF ~!Global("JO_GLOBAL_IN_IWD1","GLOBAL",1)~ THEN REPLY ~Actually, I'd rather explore Kuldahar. Are there any quests around here?~ DO ~SetGlobal("FC_PREFER_IWD1","MYAREA",1) SetGlobal("FC_PREFER_IWD2","MYAREA",0)~ EXTERN FCIWDELM JObg1_1_6 /////////  PREFER IWD1
+	IF ~!Global("JO_GLOBAL_IN_IWD1","GLOBAL",1)~ THEN REPLY ~其实我更想逛逛库达尔。这附近有什么任务吗？~ DO ~SetGlobal("FC_PREFER_IWD1","MYAREA",1) SetGlobal("FC_PREFER_IWD2","MYAREA",0)~ EXTERN FCIWDELM JObg1_1_6 /////////  PREFER IWD1
 */
 
 CHAIN
@@ -306,7 +306,7 @@ EXTERN FCIWDELM bg2_1_7
 /*
 CHAIN
 IF ~~ THEN FCIWDELM JObg2_1_6
-  ~I think you remember about the teleportation restrictions. You can store your equipment behind the fireplace, I'll guard it for you.~ DO ~ContainerEnable("IWD_Container",TRUE)~ EXTERN FCIWDELM bg2_1_7
+  ~你应该还记得传送的相关限制。你可以把装备存放在壁炉后面，我替你看管。~ DO ~ContainerEnable("IWD_Container",TRUE)~ EXTERN FCIWDELM bg2_1_7
 */
 
 CHAIN
@@ -315,7 +315,7 @@ IF ~~ THEN FCIWDELM bg2_1_7
 END
 	IF ~!Global("JO_GLOBAL_IN_IWD2","GLOBAL",1)~ THEN REPLY @1048 EXTERN FCIWDELM bg2_1_8
 	IF ~~ THEN REPLY @1049 DO ~SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",9)~ EXTERN FCIWDELM bg1_1_5
-	IF ~!Global("JO_GLOBAL_IN_IWD1","GLOBAL",1)~ THEN REPLY ~Actually, I'd rather explore Kuldahar. Are there any quests around here?~ DO ~SetGlobal("FC_PREFER_IWD1","MYAREA",1) SetGlobal("FC_PREFER_IWD2","MYAREA",0)~ EXTERN FCIWDELM JObg1_1_6 /////////  PREFER IWD1
+	IF ~!Global("JO_GLOBAL_IN_IWD1","GLOBAL",1)~ THEN REPLY ~其实我更想逛逛库达尔。这附近有什么任务吗？~ DO ~SetGlobal("FC_PREFER_IWD1","MYAREA",1) SetGlobal("FC_PREFER_IWD2","MYAREA",0)~ EXTERN FCIWDELM JObg1_1_6 /////////  PREFER IWD1
 
 CHAIN
 IF ~Global("FC_GLOBAL_IWD_VARIABLE","GLOBAL",9)~ THEN FCIWDELM bg2_1_9
@@ -323,7 +323,7 @@ IF ~Global("FC_GLOBAL_IWD_VARIABLE","GLOBAL",9)~ THEN FCIWDELM bg2_1_9
 END
 	IF ~!Global("JO_GLOBAL_IN_IWD2","GLOBAL",1)~ THEN REPLY @1048 EXTERN FCIWDELM bg2_1_8
 	IF ~~ THEN REPLY @1049 EXTERN FCIWDELM bg1_1_5
-	IF ~!Global("JO_GLOBAL_IN_IWD1","GLOBAL",1)~ THEN REPLY ~Actually, I'd rather explore Kuldahar. Are there any quests around here?~ DO ~SetGlobal("FC_PREFER_IWD1","MYAREA",1) SetGlobal("FC_PREFER_IWD2","MYAREA",0)~ EXTERN FCIWDELM JObg1_1_6 /////////  PREFER IWD1
+	IF ~!Global("JO_GLOBAL_IN_IWD1","GLOBAL",1)~ THEN REPLY ~其实我更想逛逛库达尔。这附近有什么任务吗？~ DO ~SetGlobal("FC_PREFER_IWD1","MYAREA",1) SetGlobal("FC_PREFER_IWD2","MYAREA",0)~ EXTERN FCIWDELM JObg1_1_6 /////////  PREFER IWD1
 
 CHAIN
 IF ~~ THEN FCIWDELM bg2_1_8 // SetGlobal("FC_PREFER_IWD1","MYAREA",0) Avoid to reset FC_GLOBAL_IWD_VARIABLE at 8
@@ -388,7 +388,7 @@ END
 
 CHAIN  /////////  IWD1 Global("FC_PREFER_IWD1","MYAREA",1)
 IF ~~ THEN FCIWDELM JObg1_1_6
-~A Great Oak...~
+~一棵巨橡……~
 = @1037
 = @1038
 = @1039
@@ -397,7 +397,7 @@ END
 	IF ~AreaCheck("AR0406")~ THEN REPLY @1040 EXTERN FCIWDELM JObg1_1_7
 	IF ~~ THEN REPLY @1041 DO ~SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",2)~ EXTERN FCIWDELM bg1_1_5
 	IF ~~ THEN REPLY @1042 DO ~SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",1)~ EXTERN FCIWDELM bg1_1_5
-	IF ~!Global("JO_GLOBAL_IN_IWD2","GLOBAL",1)~ THEN REPLY ~Actually, I'd rather explore Targos. Are there any quests around here?~ DO ~SetGlobal("FC_PREFER_IWD2","MYAREA",1) SetGlobal("FC_PREFER_IWD1","MYAREA",0)~ EXTERN FCIWDELM JObg2_1_3 /////////  PREFER IWD2
+	IF ~!Global("JO_GLOBAL_IN_IWD2","GLOBAL",1)~ THEN REPLY ~其实我更想逛逛塔戈斯。这附近有什么任务吗？~ DO ~SetGlobal("FC_PREFER_IWD2","MYAREA",1) SetGlobal("FC_PREFER_IWD1","MYAREA",0)~ EXTERN FCIWDELM JObg2_1_3 /////////  PREFER IWD2
 
 // III
 
@@ -411,7 +411,7 @@ IF ~~ THEN FCIWDELM JObg1_1_7
 END
 	IF ~!Global("JO_GLOBAL_IN_IWD1","GLOBAL",1)~ THEN REPLY @1048 EXTERN FCIWDELM bg1_1_8
 	IF ~~ THEN REPLY @1049 DO ~SetGlobal("FC_GLOBAL_IWD_VARIABLE","GLOBAL",3)~ EXTERN FCIWDELM bg1_1_5
-	IF ~!Global("JO_GLOBAL_IN_IWD2","GLOBAL",1)~ THEN REPLY ~Actually, I'd rather explore Targos. Are there any quests around here?~ DO ~SetGlobal("FC_PREFER_IWD2","MYAREA",1) SetGlobal("FC_PREFER_IWD1","MYAREA",0)~ EXTERN FCIWDELM JObg2_1_3 /////////  PREFER IWD2
+	IF ~!Global("JO_GLOBAL_IN_IWD2","GLOBAL",1)~ THEN REPLY ~其实我更想逛逛塔戈斯。这附近有什么任务吗？~ DO ~SetGlobal("FC_PREFER_IWD2","MYAREA",1) SetGlobal("FC_PREFER_IWD1","MYAREA",0)~ EXTERN FCIWDELM JObg2_1_3 /////////  PREFER IWD2
 
 // IV
 
@@ -428,16 +428,16 @@ IF ~Global("FC_GLOBAL_IWD_VARIABLE","GLOBAL",5)~ THEN FCIWDELM JObg1_7_1 // !Glo
 
 CHAIN  /////////  IWD2 Global("FC_PREFER_IWD2","MYAREA",1)
 IF ~Global("FC_GLOBAL_IWD_VARIABLE","GLOBAL",8)~ THEN FCIWDELM JObg2_1_3 // !Global("JO_GLOBAL_IN_IWD1","GLOBAL",1)
-~There is an adventure near Targos one of the ten towns of Icewind Dale.~
+~冰风谷十镇之一的塔戈斯附近，有一场冒险。~
 = @1076
-= ~It takes me all my courage to ask: Will you help us?~ // "Remove once more"
+= ~我鼓足了全部勇气才敢问：你愿意帮帮我们吗？~ // "Remove once more"
 END
 	IF ~Global("FC_HAS_BG1","GLOBAL",0) AreaCheck("AR0406")~ THEN REPLY @1078 DO ~SetGlobal("FC_HAS_BG1","GLOBAL",1)~ EXTERN FCIWDELM bg2_1_5
 	IF ~Global("FC_HAS_BG1","GLOBAL",0) AreaCheck("BG1001")~ THEN REPLY @1078 DO ~SetGlobal("FC_HAS_BG1","GLOBAL",1)~ EXTERN FCIWDELM JObg2_1_5
 	IF ~Global("FC_HAS_BG1","GLOBAL",1) AreaCheck("AR0406")~ THEN REPLY @1078 EXTERN FCIWDELM bg2_1_6
 	IF ~Global("FC_HAS_BG1","GLOBAL",1) AreaCheck("BG1001")~ THEN REPLY @1078 EXTERN FCIWDELM JObg2_1_6
 	IF ~~ THEN REPLY @1079 EXTERN FCIWDELM bg1_1_5
-	IF ~!Global("JO_GLOBAL_IN_IWD1","GLOBAL",1)~ THEN REPLY ~Actually, I'd rather explore Kuldahar. Are there any quests around here?~ DO ~SetGlobal("FC_PREFER_IWD1","MYAREA",1) SetGlobal("FC_PREFER_IWD2","MYAREA",0)~ EXTERN FCIWDELM JObg1_1_6 /////////  PREFER IWD1
+	IF ~!Global("JO_GLOBAL_IN_IWD1","GLOBAL",1)~ THEN REPLY ~其实我更想逛逛库达尔。这附近有什么任务吗？~ DO ~SetGlobal("FC_PREFER_IWD1","MYAREA",1) SetGlobal("FC_PREFER_IWD2","MYAREA",0)~ EXTERN FCIWDELM JObg1_1_6 /////////  PREFER IWD1
 
 // VI
 
@@ -453,7 +453,7 @@ EXTERN FCIWDELM bg2_1_7
 
 CHAIN
 IF ~~ THEN FCIWDELM JObg2_1_6
-  ~I think you remember about the teleportation restrictions. You can store your equipment behind the fireplace, I'll guard it for you.~ DO ~ContainerEnable("IWD_Container",TRUE)~ EXTERN FCIWDELM bg2_1_7
+  ~你应该还记得传送的相关限制。你可以把装备存放在壁炉后面，我替你看管。~ DO ~ContainerEnable("IWD_Container",TRUE)~ EXTERN FCIWDELM bg2_1_7
 
 // VIII
 
